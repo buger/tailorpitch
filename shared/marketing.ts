@@ -74,7 +74,7 @@ export const marketing = {
     ],
     [
       "Can I bring my own lead sources?",
-      "Yes. Connect supported discovery tools including Apify, Gojiberry and Manus, add a company manually, or research a public website or GitHub link. Connected workflows use your authorized accounts. Provider subscriptions and usage fees are separate from TailorPitch’s proposed plans.",
+      "Yes. Use included Apify sourcing, connect Gojiberry or Manus with your own authorized account, add a company manually, or research a public website or GitHub link. Optional third-party subscriptions and usage fees are separate from TailorPitch’s proposed plans.",
     ],
     [
       "What happens when I join early access?",
@@ -86,7 +86,7 @@ export const marketing = {
     ],
     [
       "What does the proposed $99 plan include?",
-      "Up to 100 researched leads and 10 personalized pages per month, with both allowances included. Website-led setup, editable customer profiles, saved-draft editing and outreach drafts are proposed to be included. Final pricing may change; provider fees are separate.",
+      "Up to 100 researched leads and 10 personalized pages per month, with both allowances included. Website-led setup, editable customer profiles, saved-draft editing and outreach drafts are proposed to be included. Managed Apify sourcing is included. Final pricing may change; optional third-party fees are separate.",
     ],
     [
       "Will TailorPitch guarantee replies or meetings?",

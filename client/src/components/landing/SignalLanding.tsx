@@ -522,7 +522,7 @@ function SourcePreview() {
       icon: Search,
       title: "Let your sources bring in candidates.",
       detail:
-        "Use Apify, Gojiberry or Manus with your own authorized account. Set your profile, instructions and daily pace.",
+        "Use included Apify sourcing, or connect Gojiberry or Manus with your own authorized account. Set your profile, instructions and daily pace.",
       sample: "Discovery source",
       value: "Your connected provider",
     },
@@ -766,8 +766,8 @@ export default function SignalLanding() {
                 qualification workflow.
               </p>
               <p className="signal-source-fees">
-                Connect your authorized accounts. Provider subscriptions and
-                usage fees are separate.
+                Apify sourcing is included. Optional Gojiberry and Manus
+                connections use your own accounts; their fees are separate.
               </p>
             </div>
             <div className="signal-intake-list">
@@ -907,8 +907,8 @@ export default function SignalLanding() {
           </div>
           <p className="signal-pricing-note">
             Proposed plans, not available to purchase yet. Final prices and
-            allowances may change. Provider fees are separate. No card. No
-            payment today.
+            allowances may change. Optional third-party fees are separate. No
+            card. No payment today.
           </p>
           <details className="signal-credit-details">
             <summary>

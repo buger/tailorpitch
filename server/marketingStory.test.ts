@@ -60,9 +60,10 @@ describe("outcome-led landing story", () => {
       "does not automatically grant a company workspace"
     );
     expect(answers).toContain(
-      "Provider subscriptions and usage fees are separate"
+      "Optional third-party subscriptions and usage fees are separate"
     );
     expect(answers).toContain("not automatic social delivery");
+    expect(answers).toContain("Managed Apify sourcing is included.");
     expect(answers).not.toMatch(
       /guaranteed meetings|limited spots|money.back|free trial/i
     );
