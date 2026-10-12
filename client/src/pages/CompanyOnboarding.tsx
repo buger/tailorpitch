@@ -169,9 +169,6 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
       setDraft(previous =>
         previous ? { ...previous, appliedAt: new Date() } : previous
       );
-      setDraft(previous =>
-        previous ? { ...previous, appliedAt: new Date() } : previous
-      );
       setToast("Reviewed company profile applied.");
     } catch (caught) {
       setError(
@@ -403,11 +400,12 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                     }
                   />
                   <TextArea
-                    label="Website instructions"
+                    label="Website instructions & visual direction"
                     value={brand.websiteInstructions}
                     onChange={event =>
                       setBrandField("websiteInstructions", event.target.value)
                     }
+                    hint="Edit typography, layout, imagery and page-writing guidance here; these preferences also remain editable in Settings."
                   />
                   <TextArea
                     label="Outreach instructions"
@@ -445,6 +443,12 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                         className="w-full rounded-sm border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none focus:border-terracotta"
                       >
                         <option value="">No logo selected</option>
+                        {brand.logoUrl &&
+                          !candidateLogos.some(
+                            candidate => candidate.url === brand.logoUrl
+                          ) && (
+                            <option value={brand.logoUrl}>Custom logo</option>
+                          )}
                         {candidateLogos.map(candidate => (
                           <option value={candidate.url} key={candidate.url}>
                             {candidate.label || candidate.url}
@@ -456,6 +460,15 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                       </span>
                     </label>
                   </div>
+                  <TextInput
+                    label="Logo URL — custom override"
+                    value={brand.logoUrl}
+                    onChange={event =>
+                      setBrandField("logoUrl", event.target.value)
+                    }
+                    placeholder="https://example.com/logo.svg"
+                    hint="Replace a discovered logo with your own HTTPS URL or an existing uploaded /manus-storage/ asset. You can upload files later in Settings."
+                  />
                   <div className="grid gap-5 sm:grid-cols-3">
                     <TextInput
                       label="Primary color"
@@ -616,9 +629,11 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                   className="mt-6 w-full sm:w-auto"
                 >
                   <Save className="h-4 w-4" />
-                  {apply.isPending
-                    ? "Applying reviewed profile…"
-                    : "Apply reviewed company profile"}
+                  {draft.appliedAt
+                    ? "Profile applied — edit later in Settings"
+                    : apply.isPending
+                      ? "Applying reviewed profile…"
+                      : "Apply reviewed company profile"}
                 </Button>
                 {apply.isPending && (
                   <p className="mt-3 text-xs text-ink-muted">

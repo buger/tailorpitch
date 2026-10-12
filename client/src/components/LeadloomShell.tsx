@@ -116,6 +116,13 @@ export function LeadloomShell({
           <div className="my-7 border-t border-line" />
           <MonoLabel className="mb-3 block px-3">Company</MonoLabel>
           <button
+            onClick={() => go("/app/onboarding")}
+            className={`flex w-full items-center gap-3 border-l-2 px-3 py-2.5 text-left text-sm ${location === "/app/onboarding" ? "border-terracotta bg-ink/[.035] text-ink" : "border-transparent text-ink-muted hover:bg-ink/[.035] hover:text-ink"}`}
+          >
+            <span className="w-[17px] font-mono text-xs">↗</span>Website
+            onboarding
+          </button>
+          <button
             onClick={() => go("/app/settings")}
             className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm ${location === "/app/settings" ? "border-l-2 border-terracotta bg-ink/[.035] text-ink" : "border-l-2 border-transparent text-ink-muted hover:bg-ink/[0.035] hover:text-ink"}`}
           >
