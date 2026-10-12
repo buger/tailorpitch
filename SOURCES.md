@@ -42,3 +42,7 @@ Leonid Bugaev explicitly approved removal of the draft/testimonial warnings and 
 ## Whole-landing offer structure — 12 October 2026
 
 Revisited Hormozi’s own discussion of desired outcome, likelihood, time delay and effort/sacrifice in https://youngandprofiting.com/alex-hormozi-the-value-equation-how-to-make-offers-so-good-people-feel-stupid-saying-no-e199/ and Acquisition’s official https://www.acquisition.com/training/offers module index (value equation, creation, bonuses, guarantees, urgency and naming). The revised landing applies the framework through concrete account-specific outputs, a worked mechanism, website-first setup, fewer tool handoffs, a package with explicit allocations and a low-risk early-access action. It intentionally does not manufacture guarantees, scarcity, bonus valuations or reported revenue/reply results. Existing owner-approved Leonid quotes are unchanged. No endorsement by Hormozi or Acquisition is implied.
+
+## Async progress interaction references — 12 October 2026
+
+Refero Typeform processing/modal screen: https://refero.design/pages/77fd0e93-47b0-47ab-af3a-7a04cfa7ac70 (step ledger plus current work), and MonoDesk website-analysis screen: https://refero.design/pages/bb0463c2-9c00-4796-8c17-e59bb30da9a4 (immediate analysis overlay). Screens inspected visually through Refero; hierarchy borrowed and reinterpreted in TailorPitch’s own paper/ink identity. Stage checkmarks are based on actual API/service transitions, not elapsed timers. No third-party images, copying brand marks, or claimed provider progress percentages.

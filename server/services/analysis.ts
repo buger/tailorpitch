@@ -1,3 +1,4 @@
+import type { ProgressReporter } from "../../shared/operations";
 import { clearUnobservedContacts } from "./contactEvidence";
 import { createHash } from "node:crypto";
 import { and, eq, desc, sql } from "drizzle-orm";
@@ -43,18 +44,28 @@ export async function analysisHistory(companyId: number) {
 }
 export async function analyzeCompanyWebsite(
   company: typeof t.companies.$inferSelect,
-  url: string
+  url: string,
+  report: ProgressReporter = async () => {}
 ) {
   const website = normalizePublicUrl(url);
   if (githubRepo(website))
     throw new Error(
       "Use your company website for onboarding. GitHub links belong in manual lead intake."
     );
+  await report(0, "Reading the public website and its linked company pages.");
   const evidence = await collectEvidence(website);
+  await report(
+    1,
+    `Read ${evidence.sources.length} source pages and collected ${evidence.copyExamples.length} copy snippets. Preparing brand, voice and ICP suggestions.`
+  );
   const result = await generate(
     companyAnalysisSchema,
     "Analyze this owner-supplied company website. Suggest a concise companyName, factual offer, a text voice inferred from actual supplied copy, separate website/outreach drafting instructions, styling and at most 3 ICP hypotheses. Company/ICP fields not supported by pages are suggestions or unknown, never verified facts. approvedClaims includes only supported product claims with their actual source URLs. Never assume customers, certification or success metrics. Return website as the input website. Select logoUrl ONLY from supplied observed logo URLs, or empty. Color suggestions must be described as inferred if not observed. Choose a booking/contact URL actually present in links, or use website, never fabricate a /demo route. Current brand is editable prior preferences, not source evidence for the new site. Explain styles honestly: CSS clues are not a visual screenshot analysis. No automatic communication or publication.",
     { website, evidence, currentBrand: company.brand }
+  );
+  await report(
+    2,
+    "Checking suggested URLs and logo choices against observed source evidence."
   );
   result.website = website;
   const allowedLogos = new Set(evidence.logos.map(x => x.url));
@@ -73,6 +84,10 @@ export async function analyzeCompanyWebsite(
       note: "Company website analyzed during onboarding; real source copy and observed style clues retained in the analysis draft.",
     },
   ];
+  await report(
+    3,
+    "Saving the analysis for your review. Your saved brand and profiles are not being applied."
+  );
   const d = await db();
   const [row] = await d.insert(t.analysisDrafts).values({
     companyId: company.id,
@@ -179,13 +194,22 @@ export async function applyCompanyAnalysis(
 export async function analyzeLeadLink(
   company: typeof t.companies.$inferSelect,
   url: string,
-  icpId: number | null
+  icpId: number | null,
+  report: ProgressReporter = async () => {}
 ) {
   const normalized = normalizePublicUrl(url);
   const icp = icpId
     ? await scopedRow<typeof t.icps.$inferSelect>(t.icps, icpId, company.id)
     : null;
+  await report(
+    0,
+    "Reading public website or repository evidence. No contact information is guessed."
+  );
   const evidence = await collectEvidence(normalized);
+  await report(
+    1,
+    `Read ${evidence.sources.length} source pages. Extracting observed company and contact details.`
+  );
   if (icp)
     evidence.icpSignature = createHash("sha256")
       .update(JSON.stringify(icp.criteria))
@@ -219,12 +243,22 @@ export async function analyzeLeadLink(
     notes: proposed.notes,
     status: "new",
   } as typeof t.leads.$inferSelect;
+  await report(
+    2,
+    icp
+      ? "Assessing source-backed fit against the selected ICP, with unsupported filters marked unknown."
+      : "Preparing source-backed company research. No ICP was selected."
+  );
   const research = await analyzeLead(pseudo, icp, company, evidence.sources);
   const result: LeadAnalysis = leadAnalysisSchema.parse({
     lead: proposed,
     research,
     unknowns: research.unknowns,
   });
+  await report(
+    3,
+    "Saving your editable lead review. No lead is added until you explicitly save it."
+  );
   const [row] = await (await db()).insert(t.analysisDrafts).values({
     companyId: company.id,
     kind: "lead",

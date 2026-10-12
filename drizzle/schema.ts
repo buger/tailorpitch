@@ -338,3 +338,26 @@ export const analysisDrafts = mysqlTable("analysisDrafts", {
   appliedAt: timestamp("appliedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+/** Real progress snapshots; operation data/results remain in their existing scoped tables. */
+export const operationProgress = mysqlTable("operationProgress", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  companyId: int("companyId").notNull(),
+  userId: int("userId").notNull(),
+  kind: mysqlEnum("kind", [
+    "company_analysis",
+    "lead_analysis",
+    "page_generation",
+    "outreach_generation",
+  ]).notNull(),
+  status: mysqlEnum("status", ["running", "succeeded", "failed"])
+    .default("running")
+    .notNull(),
+  stage: int("stage").default(0).notNull(),
+  detail: varchar("detail", { length: 700 })
+    .default("Starting the request…")
+    .notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});

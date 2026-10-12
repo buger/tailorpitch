@@ -1,3 +1,4 @@
+import { useOperation } from "@/components/operations/OperationProvider";
 import { useState } from "react";
 import { ExternalLink, FlaskConical, Search } from "lucide-react";
 import type { AnalysisEvidence, LeadAnalysis } from "@shared/analysis";
@@ -45,6 +46,7 @@ export function LeadLinkIntake({
   onClose: () => void;
   onSaved: (message?: string) => Promise<void>;
 }) {
+  const operation = useOperation();
   const icps = api.icps.list.useQuery(undefined, { retry: false });
   const analyze = api.analysis.lead.useMutation();
   const apply = api.analysis.applyLead.useMutation();
@@ -56,6 +58,7 @@ export function LeadLinkIntake({
 
   const analyzeLink = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (analyze.isPending || operation.busy) return;
     setError(null);
     if (!isHttpsUrl(url.trim())) {
       setError(
@@ -64,7 +67,12 @@ export function LeadLinkIntake({
       return;
     }
     try {
-      const row = await analyze.mutateAsync({ url: url.trim(), icpId });
+      const row = await operation.run(
+        "lead_analysis",
+        url.trim(),
+        operationId =>
+          analyze.mutateAsync({ url: url.trim(), icpId, operationId })
+      );
       const next = leadDraftFromRow(row as AnalysisDraft);
       if (!next) throw new Error("The analysis response was not a lead draft.");
       setDraft(next);
@@ -130,13 +138,20 @@ export function LeadLinkIntake({
     <DrawerDialog
       title="Analyze a public lead link"
       description="Paste a company website or GitHub repository. Review the proposed lead fields and research before saving; no contact details are invented."
-      onClose={onClose}
+      onClose={() => {
+        if (!analyze.isPending && !apply.isPending) onClose();
+        else
+          setError(
+            "This request is still running. Keep this tab open; you can close the intake after it finishes."
+          );
+      }}
     >
       <div className="space-y-6">
         <form onSubmit={analyzeLink} className="space-y-4">
           <TextInput
             label="Website or GitHub URL"
             type="url"
+            disabled={analyze.isPending || apply.isPending}
             required
             value={url}
             onChange={event => setUrl(event.target.value)}
@@ -149,6 +164,7 @@ export function LeadLinkIntake({
             </span>
             <select
               value={icpId ?? ""}
+              disabled={analyze.isPending || apply.isPending}
               onChange={event =>
                 setIcpId(event.target.value ? Number(event.target.value) : null)
               }
@@ -169,7 +185,12 @@ export function LeadLinkIntake({
           </label>
           <Button
             type="submit"
-            disabled={analyze.isPending || url.trim().length < 8}
+            disabled={
+              analyze.isPending ||
+              operation.busy ||
+              apply.isPending ||
+              url.trim().length < 8
+            }
             className="w-full"
           >
             <Search className="h-4 w-4" />
@@ -317,7 +338,7 @@ export function LeadLinkIntake({
                     ? "Saving reviewed lead…"
                     : "Save reviewed lead"
                 }
-                pending={apply.isPending}
+                pending={apply.isPending || analyze.isPending}
                 error={apply.error?.message}
                 onSubmit={saveReviewed}
                 onCancel={onClose}

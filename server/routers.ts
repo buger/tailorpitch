@@ -1,3 +1,4 @@
+import { getOperation, withObservedOperation } from "./services/operations";
 import { assertSyncOpen } from "./services/intakeControls";
 import { leadIdentity } from "./services/publicEvidence";
 import {
@@ -321,15 +322,32 @@ export const appRouter = router({
       .input(intakeControlsSchema)
       .mutation(({ ctx, input }) => saveIntakeControls(ctx.company.id, input)),
   }),
+  operations: router({
+    get: companyProcedure
+      .input(z.object({ id: z.string().uuid() }))
+      .query(({ ctx, input }) =>
+        getOperation(
+          { companyId: ctx.company.id, userId: ctx.user.id },
+          input.id
+        )
+      ),
+  }),
   analysis: router({
     history: companyProcedure.query(({ ctx }) =>
       analysisHistory(ctx.company.id)
     ),
     company: ownerProcedure
-      .input(z.object({ url: safeUrl }))
+      .input(
+        z.object({ url: safeUrl, operationId: z.string().uuid().optional() })
+      )
       .mutation(({ ctx, input }) => {
         throttle(`analysis:${ctx.user.id}`, 3);
-        return analyzeCompanyWebsite(ctx.company, input.url);
+        return withObservedOperation(
+          { companyId: ctx.company.id, userId: ctx.user.id },
+          "company_analysis",
+          input.operationId,
+          report => analyzeCompanyWebsite(ctx.company, input.url, report)
+        );
       }),
     applyCompany: ownerProcedure
       .input(
@@ -349,11 +367,17 @@ export const appRouter = router({
         z.object({
           url: safeUrl,
           icpId: z.number().int().positive().nullable(),
+          operationId: z.string().uuid().optional(),
         })
       )
       .mutation(({ ctx, input }) => {
         throttle(`analysis:${ctx.user.id}`, 3);
-        return analyzeLeadLink(ctx.company, input.url, input.icpId);
+        return withObservedOperation(
+          { companyId: ctx.company.id, userId: ctx.user.id },
+          "lead_analysis",
+          input.operationId,
+          report => analyzeLeadLink(ctx.company, input.url, input.icpId, report)
+        );
       }),
     applyLead: companyProcedure
       .input(
@@ -877,63 +901,86 @@ export const appRouter = router({
       return { page, lead, company: ctx.company };
     }),
     generate: companyProcedure
-      .input(z.object({ leadId: z.number().int().positive() }))
+      .input(
+        z.object({
+          leadId: z.number().int().positive(),
+          operationId: z.string().uuid().optional(),
+        })
+      )
       .mutation(async ({ ctx, input }) => {
         throttle(`page:${ctx.user.id}`, 3);
-        const lead = await scopedRow<typeof t.leads.$inferSelect>(
-          t.leads,
-          input.leadId,
-          ctx.company.id
-        );
-        await assertNotSuppressed(ctx.company.id, lead);
-        const content = await generatePage(lead, ctx.company);
-        const d = await db();
-        const id = await d.transaction(async tx => {
-          const [current] = await tx
-            .select()
-            .from(t.leads)
-            .where(
-              and(
-                eq(t.leads.id, lead.id),
-                eq(t.leads.companyId, ctx.company.id)
-              )
-            )
-            .for("update");
-          await assertNotSuppressed(ctx.company.id, current);
-          if (
-            !current.research ||
-            current.updatedAt.getTime() !== lead.updatedAt.getTime()
-          )
-            throw new Error(
-              "Lead research changed during generation. No stale page draft was saved."
+        return withObservedOperation(
+          { companyId: ctx.company.id, userId: ctx.user.id },
+          "page_generation",
+          input.operationId,
+          async report => {
+            await report(
+              0,
+              "Checking this lead’s saved research and outreach suppression status."
             );
-          const [r] = await tx.insert(t.pages).values({
-            companyId: ctx.company.id,
-            leadId: lead.id,
-            shareToken: opaque(),
-            title: `${ctx.company.name} for ${lead.companyName}`.slice(0, 200),
-            content,
-            brandSnapshot: ctx.company.brand,
-          });
-          await tx
-            .update(t.leads)
-            .set({ status: "page_ready" })
-            .where(
-              and(
-                eq(t.leads.id, lead.id),
-                eq(t.leads.companyId, ctx.company.id),
-                sql`${t.leads.status} <> 'suppressed'`
-              )
+            const lead = await scopedRow<typeof t.leads.$inferSelect>(
+              t.leads,
+              input.leadId,
+              ctx.company.id
             );
-          return r.insertId;
-        });
-        await recordActivity(
-          ctx.company.id,
-          `Personalized page draft created for ${lead.companyName}`,
-          "page",
-          lead.id
+            await assertNotSuppressed(ctx.company.id, lead);
+            const content = await generatePage(lead, ctx.company, report);
+            await report(
+              3,
+              "Saving the private page draft after rechecking that the lead research has not changed."
+            );
+            const d = await db();
+            const id = await d.transaction(async tx => {
+              const [current] = await tx
+                .select()
+                .from(t.leads)
+                .where(
+                  and(
+                    eq(t.leads.id, lead.id),
+                    eq(t.leads.companyId, ctx.company.id)
+                  )
+                )
+                .for("update");
+              await assertNotSuppressed(ctx.company.id, current);
+              if (
+                !current.research ||
+                current.updatedAt.getTime() !== lead.updatedAt.getTime()
+              )
+                throw new Error(
+                  "Lead research changed during generation. No stale page draft was saved."
+                );
+              const [r] = await tx.insert(t.pages).values({
+                companyId: ctx.company.id,
+                leadId: lead.id,
+                shareToken: opaque(),
+                title: `${ctx.company.name} for ${lead.companyName}`.slice(
+                  0,
+                  200
+                ),
+                content,
+                brandSnapshot: ctx.company.brand,
+              });
+              await tx
+                .update(t.leads)
+                .set({ status: "page_ready" })
+                .where(
+                  and(
+                    eq(t.leads.id, lead.id),
+                    eq(t.leads.companyId, ctx.company.id),
+                    sql`${t.leads.status} <> 'suppressed'`
+                  )
+                );
+              return r.insertId;
+            });
+            await recordActivity(
+              ctx.company.id,
+              `Personalized page draft created for ${lead.companyName}`,
+              "page",
+              lead.id
+            );
+            return { id };
+          }
         );
-        return { id };
       }),
     save: companyProcedure
       .input(
@@ -1015,75 +1062,107 @@ export const appRouter = router({
         z.object({
           leadId: z.number().int().positive(),
           channel: channelSchema,
+          operationId: z.string().uuid().optional(),
           pageId: z.number().int().positive().optional(),
         })
       )
       .mutation(async ({ ctx, input }) => {
         throttle(`draft:${ctx.user.id}`, 5);
-        const lead = await scopedRow<typeof t.leads.$inferSelect>(
-          t.leads,
-          input.leadId,
-          ctx.company.id
-        );
-        if (lead.status === "suppressed")
-          throw new Error("This lead is suppressed. Do not create outreach.");
-        const page = input.pageId
-          ? await scopedRow<typeof t.pages.$inferSelect>(
-              t.pages,
-              input.pageId,
+        return withObservedOperation(
+          { companyId: ctx.company.id, userId: ctx.user.id },
+          "outreach_generation",
+          input.operationId,
+          async report => {
+            await report(
+              0,
+              "Checking the lead and any selected published page."
+            );
+            const lead = await scopedRow<typeof t.leads.$inferSelect>(
+              t.leads,
+              input.leadId,
               ctx.company.id
+            );
+            if (lead.status === "suppressed")
+              throw new Error(
+                "This lead is suppressed. Do not create outreach."
+              );
+            const page = input.pageId
+              ? await scopedRow<typeof t.pages.$inferSelect>(
+                  t.pages,
+                  input.pageId,
+                  ctx.company.id
+                )
+              : null;
+            if (
+              page &&
+              (page.leadId !== lead.id || page.status !== "published")
             )
-          : null;
-        if (page && (page.leadId !== lead.id || page.status !== "published"))
-          throw new Error("Choose a published page for this lead.");
-        if (page && !ctx.company.publicOrigin)
-          throw new Error(
-            "Set your public sharing origin in Domain settings before including a page in outreach."
-          );
-        const draft = await generateDraft(
-          lead,
-          ctx.company,
-          input.channel,
-          page
-        );
-        if (page && draft.body.split("[PERSONALIZED_PAGE_URL]").length !== 2)
-          throw new Error(
-            "AI draft did not include exactly one personalized page link. Please regenerate."
-          );
-        if (!page && !draft.body.includes(ctx.company.brand.bookingUrl))
-          throw new Error(
-            "AI draft omitted your approved next-step URL. Please regenerate."
-          );
-        await assertNotSuppressed(ctx.company.id, lead);
-        const body = page
-          ? draft.body.replaceAll(
-              "[PERSONALIZED_PAGE_URL]",
-              `${ctx.company.publicOrigin}/p/${page.shareToken}`
+              throw new Error("Choose a published page for this lead.");
+            if (page && !ctx.company.publicOrigin)
+              throw new Error(
+                "Set your public sharing origin in Domain settings before including a page in outreach."
+              );
+            await report(
+              1,
+              "Preparing a first message using your saved company voice and outreach instructions."
+            );
+            const draft = await generateDraft(
+              lead,
+              ctx.company,
+              input.channel,
+              page
+            );
+            await report(
+              2,
+              "Checking the required next-step link and the lead’s opt-out status."
+            );
+            if (
+              page &&
+              draft.body.split("[PERSONALIZED_PAGE_URL]").length !== 2
             )
-          : draft.body;
-        const recipient =
-          input.channel === "email"
-            ? lead.email
-            : input.channel === "linkedin"
-              ? lead.linkedinUrl
-              : lead.xUrl;
-        const [r] = await (await db()).insert(t.outreach).values({
-          companyId: ctx.company.id,
-          leadId: lead.id,
-          pageId: page?.id,
-          channel: input.channel,
-          recipient,
-          subject: draft.subject,
-          body,
-          rationale: draft.rationale,
-        });
-        await recordActivity(
-          ctx.company.id,
-          `${input.channel} draft created for ${lead.companyName}`,
-          "draft",
-          lead.id
+              throw new Error(
+                "AI draft did not include exactly one personalized page link. Please regenerate."
+              );
+            if (!page && !draft.body.includes(ctx.company.brand.bookingUrl))
+              throw new Error(
+                "AI draft omitted your approved next-step URL. Please regenerate."
+              );
+            await assertNotSuppressed(ctx.company.id, lead);
+            const body = page
+              ? draft.body.replaceAll(
+                  "[PERSONALIZED_PAGE_URL]",
+                  `${ctx.company.publicOrigin}/p/${page.shareToken}`
+                )
+              : draft.body;
+            const recipient =
+              input.channel === "email"
+                ? lead.email
+                : input.channel === "linkedin"
+                  ? lead.linkedinUrl
+                  : lead.xUrl;
+            await report(
+              3,
+              "Saving the unsent draft. No email or social message is being sent."
+            );
+            const [r] = await (await db()).insert(t.outreach).values({
+              companyId: ctx.company.id,
+              leadId: lead.id,
+              pageId: page?.id,
+              channel: input.channel,
+              recipient,
+              subject: draft.subject,
+              body,
+              rationale: draft.rationale,
+            });
+            await recordActivity(
+              ctx.company.id,
+              `${input.channel} draft created for ${lead.companyName}`,
+              "draft",
+              lead.id
+            );
+            return { id: r.insertId };
+          }
         );
-        return { id: r.insertId };
       }),
     save: companyProcedure
       .input(

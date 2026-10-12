@@ -1,3 +1,4 @@
+import { useOperation } from "@/components/operations/OperationProvider";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -69,6 +70,7 @@ async function copyText(value: string) {
 }
 
 export function PagesView({ workspace }: { workspace: Workspace }) {
+  const operation = useOperation();
   const search = useSearch();
   const selectedLeadId = leadIdFromSearch(search);
   const [selected, setSelected] = useState<PageRow | null>(null);
@@ -91,9 +93,14 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
   };
 
   const generatePage = async (leadId: number) => {
-    if (generate.isPending) return;
+    if (generate.isPending || operation.busy) return;
     try {
-      const result = await generate.mutateAsync({ leadId });
+      const result = await operation.run(
+        "page_generation",
+        leads.data?.find(lead => lead.id === leadId)?.companyName ??
+          `Lead #${leadId}`,
+        operationId => generate.mutateAsync({ leadId, operationId })
+      );
       const generated = await utils.pages.get.fetch({ id: result.id });
       const generatedRow: PageRow = {
         ...generated.page,
@@ -202,7 +209,7 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
               leads={leads.data ?? []}
               selectedLeadId={selectedLeadId}
               onGenerate={generatePage}
-              pending={generate.isPending}
+              pending={generate.isPending || operation.busy}
             />
           )}
           {pages.isLoading && <LoadingState label="Loading page drafts" />}
@@ -657,6 +664,7 @@ function PageEditor({ page, brand, saving, onClose, onSave }: PageEditorProps) {
 }
 
 export function OutreachView() {
+  const operation = useOperation();
   const search = useSearch();
   const selectedLeadId = leadIdFromSearch(search);
   const list = api.outreach.list.useQuery(undefined, { retry: false });
@@ -680,9 +688,14 @@ export function OutreachView() {
   };
 
   const prepare = async (leadId: number, channel: Channel, pageId?: number) => {
-    if (generate.isPending) return;
+    if (generate.isPending || operation.busy) return;
     try {
-      const result = await generate.mutateAsync({ leadId, channel, pageId });
+      const result = await operation.run(
+        "outreach_generation",
+        `${leads.data?.find(lead => lead.id === leadId)?.companyName ?? `Lead #${leadId}`} / ${channel}`,
+        operationId =>
+          generate.mutateAsync({ leadId, channel, pageId, operationId })
+      );
       const refreshed = await list.refetch();
       const created = refreshed.data?.find(draft => draft.id === result.id);
       if (!created)
@@ -766,7 +779,7 @@ export function OutreachView() {
                         }))
                       }
                       onPrepare={prepare}
-                      pending={generate.isPending}
+                      pending={generate.isPending || operation.busy}
                       pagesLoading={pages.isLoading}
                     />
                   );

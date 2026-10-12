@@ -1,3 +1,4 @@
+import { useOperation } from "@/components/operations/OperationProvider";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -791,6 +792,7 @@ export function LeadDetailView({
 }: {
   workspace: Workspace;
 }) {
+  const operation = useOperation();
   const [, params] = useRoute<{ id: string }>("/app/leads/:id");
   const [, setLocation] = useLocation();
   const id = Number(params?.id);
@@ -890,10 +892,12 @@ export function LeadDetailView({
     setToast("Lead updated.");
   };
   const createPage = async () => {
-    if (!researchData || generatePage.isPending) return;
+    if (!researchData || generatePage.isPending || operation.busy) return;
     setActionError(null);
     try {
-      await generatePage.mutateAsync({ leadId: id });
+      await operation.run("page_generation", lead.companyName, operationId =>
+        generatePage.mutateAsync({ leadId: id, operationId })
+      );
       setLocation(`/app/pages?lead=${id}`);
     } catch (caught) {
       setActionError(
@@ -1314,7 +1318,9 @@ export function LeadDetailView({
               <Button
                 className="w-full justify-between"
                 onClick={() => void createPage()}
-                disabled={!researchData || generatePage.isPending}
+                disabled={
+                  !researchData || generatePage.isPending || operation.busy
+                }
               >
                 {generatePage.isPending
                   ? "Generating draft…"

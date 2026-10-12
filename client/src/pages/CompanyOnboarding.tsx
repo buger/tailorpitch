@@ -1,3 +1,4 @@
+import { useOperation } from "@/components/operations/OperationProvider";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -74,6 +75,7 @@ function companyDraftFromRow(row: AnalysisDraft): CompanyDraft | null {
 }
 
 export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
+  const operation = useOperation();
   const canManage = workspace.role === "owner";
   const history = api.analysis.history.useQuery(undefined, { retry: false });
   const analyze = api.analysis.company.useMutation();
@@ -115,6 +117,7 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
 
   const analyzeWebsite = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (analyze.isPending || operation.busy) return;
     setError(null);
     if (!canManage) {
       setError(
@@ -127,7 +130,11 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
       return;
     }
     try {
-      const row = await analyze.mutateAsync({ url: website.trim() });
+      const row = await operation.run(
+        "company_analysis",
+        website.trim(),
+        operationId => analyze.mutateAsync({ url: website.trim(), operationId })
+      );
       const next = companyDraftFromRow(row as AnalysisDraft);
       if (!next)
         throw new Error("The analysis response was not a company draft.");
@@ -242,11 +249,11 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                 onChange={event => setWebsite(event.target.value)}
                 placeholder="https://example.com"
                 hint="GitHub links are for lead intake; use the company site here."
-                disabled={!canManage}
+                disabled={!canManage || analyze.isPending || operation.busy}
               />
               <Button
                 type="submit"
-                disabled={!canManage || analyze.isPending}
+                disabled={!canManage || analyze.isPending || operation.busy}
                 className="w-full"
               >
                 <Sparkles className="h-4 w-4" />
@@ -303,6 +310,7 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                   type="button"
                   key={item.id}
                   onClick={() => loadDraft(item)}
+                  disabled={operation.busy}
                   className={`flex w-full items-center gap-3 py-4 text-left ${draft?.id === item.id ? "text-terracotta" : "hover:text-terracotta"}`}
                 >
                   <span
@@ -624,7 +632,10 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                 <Button
                   onClick={() => void applyReviewed()}
                   disabled={
-                    !canManage || apply.isPending || Boolean(draft.appliedAt)
+                    !canManage ||
+                    apply.isPending ||
+                    operation.busy ||
+                    Boolean(draft.appliedAt)
                   }
                   className="mt-6 w-full sm:w-auto"
                 >

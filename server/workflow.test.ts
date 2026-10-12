@@ -67,6 +67,11 @@ describe("company workflow boundaries", () => {
       code: "UNAUTHORIZED",
     });
     await expect(
+      caller.operations.get({ id: "00000000-0000-4000-8000-000000000001" })
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    await expect(
       caller.analysis.company({ url: "https://example.com" })
     ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(
