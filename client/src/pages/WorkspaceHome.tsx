@@ -31,13 +31,15 @@ const starter: IcpCriteria = {
 
 export function OverviewView({ workspace }: { workspace: Workspace }) {
   const stats = workspace.stats;
+  const profiles = api.icps.list.useQuery(undefined, { retry: false });
+  const pipeline = api.pipeline.get.useQuery(undefined, { retry: false });
   const stages = [
     {
       number: "01",
       label: "Define a profile",
       detail: "Make the fit legible",
       count: "Profiles",
-      value: "—",
+      value: profiles.data?.length ?? "—",
       href: "/app/icps",
     },
     {
@@ -69,13 +71,15 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
     <>
       <SectionHeader
         eyebrow="Workspace / today"
-        title="A better reason to reach out."
-        description="Your company workspace, at a glance. The numbers below are live records — zero is a useful place to begin."
+        title="A considered day's work."
+        description="Find a signal. Establish the fit. Decide what deserves a conversation. Your saved work, not a promise of activity."
         action={
-          <StatusChip tone="good">
-            <span className="h-1.5 w-1.5 rounded-full bg-sage" />
-            Live workspace
-          </StatusChip>
+          <a
+            href="/app/agents"
+            className="inline-flex items-center gap-2 border-b border-line pb-2 text-xs text-ink-muted hover:border-ink"
+          >
+            Agent controls <ArrowRight className="h-3.5 w-3.5" />
+          </a>
         }
       />
       {workspace.role === "owner" &&
@@ -102,7 +106,7 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
             </a>
           </section>
         )}
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-4">
         {" "}
         <StatCard
           label="Companies"
@@ -133,33 +137,35 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
             <div>
               <MonoLabel>Pipeline / four considered steps</MonoLabel>
               <h2 className="mt-3 font-display text-2xl tracking-[-.04em]">
-                From signal to send
+                From a signal to a reason.
               </h2>
             </div>
             <ArrowRight className="h-5 w-5 text-terracotta" />
           </div>
-          <div className="mt-8 grid gap-0 sm:grid-cols-4">
+          <div className="mt-8 divide-y divide-line border-t border-line">
             {stages.map(stage => (
               <a
                 href={stage.href}
                 key={stage.number}
-                className="group border-t border-line py-5 sm:border-l sm:border-t-0 sm:px-5 sm:first:border-l-0 sm:first:pl-0"
+                className="group grid grid-cols-[30px_1fr_auto] items-center gap-4 py-5"
               >
                 <span className="font-mono text-[10px] text-terracotta">
                   {stage.number}
                 </span>
-                <h3 className="mt-10 text-sm font-semibold group-hover:text-terracotta">
-                  {stage.label}
-                </h3>
-                <p className="mt-1 text-xs leading-5 text-ink-muted">
-                  {stage.detail}
-                </p>
-                <p className="mt-7 font-display text-2xl tracking-[-.04em]">
-                  {stage.value}
-                </p>
-                <p className="font-mono text-[9px] uppercase tracking-[.12em] text-ink-muted">
-                  {stage.count}
-                </p>
+                <div>
+                  <h3 className="font-display text-xl group-hover:text-terracotta">
+                    {stage.label}
+                  </h3>
+                  <p className="mt-1 text-xs leading-5 text-ink-muted">
+                    {stage.detail}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-display text-2xl">{stage.value}</p>
+                  <p className="font-mono text-[9px] uppercase tracking-[.12em] text-ink-muted">
+                    {stage.count}
+                  </p>
+                </div>
               </a>
             ))}
           </div>
@@ -173,14 +179,20 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
             {workspace.company.website}
           </p>
           <div className="mt-12 flex items-center gap-3">
-            <img
-              src="https://reqproof.com/assets/brand/proof-mark.svg"
-              alt="Proof mark"
-              className="h-9 w-9"
-            />
+            {workspace.company.brand.logoUrl ? (
+              <img
+                src={workspace.company.brand.logoUrl}
+                alt={`${workspace.company.name} mark`}
+                className="h-9 w-9 object-contain"
+              />
+            ) : (
+              <span className="font-display text-4xl">
+                {workspace.company.name.slice(0, 1)}
+              </span>
+            )}
             <div>
-              <p className="text-sm font-semibold">Proof</p>
-              <p className="text-xs text-paper/55">Pilot workspace</p>
+              <p className="text-sm font-semibold">{workspace.company.name}</p>
+              <p className="text-xs text-paper/55">Owner-directed workspace</p>
             </div>
           </div>
           <a
@@ -190,6 +202,26 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
             Review brand & voice <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
+      </div>
+      <div className="mt-8 flex flex-col gap-4 border-y border-line py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <MonoLabel>Agents / deliberate pace</MonoLabel>
+          <p className="mt-2 text-sm text-ink-muted">
+            {pipeline.isLoading
+              ? "Loading saved pipeline state…"
+              : pipeline.error
+                ? "Pipeline status unavailable. Open agent controls to retry."
+                : pipeline.data?.pipeline.enabled
+                  ? "Pipeline enabled. Work follows your stage choices and daily limits."
+                  : "Pipeline paused. Nothing new starts until you enable the agent pipeline."}
+          </p>
+        </div>
+        <a
+          href="/app/agents"
+          className="shrink-0 border-b border-ink/30 pb-1 text-xs font-medium"
+        >
+          Review the pipeline ↗
+        </a>
       </div>
       <div className="mt-10">
         <div className="mb-4 flex items-center justify-between">

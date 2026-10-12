@@ -265,25 +265,40 @@ function BrandSettings({ workspace }: { workspace: Workspace }) {
                   key={asset.id}
                   className="flex items-center gap-3 border-t border-line pt-3"
                 >
-                  <img
-                    src={asset.url}
-                    alt={asset.note || asset.name}
-                    className="h-12 w-12 rounded-sm border border-line object-cover"
-                  />
+                  <a
+                    href={asset.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open original reference"
+                    className="shrink-0"
+                  >
+                    <img
+                      src={asset.url}
+                      alt={asset.name}
+                      className="h-16 w-20 border border-line bg-paper object-contain"
+                    />
+                  </a>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold">
                       {asset.name}
                     </p>
-                    <p className="truncate text-[11px] text-ink-muted">
-                      {asset.note || "No note"}
+                    <p className="mt-1 line-clamp-3 text-[11px] leading-4 text-ink-muted">
+                      {asset.note?.split("Owner source sha256:")[0] ||
+                        "No note"}
                     </p>
-                    <button
-                      type="button"
-                      className="mt-1 text-[11px] font-semibold text-terracotta underline"
-                      onClick={() => set("logoUrl", asset.url)}
-                    >
-                      Use as logo
-                    </button>
+                    {asset.note?.includes("exploration board") ? (
+                      <span className="mt-2 block font-mono text-[9px] uppercase tracking-[.08em] text-terracotta">
+                        Design inspiration · original preserved
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="mt-1 text-[11px] font-semibold text-terracotta underline"
+                        onClick={() => set("logoUrl", asset.url)}
+                      >
+                        Use as logo
+                      </button>
+                    )}
                   </div>
                   <button
                     type="button"

@@ -48,13 +48,17 @@ export function LeadloomShell({
   const [location, setLocation] = useLocation();
   const current =
     nav.find(item => item.href === location) ??
-    (location === "/app/settings" ? { label: "Settings" } : nav[0]);
+    (location === "/app/settings"
+      ? { label: "Settings" }
+      : location === "/app/onboarding"
+        ? { label: "Company onboarding" }
+        : nav[0]);
   const go = (href: string) => {
     setLocation(href);
     setOpen(false);
   };
   return (
-    <div className="min-h-screen bg-paper text-ink lg:flex">
+    <div className="workspace-layout min-h-screen bg-paper text-ink lg:flex">
       <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-paper px-5 lg:hidden">
         <LeadloomWordmark compact />
         <button
@@ -72,7 +76,7 @@ export function LeadloomShell({
         />
       )}
       <aside
-        className={`${open ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 z-30 flex w-[270px] flex-col border-r border-line bg-paper transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0`}
+        className={`${open ? "translate-x-0" : "-translate-x-full"} fixed inset-y-0 left-0 z-30 flex w-[240px] flex-col border-r border-line bg-paper transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0`}
       >
         <div className="flex h-20 items-center border-b border-line px-6">
           <LeadloomWordmark />
@@ -80,7 +84,7 @@ export function LeadloomShell({
         <div className="flex-1 px-4 py-7">
           <MonoLabel className="mb-3 block px-3">Workspace</MonoLabel>
           <nav className="space-y-1">
-            {nav.map(item => {
+            {nav.map((item, index) => {
               const active =
                 location === item.href ||
                 (item.href === "/app/leads" &&
@@ -90,13 +94,17 @@ export function LeadloomShell({
                 <button
                   key={item.href}
                   onClick={() => go(item.href)}
-                  className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm transition ${active ? "bg-ink text-paper" : "text-ink-muted hover:bg-ink/[0.05] hover:text-ink"}`}
+                  className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm transition ${active ? "border-l-2 border-terracotta bg-ink/[.035] text-ink" : "border-l-2 border-transparent text-ink-muted hover:bg-ink/[0.035] hover:text-ink"}`}
                 >
-                  <Icon className="h-[17px] w-[17px]" strokeWidth={1.7} />
+                  <span
+                    className={`w-5 shrink-0 font-mono text-[9px] ${active ? "text-terracotta" : "text-ink-muted/60"}`}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                   <span>{item.label}</span>
                   {item.href === "/app/leads" && workspace.stats.leads > 0 && (
                     <span
-                      className={`ml-auto font-mono text-[10px] ${active ? "text-paper/70" : "text-ink-muted"}`}
+                      className={`ml-auto font-mono text-[10px] ${active ? "text-terracotta" : "text-ink-muted"}`}
                     >
                       {workspace.stats.leads}
                     </span>
@@ -109,7 +117,7 @@ export function LeadloomShell({
           <MonoLabel className="mb-3 block px-3">Company</MonoLabel>
           <button
             onClick={() => go("/app/settings")}
-            className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm ${location === "/app/settings" ? "bg-ink text-paper" : "text-ink-muted hover:bg-ink/[0.05] hover:text-ink"}`}
+            className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-left text-sm ${location === "/app/settings" ? "border-l-2 border-terracotta bg-ink/[.035] text-ink" : "border-l-2 border-transparent text-ink-muted hover:bg-ink/[0.035] hover:text-ink"}`}
           >
             <Settings className="h-[17px] w-[17px]" strokeWidth={1.7} />
             Settings
@@ -117,7 +125,7 @@ export function LeadloomShell({
         </div>
         <div className="border-t border-line p-4">
           <div className="mb-4 flex items-center gap-3 px-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-terracotta text-xs font-bold text-paper">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-paper text-xs font-medium text-ink">
               {(user.name || user.email || "P").slice(0, 1).toUpperCase()}
             </div>
             <div className="min-w-0">
@@ -138,10 +146,12 @@ export function LeadloomShell({
           </button>
         </div>
       </aside>
-      <main className="min-w-0 flex-1">
+      <main className="workspace-surface min-w-0 flex-1">
         <div className="hidden h-20 items-center justify-between border-b border-line px-8 lg:flex">
           <div>
-            <MonoLabel>Proof / {current.label}</MonoLabel>
+            <MonoLabel>
+              {workspace.company.name} / {current.label}
+            </MonoLabel>
           </div>
           <div className="flex items-center gap-4">
             <StatusChip tone={workspace.role === "owner" ? "good" : "neutral"}>

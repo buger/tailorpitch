@@ -22,3 +22,7 @@ Gojiberry’s official MCP setup is described at https://gojiberry.ai/how-to-do-
 Manus v2 lifecycle and structured outputs: https://open.manus.ai/docs/v2/task-lifecycle and https://open.manus.ai/docs/v2/structured-output . Reusable task IDs support later turns; a stopped main agent is not complete when background-job state is true or unknown. Stable agent profiles, not independently pinned version aliases, are used. No billing or account entitlement assumptions are made.
 
 The owner confirmed Cloudflare as the DNS provider for tailorpitch.com. The Cloudflare access request was not accepted; no DNS changes were made. Domain binding remains pending authorized DNS access and actual platform-issued records.
+
+## Supplied design references — 12 October 2026
+
+The owner supplied `1fe6adcd-5f43-46e5-be63-d536b74fb687.png` and `274b246e-7a67-48d8-87ea-c5eebf800ab5.png`, two Proof homepage exploration boards. Exact bytes retained as company design-inspiration assets; the boards are not shipped product captures or a request to change the official Proof logo. [Proof's current brand guidance](https://reqproof.com/brand) was consulted for Iowan Old Style/Baskerville/Georgia headings, Space Grotesk body, paper #f3f0e9, ink #24302a and the preserved official sage accent. TailorPitch adopts the editorial composition while retaining its separate product identity and sparse oxide-red signal motif.

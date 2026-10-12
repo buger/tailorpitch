@@ -111,3 +111,6 @@ temp/
 
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
+
+# Original reference boards live in project storage, not source history.
+design-references/
