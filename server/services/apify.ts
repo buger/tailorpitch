@@ -1,10 +1,14 @@
+import { runBinding, assertMatchingActiveRun } from "./apifyRunBinding";
+import { requireSourcePlan } from "./sourcePlans";
 import { leadIdentity, githubRepo } from "./publicEvidence";
 import { assertSourcingOpen, assertSyncOpen } from "./intakeControls";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { db, scopedRow, recordActivity } from "./tenant";
 import { sourcingRuns, leads, icps, companies } from "../../drizzle/schema";
-import { getIntegration } from "./credentials";
+import { apifyRequest, getApifyStatus, ApifyRequestError } from "./apifyAccess";
+import { discoveryInput, researchInput, actorRunPath } from "./apifyInputs";
+export { apifyRequest } from "./apifyAccess";
 import { analyzeLead } from "./generation";
 import { safeUrl } from "../../shared/domain";
 
@@ -24,63 +28,6 @@ export function publicWebsite(value: string) {
     throw new Error("Use a public business website, not an internal address.");
   return u;
 }
-export async function apifyRequest(
-  companyId: number,
-  path: string,
-  init: RequestInit = {}
-) {
-  const credential = await getIntegration<{ token: string }>(
-    companyId,
-    "apify"
-  );
-  if (!credential)
-    throw new TRPCError({
-      code: "PRECONDITION_FAILED",
-      message: "Connect Apify in company settings before sourcing or research.",
-    });
-  const response = await fetch(`https://api.apify.com/v2/${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${credential.config.token}`,
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!response.ok)
-    throw new Error(
-      response.status === 401 || response.status === 403
-        ? "Apify authorization failed. Reconnect your token in settings."
-        : `Apify request failed (${response.status}). Check the run and retry.`
-    );
-  const body = await response.json();
-  if (body.error)
-    throw new Error(
-      "Apify returned an error. Check your actor access and account settings."
-    );
-  return body;
-}
-export async function connectApify(companyId: number, token: string) {
-  const response = await fetch("https://api.apify.com/v2/users/me", {
-    headers: { Authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!response.ok)
-    throw new Error(
-      "Apify token could not be verified. Check its permissions."
-    );
-  const data = await response.json();
-  if (!data.data?.id)
-    throw new Error("Apify did not return an account identity.");
-  const { saveIntegration } = await import("./credentials");
-  await saveIntegration(
-    companyId,
-    "apify",
-    { token },
-    data.data.username ?? "Apify account"
-  );
-  return { success: true };
-}
 export async function startRun(
   companyId: number,
   args: { icpId?: number; leadId?: number; query?: string; limit?: number }
@@ -96,28 +43,26 @@ export async function startRun(
       "This lead is suppressed. Research cannot reopen outreach."
     );
   const type = lead ? "research" : "discovery";
-  if (!(await getIntegration(companyId, "apify")))
+  if (!(await getApifyStatus(companyId)).connected)
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
-      message: "Connect Apify in company settings first.",
+      message:
+        "TailorPitch lead sourcing requires owner setup. You do not need a personal Apify token.",
     });
+  if (!lead && !icp)
+    throw new Error("Choose an ICP before starting lead discovery.");
+  const sourcePlan = !lead ? await requireSourcePlan(companyId, icp!.id) : null;
+  const query = sourcePlan?.selection?.query ?? args.query ?? "";
+  const requestedLimit = lead
+    ? 4
+    : (args.limit ?? sourcePlan!.answers.dailyLimit);
+  if (sourcePlan && requestedLimit > sourcePlan.answers.dailyLimit)
+    throw new Error(
+      "Run volume exceeds the reviewed daily pace. Lower the limit or review a new strategy."
+    );
   const input = lead
-    ? {
-        startUrls: [{ url: publicWebsite(lead.website).href }],
-        maxCrawlPages: 4,
-        maxCrawlDepth: 1,
-        crawlerType: "playwright:adaptive",
-        respectRobotsTxtFile: true,
-        saveMarkdown: true,
-        maxConcurrency: 2,
-        requestTimeoutSecs: 30,
-      }
-    : {
-        queries: args.query?.replace(/[\r\n]+/g, " "),
-        maxPagesPerQuery: Math.ceil((args.limit ?? 10) / 10),
-        maximumLeadsEnrichmentRecords: 0,
-        languageCode: "en",
-      };
+    ? researchInput(publicWebsite(lead.website).href)
+    : discoveryInput(query, requestedLimit, sourcePlan!.answers.recencyDays);
   const reservation = await d.transaction(async tx => {
     await tx
       .select({ id: companies.id })
@@ -145,14 +90,50 @@ export async function startRun(
         )
       )
       .limit(1);
-    if (existing) return { id: existing.id, existing: true };
+    if (existing) {
+      assertMatchingActiveRun(existing, {
+        sourcePlanId: sourcePlan?.id ?? null,
+        actorId: lead
+          ? "apify/website-content-crawler"
+          : sourcePlan!.selection!.actorId,
+        query: lead?.website ?? query,
+        requestedLimit,
+      });
+      return { id: existing.id, existing: true };
+    }
+    if (sourcePlan) {
+      const [budget] = await tx
+        .select({
+          used: sql<number>`coalesce(sum(${sourcingRuns.requestedLimit}),0)`,
+        })
+        .from(sourcingRuns)
+        .where(
+          and(
+            eq(sourcingRuns.companyId, companyId),
+            eq(sourcingRuns.icpId, icp!.id),
+            eq(sourcingRuns.type, "discovery"),
+            sql`${sourcingRuns.createdAt} >= UTC_DATE()`
+          )
+        );
+      if (
+        Number(budget?.used ?? 0) + requestedLimit >
+        sourcePlan.answers.dailyLimit
+      )
+        throw new Error(
+          "This ICP reached its approved daily discovery allowance (UTC). Wait for the next day; repeated starts cannot bypass pacing."
+        );
+    }
     const [insert] = await tx.insert(sourcingRuns).values({
       companyId,
       icpId: icp?.id ?? lead?.icpId,
       leadId: lead?.id,
       type,
-      requestedLimit: args.limit ?? 4,
-      query: args.query?.replace(/[\r\n]+/g, " ") ?? lead?.website,
+      requestedLimit,
+      query: lead?.website ?? query,
+      actorId: lead
+        ? "apify/website-content-crawler"
+        : sourcePlan!.selection!.actorId,
+      sourcePlanId: sourcePlan?.id ?? null,
     });
     return { id: insert.insertId, existing: false };
   });
@@ -186,12 +167,23 @@ export async function startRun(
   }
   const id = reservation.id;
   try {
-    const { data } = await apifyRequest(
-      companyId,
-      `actors/${lead ? "apify~website-content-crawler" : "apify~google-search-scraper"}/runs?timeout=600&restartOnError=false`,
-      { method: "POST", body: JSON.stringify(input) }
+    const reserved = await scopedRow<typeof sourcingRuns.$inferSelect>(
+      sourcingRuns,
+      id,
+      companyId
     );
-    if (!data?.id) throw new Error("Apify did not return a run ID.");
+    const { data } = await apifyRequest(companyId, actorRunPath(type), {
+      method: "POST",
+      body: JSON.stringify({
+        ...input,
+        _tailorpitchCorrelation: runBinding(reserved),
+      }),
+    });
+    if (!data?.id)
+      throw new ApifyRequestError(
+        "Apify did not confirm a run ID. Check provider history before another start.",
+        true
+      );
     await d
       .update(sourcingRuns)
       .set({
@@ -230,6 +222,7 @@ export async function startRun(
     );
     if (current.externalId) return { id };
     const uncertain =
+      (e instanceof ApifyRequestError && e.outcomeUnknown) ||
       e instanceof TypeError ||
       (e instanceof Error && ["TimeoutError", "AbortError"].includes(e.name));
     await d

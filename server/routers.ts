@@ -1,3 +1,14 @@
+import { assertRunBinding } from "./services/apifyRunBinding";
+import {
+  sourceAnswersSchema,
+  sourceSelectionSchema,
+} from "../shared/sourcePlans";
+import {
+  discoverSourceCatalog,
+  listSourcePlans,
+  recommendSources,
+  approveSources,
+} from "./services/sourcePlans";
 import { reviewedIcpsSchema } from "../shared/icpReview";
 import { getOperation, withObservedOperation } from "./services/operations";
 import { assertSyncOpen } from "./services/intakeControls";
@@ -43,9 +54,9 @@ import {
   apifyRequest,
   startRun,
   syncRun,
-  connectApify,
 } from "./services/apify";
 import { generatePage, generateDraft } from "./services/generation";
+import { verifyApify, hasManagedApify } from "./services/apifyAccess";
 import {
   getMailboxStatus,
   connectImap,
@@ -575,6 +586,35 @@ export const appRouter = router({
         return { id: r.insertId };
       }),
   }),
+  sources: router({
+    catalog: companyProcedure.query(({ ctx }) =>
+      discoverSourceCatalog(ctx.company.id)
+    ),
+    list: companyProcedure
+      .input(z.object({ icpId: z.number().int().positive() }))
+      .query(({ ctx, input }) => listSourcePlans(ctx.company.id, input.icpId)),
+    recommend: ownerProcedure
+      .input(
+        z.object({
+          icpId: z.number().int().positive(),
+          answers: sourceAnswersSchema,
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        throttle(`source-plan:${ctx.user.id}`, 4);
+        return recommendSources(ctx.company.id, input.icpId, input.answers);
+      }),
+    approve: ownerProcedure
+      .input(
+        z.object({
+          id: z.number().int().positive(),
+          selection: sourceSelectionSchema,
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        approveSources(ctx.company.id, ctx.user.id, input.id, input.selection)
+      ),
+  }),
   leads: router({
     list: companyProcedure.query(async ({ ctx }) => {
       const d = await db();
@@ -800,12 +840,40 @@ export const appRouter = router({
             ctx.company.id,
             `actor-runs/${input.externalId}`
           );
+          if (
+            !run.actorId ||
+            !/^[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(run.actorId)
+          )
+            throw new Error(
+              "Legacy run actor ownership is unavailable; server-administrator review is required."
+            );
           const { data: actor } = await apifyRequest(
             ctx.company.id,
-            `actors/${run.type === "research" ? "apify~website-content-crawler" : "apify~google-search-scraper"}`
+            `actors/${run.actorId.replace("/", "~")}`
           );
           if (data.actId !== actor.id)
             throw new Error("This Apify run belongs to a different actor.");
+          if (
+            !data.defaultKeyValueStoreId ||
+            !/^[A-Za-z0-9]+$/.test(data.defaultKeyValueStoreId)
+          )
+            throw new Error(
+              "Provider input correlation is unavailable. No run was attached."
+            );
+          const originalInput = await apifyRequest(
+            ctx.company.id,
+            `key-value-stores/${data.defaultKeyValueStoreId}/records/INPUT`
+          );
+          assertRunBinding(run, originalInput);
+          const [attachedElsewhere] = await (await db())
+            .select({ id: t.sourcingRuns.id })
+            .from(t.sourcingRuns)
+            .where(eq(t.sourcingRuns.externalId, input.externalId))
+            .limit(1);
+          if (attachedElsewhere)
+            throw new Error(
+              "This provider run already belongs to an internal run."
+            );
           await (
             await db()
           )
@@ -1490,6 +1558,10 @@ export const appRouter = router({
     }),
   }),
   mailbox: router({
+    verifyApify: ownerProcedure.mutation(async ({ ctx }) => {
+      throttle(`apify-check:${ctx.user.id}`, 4);
+      return verifyApify(ctx.company.id);
+    }),
     status: companyProcedure.query(({ ctx }) =>
       getMailboxStatus(ctx.company.id)
     ),
@@ -1509,9 +1581,6 @@ export const appRouter = router({
         );
         return { success: true };
       }),
-    connectApify: ownerProcedure
-      .input(z.object({ token: z.string().min(10).max(2000) }))
-      .mutation(({ ctx, input }) => connectApify(ctx.company.id, input.token)),
     connectImap: ownerProcedure
       .input(
         z.object({
@@ -1543,9 +1612,15 @@ export const appRouter = router({
     ),
     disconnect: ownerProcedure
       .input(z.object({ provider: z.enum(["apify", "gmail", "imap"]) }))
-      .mutation(({ ctx, input }) =>
-        disconnectIntegration(ctx.company.id, input.provider)
-      ),
+      .mutation(({ ctx, input }) => {
+        if (input.provider === "apify" && hasManagedApify())
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Apify is managed by TailorPitch. Use sourcing pause controls to stop new lead discovery.",
+          });
+        return disconnectIntegration(ctx.company.id, input.provider);
+      }),
   }),
   inbox: router({
     list: companyProcedure.query(async ({ ctx }) =>

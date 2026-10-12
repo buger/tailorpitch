@@ -399,11 +399,11 @@ function BrandSettings({ workspace }: { workspace: Workspace }) {
 
 function IntegrationSettings() {
   const status = api.mailbox.status.useQuery(undefined, { retry: false });
-  const connectApify = api.mailbox.connectApify.useMutation();
+  const verifyApify = api.mailbox.verifyApify.useMutation();
   const connectImap = api.mailbox.connectImap.useMutation();
   const startGmail = api.mailbox.startGmail.useMutation();
   const disconnect = api.mailbox.disconnect.useMutation();
-  const [token, setToken] = useState("");
+
   const [imap, setImap] = useState({
     email: "",
     username: "",
@@ -416,16 +416,16 @@ function IntegrationSettings() {
     smtpSecure: true,
   });
   const [toast, setToast] = useState<string | null>(null);
-  const connectA = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const checkApify = async () => {
     try {
-      await connectApify.mutateAsync({ token });
-      setToken("");
-      setToast("Apify connected.");
+      await verifyApify.mutateAsync();
+      setToast(
+        "Apify account and both research actors verified. No scrape was started."
+      );
       await status.refetch();
     } catch (error) {
       setToast(
-        error instanceof Error ? error.message : "Apify connection failed."
+        error instanceof Error ? error.message : "Sourcing verification failed."
       );
     }
   };
@@ -460,7 +460,7 @@ function IntegrationSettings() {
       );
     }
   };
-  const disconnectProvider = async (provider: "apify" | "gmail" | "imap") => {
+  const disconnectProvider = async (provider: "gmail" | "imap") => {
     if (
       !window.confirm(`Disconnect ${provider}? Access removal is reversible.`)
     )
@@ -477,54 +477,59 @@ function IntegrationSettings() {
       <section className="border border-line bg-white p-6 sm:p-7">
         <div className="flex items-start justify-between">
           <div>
-            <MonoLabel>Apify / company sourcing</MonoLabel>
+            <MonoLabel>Included / lead sourcing</MonoLabel>
             <h2 className="mt-3 font-display text-2xl tracking-[-.04em]">
-              Search with provenance.
+              Research runs behind the scenes.
             </h2>
           </div>
           <PlugZap className="h-5 w-5 text-terracotta" />
         </div>
         <p className="mt-3 text-sm leading-6 text-ink-muted">
-          A token is required to start persistent sourcing and research jobs. It
-          is never shown again or persisted in the browser.
+          TailorPitch manages Apify for discovery and website research. You do
+          not need a personal Apify account or API token. Choose your ICP in
+          Leads, or set a conservative discovery pace in Agents.
         </p>
-        <form onSubmit={connectA} className="mt-6">
-          <TextInput
-            label="Apify API token"
-            type="password"
-            value={token}
-            onChange={e => setToken(e.target.value)}
-            autoComplete="new-password"
-            required={!status.data?.apify.connected}
-          />
+        <div className="mt-5 border-t border-line pt-4" aria-live="polite">
+          {status.isLoading ? (
+            <StatusChip>Checking configuration…</StatusChip>
+          ) : status.isError ? (
+            <p className="text-sm text-red-700">
+              Could not load sourcing configuration. Retry the status check.
+            </p>
+          ) : status.data?.apify.connected ? (
+            <StatusChip tone="good">
+              {status.data.apify.managed
+                ? "Managed by TailorPitch"
+                : "Company sourcing configured"}
+            </StatusChip>
+          ) : (
+            <StatusChip tone="warn">App owner setup required</StatusChip>
+          )}
+          <p className="mt-3 text-xs leading-5 text-ink-muted">
+            Configuration does not start a scrape. Discovery and result sync can
+            be paused independently in Leads. A check verifies provider access
+            without creating a run or importing leads.
+          </p>
           <Button
             className="mt-4"
-            type="submit"
-            disabled={connectApify.isPending}
+            variant="secondary"
+            onClick={() => void checkApify()}
+            disabled={verifyApify.isPending || !status.data?.apify.connected}
           >
-            {connectApify.isPending
-              ? "Connecting…"
-              : status.data?.apify.connected
-                ? "Replace token"
-                : "Connect Apify"}
+            {verifyApify.isPending
+              ? "Verifying provider access…"
+              : "Check sourcing connection"}
           </Button>
-        </form>
-        {status.data?.apify.connected && (
-          <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
-            <StatusChip tone="good">
-              Connected
-              {status.data.apify.displayName
-                ? ` · ${status.data.apify.displayName}`
-                : ""}
-            </StatusChip>
-            <button
-              className="text-xs text-red-700 underline"
-              onClick={() => void disconnectProvider("apify")}
+          {status.isError && (
+            <Button
+              className="ml-3 mt-4"
+              variant="secondary"
+              onClick={() => void status.refetch()}
             >
-              Disconnect
-            </button>
-          </div>
-        )}
+              Retry status
+            </Button>
+          )}
+        </div>
       </section>
       <section className="border border-line bg-white p-6 sm:p-7">
         <div className="flex items-start justify-between">

@@ -18,6 +18,7 @@ import {
 import { getDb } from "../db";
 import { sdk } from "../_core/sdk";
 import { getIntegration, saveIntegration } from "./credentials";
+import { getApifyStatus } from "./apifyAccess";
 
 export const GMAIL_CALLBACK_PATH = "/api/mailbox/gmail/callback";
 const GMAIL_START_PATH = "/api/mailbox/gmail/start";
@@ -798,7 +799,7 @@ async function syncImap(
 }
 
 export async function getMailboxStatus(companyId: number): Promise<{
-  apify: { connected: boolean; displayName?: string };
+  apify: { connected: boolean; managed: boolean; displayName?: string };
   mailbox: {
     connected: boolean;
     provider?: "gmail" | "imap";
@@ -808,7 +809,7 @@ export async function getMailboxStatus(companyId: number): Promise<{
   gmailCallbackPath: "/api/mailbox/gmail/callback";
 }> {
   const [apify, gmail, imap, googleClient] = await Promise.all([
-    getIntegration<unknown>(companyId, "apify"),
+    getApifyStatus(companyId),
     getIntegration<unknown>(companyId, "gmail"),
     getIntegration<unknown>(companyId, "imap"),
     getIntegration<unknown>(companyId, "google-client"),
@@ -827,9 +828,7 @@ export async function getMailboxStatus(companyId: number): Promise<{
         }
       : { connected: false as const };
   return {
-    apify: apify
-      ? { connected: true, displayName: apify.row.displayName }
-      : { connected: false },
+    apify,
     mailbox,
     gmailAvailable: Boolean(
       googleClient ||

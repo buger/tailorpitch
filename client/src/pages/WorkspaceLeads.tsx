@@ -643,7 +643,18 @@ function RunDialog({
   const start = api.runs.start.useMutation();
   const [icpId, setIcpId] = useState(0);
   const [query, setQuery] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(3);
+  const sourcePlans = api.sources.list.useQuery(
+    { icpId },
+    { enabled: icpId > 0, retry: false }
+  );
+  const sourcePlan = sourcePlans.data?.plans[0];
+  const sourceReady = Boolean(
+    sourcePlans.isSuccess &&
+      sourcePlan?.approvedAt &&
+      !sourcePlan.stale &&
+      sourcePlan.selection?.actorId === "apify/google-search-scraper"
+  );
   const [formError, setFormError] = useState<string | null>(null);
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -651,7 +662,7 @@ function RunDialog({
     try {
       await start.mutateAsync({
         icpId,
-        query,
+        query: sourcePlan?.selection?.query ?? query,
         limit: Math.min(30, Math.max(1, limit)),
       });
       await onSaved();
@@ -666,7 +677,7 @@ function RunDialog({
   return (
     <DrawerDialog
       title="Start a sourcing run"
-      description="Choose an ICP and edit the initial query before starting a provider-backed search. An existing active run for the same search is not duplicated."
+      description="Choose an ICP with an approved source strategy before starting bounded discovery. The server uses that reviewed query; duplicate active runs are blocked."
       onClose={onClose}
     >
       <form onSubmit={submit} className="space-y-5">
@@ -701,24 +712,49 @@ function RunDialog({
             </span>
           )}
         </label>
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold">
-            Search query
-          </span>
-          <textarea
-            required
-            minLength={3}
-            maxLength={1500}
-            value={query}
-            onChange={event => setQuery(event.target.value)}
-            placeholder="engineering teams adopting coding agents"
-            className="min-h-24 w-full resize-y rounded-sm border border-line bg-white px-3 py-2.5 text-sm outline-none focus:border-terracotta"
-          />
-          <span className="mt-1 block text-[11px] leading-4 text-ink-muted">
-            The profile keywords, industries and geography seed this query; edit
-            it for a narrower search.
-          </span>
-        </label>
+        <div className="border border-line bg-paper p-4 text-sm leading-6">
+          {sourcePlans.isLoading && icpId > 0 ? (
+            "Loading source strategy…"
+          ) : sourcePlans.isError ? (
+            <>
+              <strong>Source strategy could not load</strong>
+              <p className="mt-2 text-xs">{sourcePlans.error.message}</p>
+              <Button
+                type="button"
+                variant="secondary"
+                className="mt-2"
+                onClick={() => void sourcePlans.refetch()}
+              >
+                Retry source strategy
+              </Button>
+            </>
+          ) : sourceReady ? (
+            <>
+              <strong>Approved Google Search strategy</strong>
+              <p className="mt-2 text-xs">{sourcePlan!.selection!.query}</p>
+            </>
+          ) : (
+            <>
+              <strong>
+                {sourcePlan?.stale
+                  ? "Strategy needs re-review"
+                  : sourcePlan?.approvedAt
+                    ? "Specialist adapter activation needed"
+                    : "Approve an ICP source strategy first"}
+              </strong>
+              <p className="mt-2 text-xs">
+                Answer the strategy questions and review the recommended
+                sources. No generic search is substituted.
+              </p>
+            </>
+          )}
+          <a
+            href="/app/sources"
+            className="mt-2 inline-block text-xs underline"
+          >
+            Review Sources & strategy →
+          </a>
+        </div>
         <label className="block">
           <span className="mb-1.5 block text-xs font-semibold">
             Result limit
@@ -733,12 +769,14 @@ function RunDialog({
             className="w-full rounded-sm border border-line bg-white px-3 py-2.5 text-sm outline-none focus:border-terracotta"
           />
           <span className="mt-1 block text-[11px] leading-4 text-ink-muted">
-            1–30 candidate companies.
+            1–30 candidates, never above this strategy’s remaining daily
+            allowance (UTC).
           </span>
         </label>
         <div className="border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800">
           <strong>
-            Provider usage may incur a charge; no estimate is available.
+            Provider ceiling: $0.50 per run, 10-minute runtime, optional paid
+            add-ons disabled.
           </strong>{" "}
           Imported search candidates have not been verified for ICP fit.
           Research each candidate before calling it qualified.
@@ -753,7 +791,7 @@ function RunDialog({
         )}
         <Button
           type="submit"
-          disabled={start.isPending || !icpId || query.trim().length < 3}
+          disabled={start.isPending || !icpId || !sourceReady}
           className="w-full"
         >
           {start.isPending ? "Starting…" : "Start run"}

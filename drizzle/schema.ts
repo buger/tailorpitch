@@ -1,3 +1,9 @@
+import type {
+  SourceAnswers,
+  SourceRecommendation,
+  SourceActor,
+  SourceSelection,
+} from "../shared/sourcePlans";
 import {
   int,
   json,
@@ -115,6 +121,8 @@ export const sourcingRuns = mysqlTable("sourcingRuns", {
   type: mysqlEnum("type", ["discovery", "research"]).notNull(),
   externalId: varchar("externalId", { length: 100 }),
   datasetId: varchar("datasetId", { length: 100 }),
+  actorId: varchar("actorId", { length: 200 }),
+  sourcePlanId: int("sourcePlanId"),
   status: varchar("status", { length: 40 }).default("STARTING").notNull(),
   imported: int("imported").default(0).notNull(),
   requestedLimit: int("requestedLimit").default(10).notNull(),
@@ -360,4 +368,20 @@ export const operationProgress = mysqlTable("operationProgress", {
   startedAt: timestamp("startedAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   completedAt: timestamp("completedAt"),
+});
+
+export const sourcePlans = mysqlTable("sourcePlans", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").notNull(),
+  icpId: int("icpId").notNull(),
+  answers: json("answers").$type<SourceAnswers>().notNull(),
+  recommendation: json("recommendation")
+    .$type<SourceRecommendation>()
+    .notNull(),
+  catalog: json("catalog").$type<SourceActor[]>().notNull(),
+  contextHash: varchar("contextHash", { length: 64 }).notNull(),
+  selection: json("selection").$type<SourceSelection>(),
+  approvedAt: timestamp("approvedAt"),
+  approvedBy: int("approvedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

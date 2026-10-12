@@ -63,6 +63,15 @@ describe("company workflow boundaries", () => {
     await expect(caller.intake.get()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });
+    await expect(caller.sources.catalog()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    await expect(caller.sources.list({ icpId: 1 })).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    await expect(caller.mailbox.verifyApify()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
     await expect(caller.analysis.history()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });
@@ -117,7 +126,7 @@ describe("public HTML", () => {
     expect(r.html).not.toContain("Software Intent Graph");
   });
   it("keeps onboarding and agent routes noindex without private data", async () => {
-    for (const path of ["/app/onboarding", "/app/agents"]) {
+    for (const path of ["/app/onboarding", "/app/agents", "/app/sources"]) {
       const r = await prepareInitialHtml(template, path);
       expect(r.status).toBe(200);
       expect(r.html).toContain("noindex,nofollow");
