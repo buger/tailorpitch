@@ -11,6 +11,10 @@ import {
 import type { Brand, IcpCriteria } from "../../shared/domain";
 
 export const PILOT_OWNER_EMAIL = "hello@reqproof.com";
+export const PILOT_OWNER_EMAILS = [
+  PILOT_OWNER_EMAIL,
+  "leonsbox@gmail.com",
+] as const;
 export const proofBrand: Brand = {
   offer:
     "Proof is AI-native software assurance for existing codebases. Its Software Intent Graph connects approved requirements, code, dependencies, hazards, checks and change history. It reduces the work between a software change and the evidence required to trust it. Start with one change in the existing repository and coding-agent workflow; scope and fee are agreed before work begins.",
@@ -111,7 +115,9 @@ async function seedPilot() {
   });
 }
 export function isPilotOwner(user: Pick<User, "email">) {
-  return user.email?.trim().toLowerCase() === PILOT_OWNER_EMAIL;
+  return PILOT_OWNER_EMAILS.some(
+    email => email === user.email?.trim().toLowerCase()
+  );
 }
 export async function requireCompany(user: User) {
   await ensurePilot();
@@ -138,7 +144,7 @@ export async function requireCompany(user: User) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message:
-        "This pilot is private. Access is approved for hello@reqproof.com. Company registration will be available later.",
+        "Your account does not have access to this workspace. Sign in with an approved account or contact the workspace owner.",
     });
   return result;
 }

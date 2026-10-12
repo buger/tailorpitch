@@ -1,6 +1,6 @@
 {
   "routes": [
-    { "path": "/", "title": "TailorPitch — Find the right fit" },
+    { "path": "/", "title": "TailorPitch — Less prospecting. More personal." },
     { "path": "/privacy", "title": "Privacy — TailorPitch" },
     { "path": "/app", "title": "Overview — TailorPitch" },
     { "path": "/app/onboarding", "title": "Company onboarding — TailorPitch" },

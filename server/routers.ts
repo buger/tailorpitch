@@ -302,7 +302,11 @@ export const appRouter = router({
   }),
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(({ ctx }) => ctx.user),
+    me: publicProcedure.query(({ ctx }) => {
+      if (ctx.authError)
+        throw new TRPCError({ code: "UNAUTHORIZED", message: ctx.authError });
+      return ctx.user;
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
       ctx.res.clearCookie(COOKIE_NAME, {
         ...getSessionCookieOptions(ctx.req),
@@ -903,19 +907,14 @@ export const appRouter = router({
             throw new Error(
               "Lead research changed during generation. No stale page draft was saved."
             );
-          const [r] = await tx
-            .insert(t.pages)
-            .values({
-              companyId: ctx.company.id,
-              leadId: lead.id,
-              shareToken: opaque(),
-              title: `${ctx.company.name} for ${lead.companyName}`.slice(
-                0,
-                200
-              ),
-              content,
-              brandSnapshot: ctx.company.brand,
-            });
+          const [r] = await tx.insert(t.pages).values({
+            companyId: ctx.company.id,
+            leadId: lead.id,
+            shareToken: opaque(),
+            title: `${ctx.company.name} for ${lead.companyName}`.slice(0, 200),
+            content,
+            brandSnapshot: ctx.company.brand,
+          });
           await tx
             .update(t.leads)
             .set({ status: "page_ready" })

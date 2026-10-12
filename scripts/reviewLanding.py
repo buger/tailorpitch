@@ -16,6 +16,12 @@ with sync_playwright() as p:
         page.locator('.tp-landing').wait_for(timeout=45000)
         page.evaluate('Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,5000))])')
         page.screenshot(path=str(out/f'{name}-hero.png'))
+        gallery=page.locator('.tp-gallery')
+        gallery.get_by_role('tab',name='02 Outreach').click()
+        assert 'Recipient not specified' in gallery.inner_text()
+        page.screenshot(path=str(out/f'{name}-gallery-outreach.png'))
+        gallery.get_by_role('tab',name='01 Page').click()
+        assert 'Illustrative proposal' in gallery.inner_text()
         for section in ['.pitch-workbench','#pricing','#proof-pilot']:
             page.locator(section).screenshot(path=str(out/f'{name}-{section.replace(".","").replace("#","")}.png'))
         # All stage changes are local illustrative interactions, not actual sourcing.
@@ -51,6 +57,11 @@ with sync_playwright() as p:
         page.locator('#early-access').screenshot(path=str(out/f'{name}-signup.png'))
         assert 'Your interest: Focus' in page.locator('.tp-interest-note').inner_text()
         assert page.get_by_label('Work email',exact=True).input_value()==''
+        page.goto(url+'app?login_error=invalid_state',wait_until='domcontentloaded',timeout=45000)
+        page.get_by_role('alert').wait_for()
+        assert 'expired or could not be verified' in page.get_by_role('alert').inner_text()
+        assert page.get_by_role('button',name='Try sign-in again').is_visible()
+        page.screenshot(path=str(out/f'{name}-login-error.png'))
         page.close()
     browser.close()
 (out/'results.json').write_text(json.dumps(results,indent=2)+'\n')

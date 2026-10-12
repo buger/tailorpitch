@@ -1,4 +1,6 @@
 import { startLogin } from "@/const";
+import { useState } from "react";
+import { loginErrorMessage } from "@shared/authMessages";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { api } from "@/components/leadloom-types";
@@ -23,17 +25,47 @@ import { CompanyOnboarding } from "./CompanyOnboarding";
 
 export default function AppWorkspace() {
   const auth = useAuth();
+  const [switching, setSwitching] = useState(false);
+  const [switchError, setSwitchError] = useState<string>();
+  const switchAccount = async () => {
+    setSwitching(true);
+    setSwitchError(undefined);
+    try {
+      await auth.logout();
+      window.location.href = "/app";
+    } catch {
+      setSwitchError("We could not sign out. Please try again.");
+      setSwitching(false);
+    }
+  };
   const [location] = useLocation();
   const workspace = api.workspace.get.useQuery(undefined, {
     enabled: Boolean(auth.user),
     retry: false,
   });
   if (auth.loading) return <LoadingState label="Checking your session" />;
-  if (!auth.user) return <LoginGate onLogin={() => startLogin()} />;
+  if (!auth.user)
+    return (
+      <LoginGate
+        onLogin={() => startLogin()}
+        error={
+          loginErrorMessage(
+            new URLSearchParams(window.location.search).get("login_error")
+          ) || auth.error?.message
+        }
+      />
+    );
   if (workspace.isLoading)
     return <LoadingState label="Opening company workspace" />;
   if (workspace.error?.data?.code === "FORBIDDEN")
-    return <AccessRestricted email={auth.user.email || undefined} />;
+    return (
+      <AccessRestricted
+        email={auth.user.email || undefined}
+        onSwitchAccount={() => void switchAccount()}
+        pending={switching}
+        error={switchError}
+      />
+    );
   if (workspace.error || !workspace.data)
     return (
       <ErrorState

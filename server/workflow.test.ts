@@ -12,9 +12,13 @@ import { appRouter } from "./routers";
 const template =
   '<!doctype html><html><head><title>Placeholder</title></head><body><div id="root"></div></body></html>';
 describe("company workflow boundaries", () => {
-  it("only matches the explicitly approved pilot owner email", () => {
+  it("only matches explicitly approved pilot owner emails", () => {
     expect(isPilotOwner({ email: "hello@reqproof.com" })).toBe(true);
     expect(isPilotOwner({ email: "HELLO@REQPROOF.COM" })).toBe(true);
+    expect(isPilotOwner({ email: "leonsbox@gmail.com" })).toBe(true);
+    expect(isPilotOwner({ email: " LEONSBOX@GMAIL.COM " })).toBe(true);
+    expect(isPilotOwner({ email: "leonsbox+other@gmail.com" })).toBe(false);
+    expect(isPilotOwner({ email: "other@gmail.com" })).toBe(false);
     expect(isPilotOwner({ email: "other@reqproof.com" })).toBe(false);
     expect(isPilotOwner({ email: null })).toBe(false);
   });

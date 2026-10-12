@@ -1,0 +1,820 @@
+/* Reference lock: Waka Waka catalog composition; Winamp angled artifacts;
+   Attio compact product framing. Scoped exclusively to the marketing page. */
+.tp-landing {
+  --tp-paper: #edeae4;
+  --tp-ink: #191919;
+  --tp-line: #c7c4bc;
+  --tp-lime: #efede7;
+  color: #191919;
+  background: #edeae4;
+}
+.tp-landing .tp-shell {
+  width: min(1320px, calc(100% - 80px));
+}
+.tp-landing .editorial-wordmark {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.065em;
+  font-size: 28px;
+  color: #191919;
+}
+.tp-header {
+  padding-block: 23px;
+  border-bottom: 1px solid #a9a79f;
+}
+.tp-header nav,
+.tp-header-actions {
+  font-size: 13px;
+}
+.tp-landing .tp-small-cta,
+.tp-landing .tp-cta {
+  background: #191919;
+  color: #fff;
+  border: 1px solid #191919;
+  border-radius: 0;
+}
+.tp-landing .tp-small-cta:hover,
+.tp-landing .tp-cta:hover {
+  background: #363636;
+}
+.tp-landing .tp-hero {
+  padding-top: 44px;
+}
+.tp-gallery-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 35px;
+  align-items: center;
+  min-height: 610px;
+}
+.tp-landing .tp-hero-kicker {
+  justify-content: flex-start;
+  font-size: 10px;
+  line-height: 1.6;
+  max-width: 390px;
+  letter-spacing: 0.045em;
+}
+.tp-landing .tp-hero h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  line-height: 0.91;
+  font-size: clamp(64px, 6.9vw, 104px);
+  letter-spacing: -0.078em;
+  text-align: left;
+  margin: 32px 0;
+}
+.tp-hero h1 span {
+  display: block;
+}
+.tp-landing .tp-hero-description {
+  margin: 0;
+  display: block;
+}
+.tp-landing .tp-hero-description p {
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.75;
+  max-width: 410px;
+}
+.tp-landing .tp-hero-actions {
+  justify-content: flex-start;
+  gap: 22px;
+  margin-top: 29px;
+}
+.tp-landing .tp-hero-fineprint {
+  text-align: left;
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 17px;
+}
+.tp-gallery {
+  min-width: 0;
+  position: relative;
+  padding: 0 0 25px;
+}
+.tp-gallery-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font:
+    9px/1.5 "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.04em;
+  padding: 0 2px 16px;
+}
+.tp-gallery-meta span:last-child {
+  color: #67645f;
+}
+.tp-gallery-artifacts {
+  position: relative;
+  min-height: 470px;
+}
+.tp-gallery-research {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 45%;
+  padding: 20px 16px;
+  background: #faf9f6;
+  border: 1px solid #bcbab3;
+  transform: rotate(-7deg);
+}
+.tp-gallery-folio {
+  font:
+    8px/1.5 "IBM Plex Mono",
+    monospace;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #ccc;
+}
+.tp-gallery-account {
+  display: flex;
+  gap: 9px;
+  margin-top: 15px;
+  align-items: center;
+}
+.tp-gallery-account > span {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  background: #28282a;
+  color: #fff;
+  font:
+    13px Georgia,
+    serif;
+  flex-shrink: 0;
+}
+.tp-gallery-account strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.tp-gallery-account small {
+  display: block;
+  font-size: 8px;
+  color: #686765;
+  margin-top: 5px;
+}
+.tp-gallery-source {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font:
+    8px/1.4 "IBM Plex Mono",
+    monospace;
+  margin: 22px 0 12px;
+  color: #666;
+  overflow-wrap: anywhere;
+}
+.tp-gallery-research h3 {
+  font:
+    700 26px/0.99 Arial,
+    sans-serif;
+  letter-spacing: -0.06em;
+  max-width: 190px;
+  margin-bottom: 12px;
+}
+.tp-gallery-research > p:last-of-type {
+  font-size: 11px;
+  line-height: 1.55;
+}
+.tp-gallery-evidence {
+  display: flex;
+  gap: 6px;
+  font-size: 9px;
+  line-height: 1.5;
+  margin-top: 19px;
+  padding-top: 12px;
+  border-top: 1px solid #d0cec7;
+}
+.tp-gallery-evidence svg {
+  flex-shrink: 0;
+}
+.tp-gallery-output {
+  position: absolute;
+  right: 3%;
+  top: 42px;
+  width: 72%;
+  border: 1px solid #191919;
+  background: #28282a;
+  color: #f7f4ef;
+  transform: rotate(5deg);
+  transition: transform 200ms ease;
+}
+.tp-gallery-output:hover,
+.tp-gallery-output:focus-within {
+  transform: rotate(2deg);
+}
+.tp-gallery-window {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #ffffff24;
+  padding: 10px 12px;
+  font:
+    7px/1.4 "IBM Plex Mono",
+    monospace;
+  color: #c3c1ba;
+}
+.tp-gallery-window i {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border: 1px solid #b9b9b6;
+  border-radius: 50%;
+}
+.tp-gallery-window > span {
+  margin-left: 8px;
+  flex: 1;
+}
+.tp-gallery-page {
+  padding: 21px 25px 17px;
+}
+.tp-gallery-proof {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ffffff22;
+  padding-bottom: 16px;
+}
+.tp-gallery-proof > span {
+  font:
+    24px/0.9 Georgia,
+    serif;
+  letter-spacing: -0.08em;
+}
+.tp-gallery-proof > span > span {
+  font-size: 21px;
+}
+.tp-gallery-proof small {
+  font:
+    7px/1.3 "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.05em;
+}
+.tp-gallery-page-kicker {
+  font:
+    7px/1.4 "IBM Plex Mono",
+    monospace;
+  margin-top: 23px;
+  color: #cbc8bc;
+}
+.tp-gallery-page h3 {
+  font:
+    400 clamp(28px, 3.2vw, 43px) / 0.94 Georgia,
+    serif;
+  letter-spacing: -0.06em;
+  margin: 12px 0 15px;
+}
+.tp-gallery-page > p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #ddd9cf;
+  max-width: 290px;
+}
+.tp-gallery-page-rule {
+  height: 1px;
+  background: #ffffff29;
+  margin: 20px 0 13px;
+}
+.tp-gallery-case {
+  display: flex;
+  gap: 12px;
+}
+.tp-gallery-case > span {
+  font:
+    8px "IBM Plex Mono",
+    monospace;
+  padding-top: 3px;
+}
+.tp-gallery-case strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.tp-gallery-case p {
+  font-size: 9px;
+  line-height: 1.7;
+  color: #c6c3ba;
+  margin-top: 6px;
+}
+.tp-gallery-page > button,
+.tp-gallery-email > button {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  border-bottom: 1px solid #ffffff80;
+  color: #fff;
+  font-size: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+}
+.tp-gallery-notice {
+  display: block;
+  font:
+    7px/1.5 "IBM Plex Mono",
+    monospace;
+  margin-top: 12px;
+  color: #c1bfb7;
+}
+.tp-gallery-annotation {
+  position: absolute;
+  bottom: 0;
+  left: 4%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: rotate(-6deg);
+}
+.tp-gallery-annotation > span {
+  font:
+    18px/1.1 Georgia,
+    serif;
+  letter-spacing: -0.04em;
+}
+.tp-gallery-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 23px;
+  font:
+    8px "IBM Plex Mono",
+    monospace;
+}
+.tp-gallery-controls > span {
+  margin-right: auto;
+  color: #555;
+}
+.tp-gallery-controls > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #99978f;
+  padding: 10px 13px;
+  cursor: pointer;
+  font-size: 10px;
+}
+.tp-gallery-controls > button[aria-selected="true"] {
+  background: #191919;
+  color: #fff;
+  border-color: #191919;
+}
+.tp-gallery-output.is-message {
+  background: #faf9f6;
+  color: #191919;
+}
+.tp-gallery-output.is-message .tp-gallery-window {
+  color: #555;
+  border-color: #d5d2ca;
+}
+.tp-gallery-email {
+  padding: 24px 25px 20px;
+  min-height: 340px;
+}
+.tp-gallery-email-tag {
+  display: flex;
+  gap: 7px;
+  font:
+    8px "IBM Plex Mono",
+    monospace;
+}
+.tp-gallery-email dl {
+  margin: 22px 0 15px;
+  font-size: 10px;
+}
+.tp-gallery-email dl > div {
+  display: flex;
+  gap: 15px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ccc;
+}
+.tp-gallery-email dt {
+  color: #777;
+  width: 40px;
+}
+.tp-gallery-email dd {
+  max-width: 250px;
+}
+.tp-gallery-email > p {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 12px 0;
+}
+.tp-gallery-email > button {
+  border-color: #555;
+  color: #191919;
+}
+.tp-gallery-email .tp-gallery-notice {
+  color: #666;
+}
+.tp-flow-rail {
+  border-block: 1px solid #a9a79f;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 34px;
+  padding: 21px 0;
+}
+.tp-flow-rail > span {
+  font:
+    9px "IBM Plex Mono",
+    monospace;
+  color: #5e5b55;
+}
+.tp-flow-rail ol {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  list-style: none;
+}
+.tp-flow-rail li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+.tp-flow-rail li > span {
+  font:
+    9px "IBM Plex Mono",
+    monospace;
+  color: #75716a;
+}
+.tp-landing .tp-workbench-wrap {
+  margin-top: 56px;
+}
+.tp-landing .tp-workbench-caption {
+  font-size: 10px;
+}
+.tp-landing .tp-handwritten {
+  font:
+    12px Arial,
+    sans-serif;
+  transform: none;
+  color: #333;
+}
+.tp-landing .tp-integrations {
+  padding-block: 24px;
+  border: 0;
+}
+.tp-landing h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1.03;
+}
+.tp-landing h2 em {
+  font-style: normal;
+  font-weight: 700;
+}
+.tp-landing .tp-not-a-list {
+  background: #dedbd4;
+  margin-top: 65px;
+  border-block: 0;
+}
+.tp-landing .tp-contrast-right {
+  background: #28282a;
+  color: #f9f9f7;
+}
+.tp-landing .tp-contrast-right:after {
+  background: #28282a;
+}
+.tp-landing .tp-contrast-right li > span,
+.tp-landing .tp-contrast-right li > svg {
+  color: #dedbd4;
+}
+.tp-landing .tp-contrast-right h3 {
+  font:
+    500 22px Arial,
+    sans-serif;
+  letter-spacing: -0.035em;
+}
+.tp-landing .tp-method {
+  padding-top: 78px;
+}
+.tp-landing .tp-method-number {
+  font:
+    700 48px/1 Arial,
+    sans-serif;
+  letter-spacing: -0.07em;
+  color: #8e8b83;
+}
+.tp-landing .tp-method-row {
+  grid-template-columns: 72px 1fr 420px;
+  gap: 25px;
+}
+.tp-landing .tp-method-copy h3 {
+  font:
+    700 31px/1.08 Arial,
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+.tp-landing .tp-method-copy p {
+  color: #585651;
+}
+.tp-landing .tp-source-slip,
+.tp-landing .tp-pace-slip,
+.tp-landing .tp-approval-slip {
+  box-shadow: none;
+  border-color: #aaa79f;
+}
+.tp-landing .tp-pace-slip {
+  background: #d9d6cf;
+}
+.tp-landing .tp-pace-days i {
+  background: #28282a;
+}
+.tp-landing .tp-pace-footer {
+  border-color: #aaa79f;
+}
+.tp-landing .tp-approval-slip {
+  background: #28282a;
+}
+.tp-landing .tp-slip-evidence span {
+  background: #edeae4;
+  border-color: #c3c0b8;
+}
+.tp-landing .tp-approval-stamp {
+  color: #edeae4;
+  border-color: #777;
+}
+.tp-landing .tp-proof {
+  padding-block: 68px;
+}
+.tp-landing .tp-proof-intro > p {
+  font-size: 13px;
+  color: #585651;
+}
+.tp-landing .tp-quote-layout blockquote {
+  font:
+    500 27px/1.25 Arial,
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+.tp-landing .tp-plan-row.is-selected {
+  background: #191919;
+  color: #fff;
+  border-left-color: #191919;
+}
+.tp-landing .tp-plan-row.is-selected .tp-plan-index,
+.tp-landing .tp-plan-row.is-selected .tp-plan-name small {
+  color: #e0ddd6;
+}
+.tp-landing .tp-plan-row:hover:not(.is-selected) {
+  background: #ddd9d1;
+}
+.tp-landing .tp-plan-name,
+.tp-landing .tp-plan-price {
+  font-family: Arial, sans-serif;
+  font-weight: 600;
+}
+.tp-landing .tp-allocation {
+  background: #faf9f6;
+  border-color: #191919;
+  box-shadow: none;
+}
+.tp-landing .tp-credit-number {
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+}
+.tp-landing .tp-credit-allocation > div > span {
+  font-family: Arial, sans-serif;
+  font-weight: 600;
+}
+.tp-landing .tp-credit-example h3 {
+  font-family: Arial, sans-serif;
+  font-weight: 600;
+}
+.tp-landing .tp-credit-controls input {
+  accent-color: #191919;
+}
+.tp-landing .tp-credit-meter {
+  background: #d0cdc5;
+}
+.tp-landing .tp-credit-meter > span {
+  background: #28282a;
+}
+.tp-landing .tp-faq {
+  padding-block: 78px;
+}
+.tp-landing .tp-access {
+  background: #28282a;
+  color: #faf9f6;
+  border-color: #28282a;
+}
+.tp-landing .tp-access .tp-cta {
+  background: #faf9f6;
+  color: #191919;
+  border-color: #faf9f6;
+}
+.tp-landing .tp-signup-row > input {
+  background: #faf9f6;
+  color: #191919;
+  border-color: #aaa;
+}
+.tp-landing .tp-access-layout > div > p,
+.tp-landing .tp-signup-note {
+  color: #d8d5cc;
+}
+.tp-landing .tp-consent input {
+  accent-color: #191919;
+}
+.tp-landing .tp-footer > span {
+  font-family: Arial, sans-serif;
+  font-style: normal;
+}
+.tp-landing button:focus-visible,
+.tp-landing a:focus-visible {
+  outline: 2px solid #407ff2;
+  outline-offset: 4px;
+}
+@media (max-width: 1150px) {
+  .tp-gallery-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .tp-landing .tp-hero h1 {
+    font-size: clamp(57px, 6.6vw, 90px);
+  }
+  .tp-gallery-page {
+    padding-inline: 18px;
+  }
+  .tp-gallery-artifacts {
+    min-height: 470px;
+  }
+  .tp-landing .tp-method-row {
+    grid-template-columns: 50px 1fr 350px;
+  }
+}
+@media (max-width: 800px) {
+  .tp-landing .tp-shell {
+    width: calc(100% - 40px);
+  }
+  .tp-gallery-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    min-height: 0;
+  }
+  .tp-landing .tp-hero {
+    padding-top: 34px;
+  }
+  .tp-landing .tp-hero h1 {
+    font-size: clamp(53px, 12.1vw, 84px);
+    letter-spacing: -0.075em;
+    margin: 24px 0;
+  }
+  .tp-landing .tp-hero-description p {
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 500px;
+  }
+  .tp-landing .tp-hero-actions {
+    gap: 18px;
+  }
+  .tp-gallery {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .tp-gallery-artifacts {
+    min-height: 490px;
+  }
+  .tp-gallery-output {
+    width: 78%;
+    right: 1%;
+    top: 40px;
+    transform: rotate(4deg);
+  }
+  .tp-gallery-research {
+    width: 51%;
+    transform: rotate(-5deg);
+    padding: 16px 13px;
+  }
+  .tp-gallery-account strong {
+    font-size: 11px;
+  }
+  .tp-gallery-account small {
+    font-size: 7px;
+  }
+  .tp-gallery-page {
+    padding: 19px 18px 15px;
+  }
+  .tp-gallery-page h3 {
+    font-size: 34px;
+  }
+  .tp-gallery-annotation {
+    left: 1%;
+    bottom: 4px;
+  }
+  .tp-gallery-controls {
+    margin-top: 15px;
+  }
+  .tp-gallery-meta {
+    font-size: 7px;
+  }
+  .tp-gallery-controls > span {
+    font-size: 7px;
+  }
+  .tp-flow-rail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .tp-flow-rail ol {
+    gap: 15px;
+  }
+  .tp-flow-rail li {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .tp-landing .tp-workbench-wrap {
+    margin-top: 36px;
+  }
+  .tp-landing .tp-method-row {
+    grid-template-columns: 35px 1fr;
+    gap: 15px;
+  }
+  .tp-landing .tp-method-number {
+    font-size: 28px;
+  }
+  .tp-landing .tp-method-copy h3 {
+    font-size: 28px;
+  }
+  .tp-landing .tp-method-row > div:last-child {
+    grid-column: 2;
+  }
+  .tp-landing .tp-header-actions > button:first-child {
+    display: flex;
+    font-size: 11px;
+  }
+  .tp-landing .tp-header-actions {
+    gap: 13px;
+  }
+  .tp-landing .tp-header .editorial-wordmark {
+    font-size: 22px;
+  }
+  .tp-landing .tp-small-cta {
+    padding: 9px;
+    font-size: 10px;
+  }
+  .tp-landing .tp-header {
+    gap: 12px;
+  }
+  .tp-landing .tp-quote-layout blockquote {
+    font-size: 25px;
+  }
+}
+@media (max-width: 370px) {
+  .tp-landing .tp-header-actions > .tp-small-cta {
+    display: none;
+  }
+  .tp-gallery-page h3 {
+    font-size: 29px;
+  }
+  .tp-gallery-proof small {
+    font-size: 6px;
+  }
+  .tp-gallery-page {
+    padding-inline: 14px;
+  }
+  .tp-gallery-artifacts {
+    min-height: 490px;
+  }
+  .tp-gallery-research h3 {
+    font-size: 21px;
+  }
+  .tp-gallery-controls > button {
+    padding: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-gallery-output {
+    transition: none;
+  }
+  .tp-gallery-output:hover {
+    transform: rotate(5deg);
+  }
+}
+
+/* The output must never overlap its tab controls or explanatory note. */
+.tp-gallery-artifacts {
+  min-height: 530px;
+}
+.tp-gallery-annotation {
+  bottom: 0;
+}
+@media (max-width: 800px) {
+  .tp-gallery-artifacts {
+    min-height: 550px;
+  }
+}
+@media (max-width: 370px) {
+  .tp-gallery-artifacts {
+    min-height: 570px;
+  }
+}

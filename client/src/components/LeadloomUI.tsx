@@ -391,57 +391,97 @@ export function DrawerDialog({
   );
 }
 
-export function AccessRestricted({ email }: { email?: string }) {
+export function AccessRestricted({
+  email,
+  onSwitchAccount,
+  pending,
+  error,
+}: {
+  email?: string;
+  onSwitchAccount: () => void;
+  pending?: boolean;
+  error?: string;
+}) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-paper px-6">
-      <div className="max-w-md border border-line bg-white p-8 sm:p-10">
+      <section
+        role="alert"
+        className="max-w-lg border border-line bg-white p-8 sm:p-10"
+      >
         <LockKeyhole className="h-6 w-6 text-terracotta" />
-        <MonoLabel className="mt-6 block">Pilot access</MonoLabel>
+        <MonoLabel className="mt-6 block">Workspace access denied</MonoLabel>
         <h1 className="mt-3 font-display text-4xl leading-none tracking-[-0.06em]">
-          A considered workspace, not an open door.
+          No workspace access for this account.
         </h1>
         <p className="mt-5 text-sm leading-6 text-ink-muted">
-          This Proof pilot is restricted to approved members. Ask the owner to
-          approve your account at{" "}
+          You signed in successfully, but your account is not an approved member
+          of this private workspace. Sign in with an approved account or{" "}
           <a
-            className="font-semibold text-terracotta underline"
+            className="text-terracotta underline"
             href="mailto:hello@reqproof.com"
           >
-            hello@reqproof.com
+            contact the workspace owner
           </a>
           .
         </p>
-        {email && (
-          <p className="mt-4 border-t border-line pt-4 font-mono text-[11px] text-ink-muted">
-            Signed in as {email}
-          </p>
-        )}
-      </div>
+        <p className="mt-4 border-t border-line pt-4 text-sm text-ink-muted">
+          Signed in as{" "}
+          <strong>{email || "an account without an email address"}</strong>
+        </p>
+        <Button className="mt-6" onClick={onSwitchAccount} disabled={pending}>
+          {pending ? "Signing out…" : "Sign out and use another account"}
+        </Button>
+        {error && <p className="mt-3 text-sm text-terracotta">{error}</p>}
+        <a href="/" className="mt-5 block text-sm underline">
+          Back to TailorPitch
+        </a>
+      </section>
     </div>
   );
 }
-
-export function LoginGate({ onLogin }: { onLogin: () => void }) {
+export function LoginGate({
+  onLogin,
+  error,
+}: {
+  onLogin: () => void;
+  error?: string;
+}) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-paper px-6">
-      <div className="max-w-md text-center">
+      <section className="max-w-lg text-center">
         <LeadloomWordmark />
-        <MonoLabel className="mt-16 block text-terracotta">
-          Private workspace
+        <MonoLabel className="mt-12 block text-terracotta">
+          TailorPitch dashboard
         </MonoLabel>
         <h1 className="mt-4 font-display text-5xl leading-[.96] tracking-[-0.07em]">
-          Research first.
+          Your next pitch
           <br />
-          Reach out with a reason.
+          starts here.
         </h1>
+        {error && (
+          <p
+            role="alert"
+            className="mt-6 border border-terracotta/30 bg-terracotta/5 p-4 text-left text-sm leading-6 text-terracotta"
+          >
+            {error}
+          </p>
+        )}
         <p className="mt-5 text-sm leading-6 text-ink-muted">
-          Sign in with your approved Manus account to open the TailorPitch
-          workspace.
+          Continue to the secure Manus sign-in screen, then choose{" "}
+          <strong>Continue with Google</strong>. Use the Google account approved
+          for this workspace.
         </p>
-        <Button className="mt-8 w-full sm:w-auto" onClick={onLogin}>
-          Sign in to TailorPitch
+        <Button className="mt-7 w-full sm:w-auto" onClick={onLogin}>
+          {error ? "Try sign-in again" : "Continue to sign-in"}
         </Button>
-      </div>
+        <p className="mt-4 text-xs leading-5 text-ink-muted">
+          Google authentication is handled by Manus. This does not connect your
+          Gmail inbox or grant email-sending permissions.
+        </p>
+        <a href="/" className="mt-6 block text-sm underline">
+          Back to TailorPitch
+        </a>
+      </section>
     </div>
   );
 }

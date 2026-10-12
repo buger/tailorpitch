@@ -18,10 +18,12 @@ import {
   MonoLabel,
   Toast,
 } from "@/components/LeadloomUI";
+import { PitchGallery } from "@/components/landing/PitchGallery";
 import { PitchWorkbench } from "@/components/landing/PitchWorkbench";
 import { PricingLedger } from "@/components/landing/PricingLedger";
 import { proposedPlans, type ProposedPlanId } from "@shared/pricing";
 import "@/components/landing/landing.css";
+import "@/components/landing/refero.css";
 
 const faqs = [
   [
@@ -60,13 +62,11 @@ export default function LandingPage() {
     kind: "success" | "error";
   } | null>(null);
   const scrollTo = (id: string) =>
-    document
-      .getElementById(id)
-      ?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-      });
+    document.getElementById(id)?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
   const registerInterest = (plan: ProposedPlanId) => {
     setInterest(plan);
     scrollTo("early-access");
@@ -127,56 +127,66 @@ export default function LandingPage() {
       </header>
       <main>
         <section className="tp-hero tp-shell" aria-labelledby="hero-title">
-          <div className="tp-hero-kicker">
-            <span className="tp-dot" />
-            <span>A RESEARCH TEAM. A CREATIVE TEAM. YOUR NEXT PITCH.</span>
+          <div className="tp-gallery-layout">
+            <div className="tp-gallery-intro">
+              <div className="tp-hero-kicker">
+                <span>A RESEARCH TEAM. A CREATIVE TEAM. YOUR NEXT PITCH.</span>
+              </div>
+              <h1 id="hero-title">
+                <span>Less</span>
+                <span>prospecting.</span>
+                <span>More</span>
+                <span>personal.</span>
+              </h1>
+              <div className="tp-hero-description">
+                <p>
+                  Find the right accounts. Know why they fit. Turn the best ones
+                  into a landing page and outreach draft that feels made for
+                  them—because it is.
+                </p>
+              </div>
+              <div className="tp-hero-actions">
+                <button
+                  type="button"
+                  className="tp-cta"
+                  onClick={() => scrollTo("early-access")}
+                >
+                  Build my next pitch <ArrowRight size={17} />
+                </button>
+                <button
+                  type="button"
+                  className="tp-text-cta"
+                  onClick={() => scrollTo("the-work")}
+                >
+                  See one take shape <span aria-hidden="true">↓</span>
+                </button>
+              </div>
+              <p className="tp-hero-fineprint">
+                Early access · Proposed plans from $99/month · No payment today
+              </p>
+            </div>
+            <PitchGallery onExplore={() => scrollTo("the-work")} />
           </div>
-          <h1 id="hero-title">
-            The right lead.
-            <br />
-            <span className="tp-hero-bottom">
-              A pitch <em>just for them.</em>
-              <span className="tp-star" aria-hidden="true">
-                ✳
-              </span>
-            </span>
-          </h1>
-          <div className="tp-hero-description">
-            <span className="tp-margin-note">
-              01—100
-              <br />
-              NOT 10,000
-            </span>
-            <p>
-              Find leads that fit. Get the research done. Turn the best ones
-              into a personal landing page and outreach draft—without doing it
-              all yourself.
-            </p>
-            <span className="tp-margin-note tp-note-right">
-              LESS TAB-HOPPING.
-              <br />
-              MORE RELEVANCE.
-            </span>
+          <div className="tp-flow-rail">
+            <span>A CONSIDERED PIPELINE / YOUR PACE</span>
+            <ol>
+              <li>
+                <span>01</span> Find
+              </li>
+              <li>
+                <span>02</span> Qualify
+              </li>
+              <li>
+                <span>03</span> Your choice
+              </li>
+              <li>
+                <span>04</span> Page
+              </li>
+              <li>
+                <span>05</span> Outreach
+              </li>
+            </ol>
           </div>
-          <div className="tp-hero-actions">
-            <button
-              type="button"
-              className="tp-cta"
-              onClick={() => scrollTo("early-access")}
-            >
-              Build my next pitch <ArrowRight size={17} />
-            </button>
-            <button
-              type="button"
-              className="tp-text-cta"
-              onClick={() => scrollTo("the-work")}
-            >
-              See one take shape <span aria-hidden="true">↓</span>
-            </button>
-          </div>
-          <p className="tp-hero-fineprint">
-            Early access · Proposed plans from $99/month · No payment today
-          </p>
           <div id="the-work" className="tp-workbench-wrap">
             <div className="tp-workbench-caption">
               <span>FROM A SIGNAL TO SOMETHING WORTH SENDING</span>
