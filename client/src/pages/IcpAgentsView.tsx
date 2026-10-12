@@ -143,11 +143,29 @@ export function IcpAgentsView() {
         <div>
           <MonoLabel>Execution</MonoLabel>
           <strong className="ia-worker">
-            {data.localWorker ? "Mac worker ready" : "Worker not active here"}
+            {data.worker.active
+              ? data.worker.environment === "cloud"
+                ? "Cloud Computer worker active"
+                : "Server worker active"
+              : "Worker not active here"}
           </strong>
           <span>
-            Mac agents work while this server runs. Hosted agents require a
-            published schedule.
+            {data.worker.environment === "cloud"
+              ? "Runs on the Cloud Computer, independently of your Mac or browser. No separate published schedule is needed."
+              : "Runs in the app server, independently of an open dashboard."}
+            {data.worker.active && (
+              <span className="block mt-2">
+                Checks every {data.worker.pollIntervalSeconds} seconds ·{" "}
+                {data.worker.lastCheckAt
+                  ? `Last check: ${new Date(data.worker.lastCheckAt).toLocaleTimeString()}`
+                  : "First check within one minute"}
+              </span>
+            )}
+            {data.worker.lastError && (
+              <span className="block text-red-700">
+                {data.worker.lastError}
+              </span>
+            )}
           </span>
         </div>
       </div>
@@ -243,8 +261,10 @@ export function IcpAgentsView() {
                   {a.config.weekdaysOnly ? "Weekdays" : "Every day"}{" "}
                   {a.config.startHour}:00–{a.config.endHour}:00 ·{" "}
                   {a.config.execution === "local"
-                    ? "This Mac"
-                    : "Hosted schedule"}
+                    ? data.worker.environment === "cloud"
+                      ? "Cloud Computer"
+                      : "App server"
+                    : "Platform schedule"}
                 </span>
               </div>
             </div>
@@ -594,11 +614,16 @@ export function IcpAgentsView() {
                 }
               >
                 <option value="local">
-                  This Mac · while the app server runs
+                  {data.worker.environment === "cloud"
+                    ? "Cloud Computer · automatic server worker"
+                    : "App server · automatic worker"}
                 </option>
-                <option value="hosted">
-                  Published app · separate hosted schedule
-                </option>
+                {data.worker.environment !== "cloud" ||
+                editor.config.execution === "hosted" ? (
+                  <option value="hosted">
+                    Platform hosting · separate schedule
+                  </option>
+                ) : null}
               </select>
             </label>
             <p className="ia-note">

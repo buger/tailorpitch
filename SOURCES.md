@@ -71,3 +71,10 @@ Focused review correction: the final credential resolver accepts only the protec
 
 ## Personalized-page offer prompt — 12 October 2026
 Re-read Acquisition offer modules at https://www.acquisition.com/training/offers and Hormozi value-equation interview at https://youngandprofiting.com/alex-hormozi-the-value-equation-how-to-make-offers-so-good-people-feel-stupid-saying-no-e199/ . The generated prospect page now explicitly maps desired outcome, confidence through a credible mechanism, reduced delay/effort, concrete proposed value stack, objections and a single low-friction contact-form CTA into its editable schema. Saved voice/brand and source evidence remain authoritative. Scarcity, urgency, guarantees, prices, numerical results and testimonial proof cannot be invented.
+
+## Quiet Proof proposal visual and offer polish
+
+- Proof public offer and custody terms: https://reqproof.com/ — a first call needs no repository access; standing component engagement about four weeks, actual fee/scope agreed first. Public findings are not proof of a Hilbert relationship.
+- fal.ai model/schema: `google/nano-banana-2.1`, live schema inspected 12 October 2026. One 2K 16:9 WebP generated via connected fal.ai; request `01a13001-4bdf-7051-a6b2-ee2c454fb372`. Artwork stored at `client/public/visuals/proof-evidence-layers.webp`, not a private brand asset.
+- fal queue runtime API: https://docs.fal.ai/model-apis/model-endpoints/queue — server credential uses Authorization Key; connector credentials are not automatically injected into deployed app. `shared/visuals.ts` sets the preferred provider/model. Automatic app-side fal generation remains separately credentialed.
+- Existing verified lead research supplies Hilbert context. No fabricated saved time, acceptance metrics, budget, customer status or certification is introduced.

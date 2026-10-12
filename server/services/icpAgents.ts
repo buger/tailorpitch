@@ -1,3 +1,4 @@
+import { workerStatus } from "./icpAgentRuntime";
 import { z } from "zod";
 import { and, eq, desc, inArray, sql } from "drizzle-orm";
 import { randomBytes, timingSafeEqual } from "node:crypto";
@@ -190,7 +191,8 @@ export async function listIcpAgents(companyId: number) {
           verifiedAgentPricing(a.pricing)
       )
       .map(({ schema, pricing, stats, ...rest }) => rest),
-    localWorker: process.env.TAILORPITCH_AGENT_WORKER === "local",
+    localWorker: workerStatus().active,
+    worker: workerStatus(),
     legacyPipeline: true,
   };
 }
@@ -935,7 +937,7 @@ export async function registerIcpAgentSchedule(
   const agent = await currentAgent(companyId, id);
   if (agent.config.execution !== "hosted")
     throw new Error(
-      "Only hosted agents register cloud schedules. Mac agents use the local application worker."
+      "Only platform-scheduled agents register hosted callbacks. Server agents use the application worker."
     );
   const d = await db();
   const uid = await d.transaction(async tx => {

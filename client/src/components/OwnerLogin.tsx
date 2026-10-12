@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Button, LeadloomWordmark, MonoLabel, TextInput } from "./LeadloomUI";
 import { passwordResponseError } from "@shared/passwordResponse";
 export function OwnerLogin({ initialError }: { initialError?: string }) {
-  const [email, setEmail] = useState("leonsbox@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(initialError);
@@ -34,7 +34,10 @@ export function OwnerLogin({ initialError }: { initialError?: string }) {
       try {
         sessionStorage.removeItem("manus-cookie");
       } catch {}
-      window.location.assign("/app");
+      const result = await response.json();
+      window.location.assign(
+        result.redirect === "/app/onboarding" ? result.redirect : "/app"
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Please try signing in again.");
       setPassword("");
@@ -90,8 +93,8 @@ export function OwnerLogin({ initialError }: { initialError?: string }) {
           </Button>
         </form>
         <p className="mt-5 text-xs leading-5 text-ink-muted">
-          Temporary owner access only. This does not connect Gmail. Google
-          sign-in can be added later.
+          Approved workspace access. This does not connect Gmail. Google sign-in
+          can be added later.
         </p>
         <a href="/" className="mt-6 block text-sm underline">
           Back to TailorPitch

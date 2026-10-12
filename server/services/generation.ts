@@ -16,7 +16,7 @@ import { eq } from "drizzle-orm";
 import { storageGetSignedUrl } from "../storage";
 import {
   researchSchema,
-  pageContentSchema,
+  pageTextContentSchema as pageContentSchema,
   draftContentSchema,
   type Brand,
   type Channel,

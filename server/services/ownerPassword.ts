@@ -69,6 +69,27 @@ export function verifyOwnerPassword(
     Buffer.from(digest, "hex")
   );
 }
+export const DEMO_LOGIN_EMAIL = "demo@example.com";
+export function loginPasswordHash(email: string): string | undefined {
+  if (email === OWNER_LOGIN_EMAIL) return ownerPasswordHash();
+  if (email === DEMO_LOGIN_EMAIL)
+    return process.env.TAILORPITCH_DEMO_PASSWORD_HASH;
+  return undefined;
+}
+export function passwordSessionValid(
+  payload: Record<string, unknown>
+): boolean {
+  const email =
+    typeof payload.authEmail === "string"
+      ? payload.authEmail
+      : OWNER_LOGIN_EMAIL;
+  const hash = loginPasswordHash(email);
+  return Boolean(
+    hash &&
+      payload.authMethod === "owner-password" &&
+      payload.authVersion === passwordVersion(hash)
+  );
+}
 function secret() {
   const key = process.env.MANUS_JWT_SECRET;
   if (!key || key.length < 16) throw Error("Session signing is unavailable.");
@@ -171,12 +192,16 @@ export function registerOwnerPasswordRoutes(app: Express) {
       typeof req.body?.email === "string"
         ? req.body.email.trim().toLowerCase()
         : "";
-    const validPassword = verifyOwnerPassword(req.body?.password);
-    if (email !== OWNER_LOGIN_EMAIL || !validPassword) {
+    const accountHash = loginPasswordHash(email);
+    const validPassword = verifyOwnerPassword(
+      req.body?.password,
+      accountHash || ownerPasswordHash()
+    );
+    if (!accountHash || !validPassword) {
       fail(
         res,
         401,
-        "Email or password is incorrect. This temporary login is available only to the approved workspace owner."
+        "Email or password is incorrect. Use an approved workspace account."
       );
       return;
     }
@@ -186,13 +211,13 @@ export function registerOwnerPasswordRoutes(app: Express) {
       const owners = await d
         .select()
         .from(users)
-        .where(eq(users.email, OWNER_LOGIN_EMAIL))
+        .where(eq(users.email, email))
         .limit(2);
       if (owners.length !== 1) {
         fail(
           res,
           403,
-          "Your owner account could not be found unambiguously. Contact the workspace administrator."
+          "Your account could not be found unambiguously. Contact the workspace administrator."
         );
         return;
       }
@@ -202,7 +227,8 @@ export function registerOwnerPasswordRoutes(app: Express) {
         appId: process.env.MANUS_PROJECT_ID,
         name: owner.name || "",
         authMethod: "owner-password",
-        authVersion: passwordVersion(),
+        authVersion: passwordVersion(accountHash),
+        authEmail: email,
       })
         .setProtectedHeader({ alg: "HS256", typ: "JWT" })
         .setIssuedAt()
@@ -212,7 +238,10 @@ export function registerOwnerPasswordRoutes(app: Express) {
         ...getSessionCookieOptions(req),
         maxAge: SESSION_MS,
       });
-      res.json({ ok: true, redirect: "/app" });
+      res.json({
+        ok: true,
+        redirect: email === DEMO_LOGIN_EMAIL ? "/app/onboarding" : "/app",
+      });
     } catch {
       fail(
         res,

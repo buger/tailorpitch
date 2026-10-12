@@ -4,8 +4,12 @@ export const safeUrl = z
   .string()
   .url()
   .refine(s => {
-    const u = new URL(s);
-    return u.protocol === "https:" && !u.username && !u.password;
+    try {
+      const u = new URL(s);
+      return u.protocol === "https:" && !u.username && !u.password;
+    } catch {
+      return false;
+    }
   }, "Use an HTTPS URL without credentials");
 export const brandSchema = z.object({
   offer: z.string().min(10).max(10000),
@@ -76,7 +80,7 @@ export const researchSchema = z.object({
   personalization: z.array(z.string()).max(10),
 });
 export type Research = z.infer<typeof researchSchema>;
-export const pageContentSchema = z.object({
+export const pageTextContentSchema = z.object({
   eyebrow: z.string().max(160),
   headline: z.string().min(10).max(180),
   subheadline: z.string().max(1000),
@@ -96,6 +100,17 @@ export const pageContentSchema = z.object({
   closing: z.string().max(500),
   designNotes: z.string().max(1000),
   layout: z.enum(["editorial", "minimal", "bold"]),
+});
+export const pageContentSchema = pageTextContentSchema.extend({
+  heroImageUrl: z
+    .union([
+      safeUrl,
+      z.string().regex(/^\/visuals\/[a-zA-Z0-9._-]+$/),
+      z.string().regex(/^\/manus-storage\/[a-zA-Z0-9/._-]+$/),
+    ])
+    .optional(),
+  heroImageAlt: z.string().max(500).optional(),
+  heroImageProvider: z.literal("fal.ai").optional(),
 });
 export type PageContent = z.infer<typeof pageContentSchema>;
 export const draftContentSchema = z.object({

@@ -25,6 +25,8 @@ import {
   verifyOwnerPassword,
   passwordVersion,
   allowedLoginOrigin,
+  loginPasswordHash,
+  passwordSessionValid,
 } from "./services/ownerPassword";
 let server: Server, origin: string;
 beforeEach(async () => {
@@ -77,6 +79,70 @@ async function login(
   });
 }
 describe("temporary owner password", () => {
+  it("separates demo credentials from owner credentials and revokes only the rotated account", () => {
+    const owner = process.env.TAILORPITCH_OWNER_PASSWORD_HASH!;
+    const demo = hashOwnerPassword("fixture-demo-password", "b".repeat(32));
+    vi.stubEnv("TAILORPITCH_DEMO_PASSWORD_HASH", demo);
+    expect(loginPasswordHash("demo@example.com")).toBe(demo);
+    expect(loginPasswordHash("other@example.com")).toBeUndefined();
+    expect(verifyOwnerPassword("test-only-password", demo)).toBe(false);
+    expect(verifyOwnerPassword("fixture-demo-password", owner)).toBe(false);
+    const session = {
+      authMethod: "owner-password",
+      authEmail: "demo@example.com",
+      authVersion: passwordVersion(demo),
+    };
+    expect(passwordSessionValid(session)).toBe(true);
+    expect(
+      passwordSessionValid({ ...session, authEmail: "leonsbox@gmail.com" })
+    ).toBe(false);
+    vi.stubEnv(
+      "TAILORPITCH_DEMO_PASSWORD_HASH",
+      hashOwnerPassword("rotated-fixture-password")
+    );
+    expect(passwordSessionValid(session)).toBe(false);
+    expect(
+      passwordSessionValid({
+        authMethod: "owner-password",
+        authVersion: passwordVersion(owner),
+      })
+    ).toBe(true);
+  });
+  it("issues the isolated demo identity and starts website-first onboarding", async () => {
+    vi.stubEnv(
+      "TAILORPITCH_DEMO_PASSWORD_HASH",
+      hashOwnerPassword("fixture-demo-password")
+    );
+    lookup.rows = [
+      {
+        id: 2,
+        openId: "tailorpitch-demo-v1",
+        email: "demo@example.com",
+        name: "Demo user",
+      },
+    ];
+    const response = await login(
+      await challenge(),
+      "demo@example.com",
+      "fixture-demo-password"
+    );
+    expect(response.status).toBe(200);
+    expect((await response.json()).redirect).toBe("/app/onboarding");
+    const raw = response.headers
+      .getSetCookie()
+      .find(x => x.startsWith("webdev_app_session="))!
+      .split(";")[0]
+      .split("=")[1];
+    const { payload } = await jwtVerify(
+      decodeURIComponent(raw),
+      new TextEncoder().encode(process.env.MANUS_JWT_SECRET),
+      { algorithms: ["HS256"] }
+    );
+    expect(payload.openId).toBe("tailorpitch-demo-v1");
+    expect(payload.authEmail).toBe("demo@example.com");
+    expect(passwordSessionValid(payload)).toBe(true);
+  });
+
   it("verifies a salted scrypt hash and invalidates version when rotated", () => {
     const h = hashOwnerPassword("example-test-password");
     expect(verifyOwnerPassword("example-test-password", h)).toBe(true);

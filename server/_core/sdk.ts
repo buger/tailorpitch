@@ -1,4 +1,7 @@
-import { passwordVersion } from "../services/ownerPassword";
+import {
+  passwordSessionValid,
+  OWNER_LOGIN_EMAIL,
+} from "../services/ownerPassword";
 import {
   AXIOS_TIMEOUT_MS,
   COOKIE_NAME,
@@ -205,7 +208,12 @@ class SDKServer {
 
   async verifySession(
     cookieValue: string | undefined | null
-  ): Promise<{ openId: string; appId: string; name: string } | null> {
+  ): Promise<{
+    openId: string;
+    appId: string;
+    name: string;
+    authEmail?: string;
+  } | null> {
     if (!cookieValue) {
       console.warn("[Auth] Missing session cookie");
       return null;
@@ -220,8 +228,7 @@ class SDKServer {
       if (
         process.env.TAILORPITCH_AUTH_MODE === "owner-password" &&
         !String(openId).startsWith("cron_") &&
-        (payload.authMethod !== "owner-password" ||
-          payload.authVersion !== passwordVersion())
+        !passwordSessionValid(payload)
       )
         return null;
 
@@ -239,6 +246,12 @@ class SDKServer {
         openId,
         appId,
         name,
+        authEmail:
+          process.env.TAILORPITCH_AUTH_MODE === "owner-password"
+            ? typeof payload.authEmail === "string"
+              ? payload.authEmail
+              : OWNER_LOGIN_EMAIL
+            : undefined,
       };
     } catch (error) {
       console.warn("[Auth] Session verification failed", String(error));
@@ -317,7 +330,7 @@ class SDKServer {
     if (
       user &&
       process.env.TAILORPITCH_AUTH_MODE === "owner-password" &&
-      user.email?.trim().toLowerCase() !== "leonsbox@gmail.com"
+      user.email?.trim().toLowerCase() !== session.authEmail
     ) {
       throw ForbiddenError("Owner account access is no longer approved");
     }

@@ -187,3 +187,18 @@ Evidence: 143 tests/29 files pass, typecheck/build pass. Live owner email list H
 - [x] Generation uses Hormozi-inspired offer/story/copy rules while preserving evidence and saved design/voice; no fabricated claims. Tests/migration/build pass; visually inspect public page with non-production fixtures, deploy cloud and back up source.
 
 Evidence: 152 tests/31 files pass; mocked page/form transaction tests, real strict-SQL daily analytics query, additive migration, compiler and production build pass. Desktop/mobile public-page fixtures verify CTA anchors, consent validation, saved-success/error retry, same-tab view-key reuse and zero overflow. Existing Hilbert draft remains private (404); no fake visitor events or test emails stored, no outreach sent.
+
+## Cloud worker status and GitHub sync
+
+- [x] Upload complete tracked source/history to user-approved public `buger/tailorpitch` main and local-development; exclude runtime secrets, database data, dependencies and private working artifacts.
+- [ ] Cloud Computer UI identifies actual active worker and last poll; no Mac dependency or unnecessary hosted-schedule instructions. Persistent cloud service continues independently of browser/Mac, with existing daily pacing and pause controls unchanged.
+- [ ] Verify cloud worker runtime, compiler/tests/build and sync the final corrected revision to both GitHub branches.
+
+## Priority public proposal polish and isolated demo
+
+- [x] Specified published proposal gains strong outcome-led copy, clear pilot scope, readable offer/steps and quieter polished responsive visuals; same share URL, real contact capture and booking CTA. Inspect rendered desktop/mobile.
+- [x] Generate one calm fal.ai illustration and retain it durably; fal.ai is preferred visual provider without exposing an API key.
+- [x] demo@example.com can log in with the requested password, stored only as private scrypt verifier, and begin website-first onboarding in its own empty company; no Proof or app-wide waitlist access. Existing owner sign-in continues working.
+- [x] Validate/deploy and upload complete corrected code to approved public GitHub main/local-development.
+
+Priority verification: 33 test files / 162 tests and TypeScript/build passed. Published proposal inspected live at 1440/390 px; hero art loaded, CTA/booking/accordion worked, no overflow or JS errors. Demo signed in to empty website onboarding; Proof page denied (404), global signup list hidden, owner Proof access intact. fal.ai is the selected visual preference and generated this image; automatic app-side generation is explicitly not enabled without a server key. GitHub sync checked after final save.

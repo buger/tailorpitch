@@ -1,3 +1,9 @@
+import {
+  workerConfiguration,
+  markWorkerStarted,
+  markWorkerCheck,
+  markWorkerStopped,
+} from "./icpAgentRuntime";
 import type { Express } from "express";
 import { eq, and, sql } from "drizzle-orm";
 import { jwtVerify } from "jose";
@@ -7,11 +13,8 @@ import { icpAgents } from "../../drizzle/schema";
 import { tickIcpAgent } from "./icpAgents";
 let localRunning = false;
 export function startIcpAgentWorker() {
-  if (
-    process.env.TAILORPITCH_AGENT_WORKER !== "local" ||
-    !["127.0.0.1", "localhost", "::1"].includes(process.env.HOST ?? "")
-  )
-    return () => {};
+  if (!workerConfiguration().configured) return () => {};
+  markWorkerStarted();
   const advance = async () => {
     if (localRunning) return;
     localRunning = true;
@@ -28,7 +31,9 @@ export function startIcpAgentWorker() {
         .filter(a => a.config.execution === "local")
         .slice(0, 10))
         await tickIcpAgent(agent.companyId, agent.id, "local");
+      markWorkerCheck();
     } catch {
+      markWorkerCheck("Dispatch could not finish; inspect agent activity.");
       console.warn(
         "[ICP agents] Dispatch could not finish; durable state is retained."
       );
@@ -38,7 +43,10 @@ export function startIcpAgentWorker() {
   };
   const timer = setInterval(() => void advance(), 60000);
   timer.unref();
-  return () => clearInterval(timer);
+  return () => {
+    clearInterval(timer);
+    markWorkerStopped();
+  };
 }
 export function registerIcpAgentRoutes(app: Express) {
   app.post("/api/scheduled/icp-agent", async (req, res) => {
@@ -92,11 +100,9 @@ export function registerIcpAgentRoutes(app: Express) {
     try {
       res.json(await tickIcpAgent(agent.companyId, agent.id, "hosted"));
     } catch {
-      res
-        .status(500)
-        .json({
-          error: "ICP agent could not advance; inspect its saved activity.",
-        });
+      res.status(500).json({
+        error: "ICP agent could not advance; inspect its saved activity.",
+      });
     }
   });
 }
