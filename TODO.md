@@ -94,3 +94,7 @@ Login/Refero evidence: existing authenticated Google user id1 was explicitly bou
 - [x] Component-render regression tests reproduce the exact null response and cover loading, absent data, errors and saved states; types/build/tests pass; save and release through the user's enabled automatic publishing without claiming deployment success prematurely.
 
 Crash-fix evidence: ten actual React component-render regressions pass, including successful response pipeline:null and failed requests without editor state. All 66 tests, TypeScript and production build pass. No user/company/pipeline record was created or changed; unsaved pipeline remains intentionally absent. Release uses currently user-enabled auto_publish:true. Production asset in reported stack was index-B0CICXka.js, which predates this correction.
+
+## Owner-approved Proof quotes — 12 October 2026
+
+Leonid Bugaev explicitly approved removal of the draft/testimonial warnings and attribution of the existing two perspective quotes to his name as Proof owner. Both interactive landing and crawler-visible initial HTML now use Leonid Bugaev — Owner, Proof. This approval concerns these quotes only: no performance metrics, fabricated customer outcomes, billing enablement or unlabeled live-demo claims were added.

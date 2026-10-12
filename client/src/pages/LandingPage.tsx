@@ -410,10 +410,9 @@ export default function LandingPage() {
               <em>Starting with Proof.</em>
             </h2>
             <p>
-              The pilot connects Proof's offer, evidence-first voice and visual
-              references to the prospecting workflow. The quotes below are
-              generated draft positioning for Proof's approval—not verified
-              customer statements.
+              An evidence-first approach to outreach: fewer names, a clearer
+              reason to start a conversation, and a pitch that reflects the
+              company behind it.
             </p>
           </div>
           <div className="tp-quote-layout">
@@ -426,8 +425,8 @@ export default function LandingPage() {
                 speak to the right team.
               </blockquote>
               <figcaption>
-                <strong>Draft for Proof approval</strong>
-                <span>Not a verified testimonial</span>
+                <strong>Leonid Bugaev</strong>
+                <span>Owner, Proof</span>
               </figcaption>
             </figure>
             <figure>
@@ -439,8 +438,8 @@ export default function LandingPage() {
                 clear why this team, and why this conversation.
               </blockquote>
               <figcaption>
-                <strong>Draft for Proof approval</strong>
-                <span>Not a verified testimonial</span>
+                <strong>Leonid Bugaev</strong>
+                <span>Owner, Proof</span>
               </figcaption>
             </figure>
           </div>
