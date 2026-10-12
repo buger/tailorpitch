@@ -1,0 +1,58 @@
+from pathlib import Path
+import json
+from playwright.sync_api import sync_playwright
+
+out = Path('/home/ubuntu/leadloom/.visual-review')
+out.mkdir(exist_ok=True)
+url='https://8328-iaiec42qkfqwba07zca38-bcae9ca0.sg2.manus.computer/'
+with sync_playwright() as p:
+    browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+    results=[]
+    for name,width,height in [('desktop',1440,1000),('mobile',390,844)]:
+        page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=1,reduced_motion='reduce')
+        errors=[]
+        page.on('pageerror',lambda e: errors.append(str(e)))
+        page.goto(url,wait_until='domcontentloaded',timeout=60000)
+        page.locator('.tp-landing').wait_for(timeout=45000)
+        page.evaluate('Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,5000))])')
+        page.screenshot(path=str(out/f'{name}-hero.png'))
+        for section in ['.pitch-workbench','#pricing','#proof-pilot']:
+            page.locator(section).screenshot(path=str(out/f'{name}-{section.replace(".","").replace("#","")}.png'))
+        # All stage changes are local illustrative interactions, not actual sourcing.
+        page.get_by_role('tab',name='05 Outreach').click()
+        page.get_by_role('button',name='Replay example').click()
+        page.get_by_role('tab',name='02 Qualify').click()
+        page.get_by_role('tab',name='03 Select').click()
+        assert page.get_by_role('button',name='Approve lead to continue').is_disabled()
+        page.get_by_role('button',name='Approve demo lead').click()
+        page.get_by_role('tab',name='04 Page').click()
+        page.get_by_role('button',name='Expand page example').click()
+        assert page.get_by_text('A scoped place to start.',exact=True).is_visible()
+        page.locator('.pitch-workbench').screenshot(path=str(out/f'{name}-page-stage.png'))
+        page.get_by_role('tab',name='05 Outreach').click()
+        page.get_by_role('tab',name='LinkedIn',exact=True).click()
+        assert 'Saw Northstar' in page.locator('.pitch-workbench__draft-body').inner_text()
+        page.get_by_role('tab',name='X',exact=True).click()
+        assert 'Northstar is scaling' in page.locator('.pitch-workbench__draft-body').inner_text()
+        page.locator('.pitch-workbench').screenshot(path=str(out/f'{name}-outreach-stage.png'))
+        page.get_by_role('button',name='Replay example').click()
+        page.get_by_role('button',name='02 Momentum').click()
+        assert '600' in page.locator('.tp-credit-number').inner_text()
+        page.get_by_role('button',name='03 Studio').click()
+        assert '1,400' in page.locator('.tp-credit-number').inner_text()
+        page.get_by_role('button',name='01 Focus').click()
+        page.locator('input[type="range"]').nth(0).fill('100')
+        page.locator('input[type="range"]').nth(1).fill('10')
+        assert '200 / 200 credits' in page.locator('.tp-credit-equation').inner_text()
+        page.locator('.tp-method').screenshot(path=str(out/f'{name}-method.png'))
+        results.append({'viewport':name,'width':width,'bodyWidth':page.evaluate('document.documentElement.scrollWidth'),'horizontalOverflow':page.evaluate('document.documentElement.scrollWidth>window.innerWidth'),'pageErrors':errors})
+        # Pricing is an illustrative client-side chooser, not subscription enrollment.
+        page.get_by_role('button',name='Register interest in Focus').click()
+        page.locator('#early-access').screenshot(path=str(out/f'{name}-signup.png'))
+        assert 'Your interest: Focus' in page.locator('.tp-interest-note').inner_text()
+        assert page.get_by_label('Work email',exact=True).input_value()==''
+        page.close()
+    browser.close()
+(out/'results.json').write_text(json.dumps(results,indent=2)+'\n')
+print(json.dumps(results,indent=2))
+print('Screenshots saved in',out)
