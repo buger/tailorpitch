@@ -7,6 +7,9 @@ import { publicPlatformScript } from "./publicConfig";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { registerMailboxRoutes } from '../services/mailbox';
+import { registerPublicRoutes } from '../publicHtml';
+import { ensurePilot } from '../services/tenant';
 
 async function startServer() {
   const app = express();
@@ -18,7 +21,11 @@ async function startServer() {
   app.get("/api/platform/config.js", (_req, res) => {
     res.set("Cache-Control", "no-store").type("application/javascript").send(publicPlatformScript());
   });
+  app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'private, no-store'); next(); });
   registerOAuthRoutes(app);
+  registerMailboxRoutes(app);
+  registerPublicRoutes(app);
+  await ensurePilot();
   // tRPC API
   app.use(
     "/api/trpc",

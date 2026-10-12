@@ -1,0 +1,1 @@
+ALTER TABLE `sourcingRuns` ADD `processingAt` timestamp;

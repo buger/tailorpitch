@@ -1,0 +1,78 @@
+# Leadloom — company-based prospecting SaaS
+
+## Product scope
+
+Leadloom helps a company define its ideal customer profiles, find matching leads with Apify, research each lead, create a personalized landing page, and prepare or deliver email, LinkedIn and X outreach. The public Leadloom landing page collects early-access emails. The private application requires real Manus account login.
+
+The first release has one hardcoded pilot company: **Proof**, at https://reqproof.com/. “ReqProof” is the domain form; the product’s official prose name is Proof. The architecture must support company registration and teams later, rather than treating each login as a separate tenant.
+
+### Company and access model
+
+Use companies, company memberships, and company-scoped records. Every protected query and mutation resolves a membership server-side and restricts reads/writes to that company. Do not accept a tenant ID from the client as authorization. The pilot company is preconfigured; only an explicitly approved owner identity may initially access it. Future registration can create a company plus an owner membership transactionally; invitations and role-based membership are modeled now. Public early-access signups do not grant access to the private Proof workspace.
+
+### Private application
+
+- Overview with real pipeline totals and recent activity; an honest empty state, not invented live leads or analytics.
+- ICP management: name, target industries, geography, company size, decision-maker roles, keywords, buying signals, exclusions and a minimum match threshold. Editable Proof-oriented starter profiles target engineering teams adopting coding agents, reliability-sensitive developer infrastructure, and teams with significant review/regression workload. These are suggested hypotheses, not verified customer claims.
+- Leads workspace: search, filter by ICP/status, inspect match score and evidence, add a lead manually, find leads with Apify, and view durable sourcing runs and their status. Discovery uses the documented Google Search actor and limits the result count; source candidates are not silently labeled verified matches. Research evaluates criteria, marks unknowns, and explains fit before a lead is qualified.
+- Per-lead research: a bounded Apify crawl of public business pages, retained source URLs and research timestamp, facts versus hypotheses, likely pains, Proof relevance, missing criteria, suggested personalization and contact fields. No invented personal emails, hiring/funding signals, customer relationships, or certifications.
+- Per-lead page generation: one-click AI-generated headline, context, tailored value propositions, proposed pilot scope and CTA using the company offer plus supported lead research. Save as a draft, allow editing, preview, and explicitly publish/unpublish a shareable, opaque URL. A generated page is clearly a proposal from Proof, not an endorsement by the prospect. Drafts remain private. Public pages collect emails into the owning company’s submissions; outreach does not expose private notes.
+- Outreach: generate and edit personalized email, LinkedIn and X drafts with a page link; distinguish drafts, provider acceptance, manual completion and delivery failures. Review an exact recipient and payload before sending. Email uses Gmail OAuth or the company’s SMTP mailbox after the owner connects it. IMAP supplies inbox access, not sending. Social messages can be copied/opened for manual delivery in the pilot; automatic LinkedIn and X delivery requires a selected, authorized provider or eligible API account and must not be represented as connected without one. Track per-lead activity and suppress opted-out contacts. No outbound messages are sent during implementation.
+- Company settings: Proof website, offer, approved claims/limitations, booking CTA, sender identity, integrations and custom-domain readiness. Provider credentials remain server-side. Domain status is honest: ready to configure later, not falsely “connected.”
+
+Approved additions: the company owner can upload design assets, add inspiration references, define a text voice, and set separate website and outreach instructions. Both generation paths consume the current company brand profile. Proof begins with editable official brand defaults. The authorized pilot owner login is `hello@reqproof.com`; all other accounts receive an access-request state and no private company data.
+
+Email follows the user's selected options: connect Gmail with OAuth or connect IMAP for inbox access plus SMTP for sending. Store tenant mailbox credentials encrypted server-side; never return credentials to clients or logs. Gmail needs a configured Google OAuth client and may need Google verification for broader public use. IMAP/SMTP requires the user's mailbox settings or app password. Resend is not the required pilot email transport. Keep provider adapters separate from outreach drafts, review and send operations.
+
+### Public website
+
+A marketing landing page for Leadloom explaining the source → research → personalize → outreach workflow and collecting email with consent. Persist signups, validate and deduplicate emails, include success/error states and a small privacy page. Use meaningful initial HTML and appropriate metadata. Private routes and personalized prospect URLs are noindex. Canonical and sharing origins come from an explicitly configured public origin; do not guess a future domain. Keep all application links relative so hosting and custom-domain binding later do not require rewriting the app.
+
+## Implementation
+
+Use the initialized React/Tailwind/Express/tRPC/Drizzle project and managed MySQL. Preserve supplied OAuth session validation and secure cross-site Preview cookies. AI calls use Manus project server credentials and a currently available model, with structured output validation, bounded requests, and explicit errors.
+
+Pilot provider credentials use protected application secrets. Company integration records associate providers with a tenant, giving a future encrypted-credential/OAuth adapter boundary; do not copy agent credentials into source code or the browser. Apify runs are initiated only from user actions and persisted with external run IDs. The UI refreshes existing run state rather than launching duplicate runs. Result import is idempotent and constrained to the authorized company. Provider calls have bounded timeouts and terminal errors. No paid scrape is executed during development without the user choosing a run.
+
+Use one-time seed/migration records for the pilot company and suggested ICPs; never overwrite later user edits on restart. Track activity and persisted generation results in the database, not process-local memory. Public share tokens and unsubscribe tokens are opaque; missing/private pages return 404.
+
+## Project structure
+
+- `client/src/pages/`: public landing/privacy, login/access gate, overview, ICPs, leads and lead detail, pages, outreach, settings, public personalized page.
+- `client/src/components/`: application shell, wordmark, reusable form/dialog/status controls, page renderer and empty/loading/error states.
+- `shared/`: validated domain shapes and company/public-page types.
+- `drizzle/schema.ts` and committed migrations: companies, memberships, profiles, leads, sourcing runs, pages, outreach drafts/activity, submissions, suppression and provider configuration.
+- `server/db.ts` and `server/services/`: company-scoped repositories, tenant authorization, Proof seed, Apify adapter, research/AI personalization and email delivery adapter.
+- `server/routers.ts` and feature routers: authenticated company APIs plus limited public signup/page endpoints.
+- `server/_core/`: retain the starter’s auth/runtime integration; extend route-level initial HTML and safe public rendering as needed.
+- `client/public/`: brand assets and complete `manus-routes.json`; `app.config.ts` supplies a durable project logo URL.
+
+## Design direction
+
+**Movement:** contemporary editorial software, combining a calm paper-and-ink workspace with precise prospecting records. The SaaS brand remains distinct from Proof’s product brand, while Proof-generated pages respect its supplied branding.
+
+**Principles:** content before decoration; sources beside claims; one clear next action; sharp distinctions between draft, ready and actually sent.
+
+**Color philosophy:** warm ivory surfaces and deep charcoal keep research readable; a terracotta accent gives Leadloom a recognizable action color; subdued olive marks qualified states without suggesting certainty. Proof pages use its official paper #f3f0e9, ink #24302a and sage #7fa34e accent, never sage headlines.
+
+**Layout:** narrow persistent left navigation, spacious asymmetric heading/action rows, a full-width lead table, and a contextual research/detail panel. The landing page uses an editorial split with large left-aligned typography and a typographic workflow illustration, not generic stock imagery.
+
+**Signature elements:** a small interlocking L mark; numbered workflow rails; compact outlined source/status chips. No decorative imagery in the internal tool. Reuse Proof’s real official mark for the company identity.
+
+**Interaction:** precise, reversible controls with visible loading, disabled duplicate submissions, preserved inputs on errors and toast confirmation only after persistence. Drawers/dialogs retain context; actions progressively reveal the next stage.
+
+**Animation:** 150–200 ms hover and drawer transitions, subtle opacity/vertical entrance, no perpetual decoration; respect reduced motion.
+
+**Typography:** Bricolage Grotesque for the Leadloom wordmark and display headings, DM Sans for application copy, IBM Plex Mono for compact record labels. Proof pages use Iowan Old Style/Baskerville/Georgia headings, Space Grotesk body, and its official wordmark.
+
+**Brand essence:** a focused prospecting workspace that turns researched fit into a relevant conversation. Personality: discerning, clear, personal.
+
+**Voice:** direct and specific, never claims of guaranteed conversion. Examples: “Find the right fit. Make it personal.” and “Research first. Reach out with a reason.”
+
+**Wordmark:** Leadloom in a tightly set display face beside two interlocking bent strokes, suggesting a lead and its personalized path without a generic sparkle logo.
+
+**Signature color:** kiln terracotta #bf5839, used for the primary action and one small brand detail.
+
+## Current decisions requiring user input
+
+Scope is approved. The pilot owner is `hello@reqproof.com`. Apify and mailbox credentials are not configured yet. The app will provide owner-only integration setup and clearly show disconnected states until configured. Gmail OAuth requires protected client credentials; IMAP/SMTP and Apify can be connected through HTTPS company settings with encrypted server-side storage. Automatic LinkedIn/X sending remains a separate provider setup decision; implement draft/manual workflow plus provider-ready architecture now.

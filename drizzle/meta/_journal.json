@@ -8,6 +8,27 @@
       "when": 1788785580464,
       "tag": "0000_initial_users",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1791788517922,
+      "tag": "0001_striped_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1791789279154,
+      "tag": "0002_nappy_kree",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1791789721102,
+      "tag": "0003_loose_the_call",
+      "breakpoints": true
     }
   ]
 }
