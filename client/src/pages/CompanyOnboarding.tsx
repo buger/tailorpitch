@@ -1,15 +1,22 @@
+import { IcpReview } from "@/components/onboarding/IcpReview";
+import {
+  reviewEntries,
+  selectedReviewCriteria,
+  validateReviewEntries,
+  type IcpReviewEntry,
+  type IcpReviewErrors,
+} from "@shared/icpReview";
 import { useOperation } from "@/components/operations/OperationProvider";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
-  Check,
   ExternalLink,
   Globe2,
   History,
   Save,
   Sparkles,
 } from "lucide-react";
-import type { Brand, IcpCriteria } from "@shared/domain";
+import type { Brand } from "@shared/domain";
 import type { AnalysisEvidence, CompanyAnalysis } from "@shared/analysis";
 import type { RouterOutputs, Workspace } from "@/components/leadloom-types";
 import { api } from "@/components/leadloom-types";
@@ -53,10 +60,6 @@ function dateLabel(value: Date | string | number | null | undefined): string {
   return Number.isNaN(date.getTime()) ? "Unknown date" : date.toLocaleString();
 }
 
-function cloneIcp(criteria: IcpCriteria): IcpCriteria {
-  return { ...criteria };
-}
-
 function cloneBrand(brand: Brand): Brand {
   return {
     ...brand,
@@ -87,8 +90,8 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
   const [brand, setBrand] = useState<Brand>(() =>
     cloneBrand(workspace.company.brand)
   );
-  const [icps, setIcps] = useState<IcpCriteria[]>([]);
-  const [selectedIcp, setSelectedIcp] = useState<boolean[]>([]);
+  const [icpEntries, setIcpEntries] = useState<IcpReviewEntry[]>([]);
+  const [icpErrors, setIcpErrors] = useState<IcpReviewErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -105,8 +108,10 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
     setWebsite(next.result.website);
     setCompanyName(next.result.companyName);
     setBrand(cloneBrand(next.result.brand));
-    setIcps(next.result.icps.map(cloneIcp));
-    setSelectedIcp(next.result.icps.map(() => true));
+    setIcpEntries(
+      reviewEntries(next.result.icps, next.id, Boolean(next.appliedAt))
+    );
+    setIcpErrors({});
     setError(null);
   };
 
@@ -148,8 +153,21 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
   };
 
   const applyReviewed = async () => {
-    if (!draft) return;
+    if (
+      !draft ||
+      apply.isPending ||
+      operation.busy ||
+      analyze.isPending ||
+      draft.appliedAt
+    )
+      return;
     setError(null);
+    const validation = validateReviewEntries(icpEntries);
+    setIcpErrors(validation);
+    if (Object.keys(validation).length) {
+      setError("Review the highlighted ICP fields before applying.");
+      return;
+    }
     if (!canManage) {
       setError("Only the company owner can apply onboarding changes.");
       return;
@@ -166,7 +184,7 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
         companyName: companyName.trim(),
         website: website.trim(),
         brand,
-        icps: icps.filter((_, index) => selectedIcp[index]),
+        icps: selectedReviewCriteria(icpEntries),
       });
       await Promise.all([
         utils.workspace.get.invalidate(),
@@ -189,16 +207,10 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
   const setBrandField = <K extends keyof Brand>(key: K, value: Brand[K]) => {
     setBrand(previous => ({ ...previous, [key]: value }));
   };
-  const updateIcp = <K extends keyof IcpCriteria>(
-    index: number,
-    key: K,
-    value: IcpCriteria[K]
-  ) => {
-    setIcps(previous =>
-      previous.map((criteria, item) =>
-        item === index ? { ...criteria, [key]: value } : criteria
-      )
-    );
+  const changeIcpEntries = (next: IcpReviewEntry[]) => {
+    setIcpEntries(next);
+    if (Object.keys(icpErrors).length)
+      setIcpErrors(validateReviewEntries(next));
   };
   const candidateLogos =
     draft?.evidence.logos.filter(candidate => isHttpsUrl(candidate.url)) ?? [];
@@ -211,7 +223,7 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
       <SectionHeader
         eyebrow="Onboarding / company intelligence"
         title="Start with what the site actually says."
-        description="Analyze a public company website, then review every suggested brand field and ICP hypothesis before anything is saved. Website copy is evidence; suggestions remain yours to edit."
+        description="Analyze a public company website, then review every suggested brand field and ideal customer profile (ICP) before anything is saved. Website copy is evidence; suggestions remain yours to edit."
         action={
           <StatusChip
             tone={workspace.company.onboardingCompletedAt ? "good" : "warn"}
@@ -508,162 +520,59 @@ export function CompanyOnboarding({ workspace }: { workspace: Workspace }) {
                   </div>
                 </div>
               </section>
-
-              <section className="border border-line bg-white p-6 sm:p-7">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <MonoLabel>03 / ICP hypotheses</MonoLabel>
-                    <h2 className="mt-3 font-display text-2xl tracking-[-.04em]">
-                      Select only the profiles you reviewed.
-                    </h2>
-                  </div>
-                  <Check className="h-5 w-5 text-terracotta" />
-                </div>
-                <p className="mt-3 text-sm leading-6 text-ink-muted">
-                  These are editable working hypotheses, not verified market
-                  facts. Uncheck anything you do not want created as a profile.
-                </p>
-                <div className="mt-6 space-y-5">
-                  {icps.map((criteria, index) => (
-                    <div
-                      className="border border-line bg-paper p-5"
-                      key={`${draft.id}-${index}`}
-                    >
-                      <label className="flex items-start gap-3">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(selectedIcp[index])}
-                          onChange={event =>
-                            setSelectedIcp(previous =>
-                              previous.map((checked, item) =>
-                                item === index ? event.target.checked : checked
-                              )
-                            )
-                          }
-                          className="mt-1 accent-[#bf5839]"
-                        />
-                        <span>
-                          <span className="block text-xs font-semibold">
-                            Review and apply this hypothesis
-                          </span>
-                          <span className="mt-1 block text-[11px] text-ink-muted">
-                            Profile {index + 1} · working hypothesis
-                          </span>
-                        </span>
-                      </label>
-                      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                        <TextInput
-                          label="Profile name"
-                          value={criteria.name}
-                          onChange={event =>
-                            updateIcp(index, "name", event.target.value)
-                          }
-                        />
-                        <TextInput
-                          label="Geography"
-                          value={criteria.geography}
-                          onChange={event =>
-                            updateIcp(index, "geography", event.target.value)
-                          }
-                        />
-                        <TextInput
-                          label="Industries"
-                          value={criteria.industries}
-                          onChange={event =>
-                            updateIcp(index, "industries", event.target.value)
-                          }
-                        />
-                        <TextInput
-                          label="Company size"
-                          value={criteria.companySize}
-                          onChange={event =>
-                            updateIcp(index, "companySize", event.target.value)
-                          }
-                        />
-                        <TextInput
-                          label="Decision-maker roles"
-                          value={criteria.roles}
-                          onChange={event =>
-                            updateIcp(index, "roles", event.target.value)
-                          }
-                        />
-                        <TextInput
-                          label="Minimum score"
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={criteria.minScore}
-                          onChange={event =>
-                            updateIcp(
-                              index,
-                              "minScore",
-                              Number(event.target.value)
-                            )
-                          }
-                        />
-                      </div>
-                      <TextArea
-                        className="mt-4"
-                        label="Keywords"
-                        value={criteria.keywords}
-                        onChange={event =>
-                          updateIcp(index, "keywords", event.target.value)
-                        }
-                      />
-                      <TextArea
-                        className="mt-4"
-                        label="Buying signals"
-                        value={criteria.signals}
-                        onChange={event =>
-                          updateIcp(index, "signals", event.target.value)
-                        }
-                      />
-                      <TextArea
-                        className="mt-4"
-                        label="Exclusions"
-                        value={criteria.exclusions}
-                        onChange={event =>
-                          updateIcp(index, "exclusions", event.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-                <Button
-                  onClick={() => void applyReviewed()}
-                  disabled={
-                    !canManage ||
-                    apply.isPending ||
-                    operation.busy ||
-                    Boolean(draft.appliedAt)
-                  }
-                  className="mt-6 w-full sm:w-auto"
-                >
-                  <Save className="h-4 w-4" />
-                  {draft.appliedAt
-                    ? "Profile applied — edit later in Settings"
-                    : apply.isPending
-                      ? "Applying reviewed profile…"
-                      : "Apply reviewed company profile"}
-                </Button>
-                {apply.isPending && (
-                  <p className="mt-3 text-xs text-ink-muted">
-                    Saving the selected brand fields and only the checked ICP
-                    hypotheses.
-                  </p>
-                )}
-              </section>
-
-              <EvidencePanel
-                evidence={draft.evidence}
-                copyExamples={copyExamples}
-                sources={sources}
-                selectedLogo={brand.logoUrl}
-              />
             </>
           )}
         </div>
       </div>
+      {draft && (
+        <div className="mt-8 space-y-8">
+          <IcpReview
+            key={draft.id}
+            entries={icpEntries}
+            onChange={changeIcpEntries}
+            errors={icpErrors}
+            readOnly={
+              !canManage ||
+              Boolean(draft.appliedAt) ||
+              apply.isPending ||
+              analyze.isPending ||
+              operation.busy
+            }
+            applied={Boolean(draft.appliedAt)}
+          >
+            <Button
+              onClick={() => void applyReviewed()}
+              disabled={
+                !canManage ||
+                apply.isPending ||
+                operation.busy ||
+                Boolean(draft.appliedAt)
+              }
+              className="mt-6 w-full sm:w-auto"
+            >
+              <Save className="h-4 w-4" />
+              {draft.appliedAt
+                ? "Company profile applied"
+                : apply.isPending
+                  ? "Applying reviewed profile…"
+                  : "Apply reviewed company profile"}
+            </Button>
+            {apply.isPending && (
+              <p className="mt-3 text-xs text-ink-muted">
+                Saving your reviewed brand and the selected ICPs. Existing saved
+                ICPs are preserved.
+              </p>
+            )}
+          </IcpReview>
+
+          <EvidencePanel
+            evidence={draft.evidence}
+            copyExamples={copyExamples}
+            sources={sources}
+            selectedLogo={brand.logoUrl}
+          />
+        </div>
+      )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
     </>
   );

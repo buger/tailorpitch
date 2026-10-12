@@ -1,3 +1,4 @@
+import { reviewedIcpsSchema } from "../shared/icpReview";
 import { getOperation, withObservedOperation } from "./services/operations";
 import { assertSyncOpen } from "./services/intakeControls";
 import { leadIdentity } from "./services/publicEvidence";
@@ -356,7 +357,7 @@ export const appRouter = router({
           companyName: z.string().min(2).max(200),
           website: safeUrl,
           brand: brandSchema,
-          icps: z.array(icpSchema).max(3),
+          icps: reviewedIcpsSchema,
         })
       )
       .mutation(({ ctx, input }) =>

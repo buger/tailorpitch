@@ -25,7 +25,7 @@ import {
 const nav = [
   { href: "/app", label: "Overview", icon: BarChart3 },
   { href: "/app/agents", label: "Agents & pipeline", icon: Sparkles },
-  { href: "/app/icps", label: "Profiles", icon: Sparkles },
+  { href: "/app/icps", label: "ICPs", icon: Sparkles },
   { href: "/app/leads", label: "Leads", icon: Users },
   { href: "/app/pages", label: "Pages", icon: FileText },
   { href: "/app/outreach", label: "Outreach", icon: BookOpen },

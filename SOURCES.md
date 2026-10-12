@@ -46,3 +46,7 @@ Revisited Hormozi’s own discussion of desired outcome, likelihood, time delay 
 ## Async progress interaction references — 12 October 2026
 
 Refero Typeform processing/modal screen: https://refero.design/pages/77fd0e93-47b0-47ab-af3a-7a04cfa7ac70 (step ledger plus current work), and MonoDesk website-analysis screen: https://refero.design/pages/bb0463c2-9c00-4796-8c17-e59bb30da9a4 (immediate analysis overlay). Screens inspected visually through Refero; hierarchy borrowed and reinterpreted in TailorPitch’s own paper/ink identity. Stage checkmarks are based on actual API/service transitions, not elapsed timers. No third-party images, copying brand marks, or claimed provider progress percentages.
+
+## ICP collection editor references — 12 October 2026
+
+Refero Anam persona manager: https://refero.design/pages/7294765b-1ac7-493d-945f-51abedc6af26 — plainly named persona collection, visible creation action and row-level edit/remove. Refero Cycle customer collection: https://refero.design/pages/aee0343b-356b-42dd-b4c8-465020682719 — header/action hierarchy and compact named rows. Both full screens visually inspected. TailorPitch borrows these interaction patterns for explicitly named ideal customer profiles, replacing the long ambiguous hypotheses form stack with summary cards, a visible Add ICP button, include/edit/remove actions, and reversible draft-only removal. No third-party brand assets or screenshots are embedded.

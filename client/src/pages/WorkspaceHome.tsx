@@ -312,13 +312,13 @@ export function IcpView() {
   return (
     <>
       <SectionHeader
-        eyebrow="Profiles / ideal customer"
-        title="Make the fit legible."
+        eyebrow="ICPs / ideal customer profiles"
+        title="Your ideal customer profiles."
         description="Profiles are working hypotheses — a shared starting point for sourcing and research, not a claim about your market."
         action={
           <Button onClick={openNew}>
             <Plus className="h-4 w-4" />
-            New profile
+            Add ICP
           </Button>
         }
       />
@@ -333,9 +333,9 @@ export function IcpView() {
       ) : (list.data?.length ?? 0) === 0 ? (
         <EmptyState
           icon={Target}
-          title="Start with a useful hypothesis"
+          title="Define your first ICP"
           description="Describe who gets value from Proof, the signals that support the fit, and the exclusions that keep research honest."
-          action={<Button onClick={openNew}>Create your first profile</Button>}
+          action={<Button onClick={openNew}>Add your first ICP</Button>}
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
