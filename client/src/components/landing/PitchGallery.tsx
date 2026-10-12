@@ -15,7 +15,7 @@ export function PitchGallery({ onExplore }: { onExplore: () => void }) {
       aria-label="Illustrative personalized pitch gallery"
     >
       <div className="tp-gallery-meta">
-        <span>01 / A PITCH, NOT A TEMPLATE</span>
+        <span>THE DELIVERABLE / THEIR OWN PITCH</span>
         <span>FICTIONAL EXAMPLE</span>
       </div>
       <div className="tp-gallery-artifacts">
@@ -37,13 +37,13 @@ export function PitchGallery({ onExplore }: { onExplore: () => void }) {
           </p>
           <h3>Hiring platform engineers.</h3>
           <p>
-            A signal to investigate.
+            A reason to research.
             <br />
             Not a promise of intent.
           </p>
           <div className="tp-gallery-evidence">
             <Check size={13} />
-            <span>Keep the source. Mark the gaps.</span>
+            <span>Sources included. Gaps visible.</span>
           </div>
         </div>
         <div
@@ -96,7 +96,7 @@ export function PitchGallery({ onExplore }: { onExplore: () => void }) {
                 </div>
               </div>
               <button type="button" onClick={onExplore}>
-                Explore this pitch example <ArrowUpRight size={14} />
+                See how the pitch is built <ArrowUpRight size={14} />
               </button>
               <span className="tp-gallery-notice">
                 Illustrative proposal · not a live page
@@ -130,7 +130,7 @@ export function PitchGallery({ onExplore }: { onExplore: () => void }) {
               </p>
               <p>Worth comparing notes?</p>
               <button type="button" onClick={onExplore}>
-                Explore the draft workflow <ArrowUpRight size={14} />
+                See how the draft is built <ArrowUpRight size={14} />
               </button>
               <span className="tp-gallery-notice">
                 Fictional copy · no email is sent
@@ -141,9 +141,9 @@ export function PitchGallery({ onExplore }: { onExplore: () => void }) {
         <div className="tp-gallery-annotation">
           <ArrowDownRight size={27} />
           <span>
-            Same offer.
+            Your offer.
             <br />
-            Their context.
+            Their reason.
           </span>
         </div>
       </div>

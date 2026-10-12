@@ -38,3 +38,7 @@ Actual Refero style searches explored bold editorial studios, AI-product showcas
 ## Owner-approved Proof quotes — 12 October 2026
 
 Leonid Bugaev explicitly approved removal of the draft/testimonial warnings and attribution of the existing two perspective quotes to his name as Proof owner. Both interactive landing and crawler-visible initial HTML now use Leonid Bugaev — Owner, Proof. This approval concerns these quotes only: no performance metrics, fabricated customer outcomes, billing enablement or unlabeled live-demo claims were added.
+
+## Whole-landing offer structure — 12 October 2026
+
+Revisited Hormozi’s own discussion of desired outcome, likelihood, time delay and effort/sacrifice in https://youngandprofiting.com/alex-hormozi-the-value-equation-how-to-make-offers-so-good-people-feel-stupid-saying-no-e199/ and Acquisition’s official https://www.acquisition.com/training/offers module index (value equation, creation, bonuses, guarantees, urgency and naming). The revised landing applies the framework through concrete account-specific outputs, a worked mechanism, website-first setup, fewer tool handoffs, a package with explicit allocations and a low-risk early-access action. It intentionally does not manufacture guarantees, scarcity, bonus valuations or reported revenue/reply results. Existing owner-approved Leonid quotes are unchanged. No endorsement by Hormozi or Acquisition is implied.

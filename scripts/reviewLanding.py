@@ -15,6 +15,7 @@ with sync_playwright() as p:
         page.goto(url,wait_until='domcontentloaded',timeout=60000)
         page.locator('.tp-landing').wait_for(timeout=45000)
         page.evaluate('Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,5000))])')
+        assert page.get_by_role('heading',name='Give them a reason to reply.',exact=True).is_visible()
         page.screenshot(path=str(out/f'{name}-hero.png'))
         gallery=page.locator('.tp-gallery')
         gallery.get_by_role('tab',name='02 Outreach').click()
@@ -22,7 +23,7 @@ with sync_playwright() as p:
         page.screenshot(path=str(out/f'{name}-gallery-outreach.png'))
         gallery.get_by_role('tab',name='01 Page').click()
         assert 'Illustrative proposal' in gallery.inner_text()
-        for section in ['.pitch-workbench','#pricing','#proof-pilot']:
+        for section in ['.pitch-workbench','#pricing','#proof-pilot','.tp-not-a-list','.tp-example','.tp-faq']:
             page.locator(section).screenshot(path=str(out/f'{name}-{section.replace(".","").replace("#","")}.png'))
         # All stage changes are local illustrative interactions, not actual sourcing.
         page.get_by_role('tab',name='05 Outreach').click()
@@ -53,7 +54,7 @@ with sync_playwright() as p:
         page.locator('.tp-method').screenshot(path=str(out/f'{name}-method.png'))
         results.append({'viewport':name,'width':width,'bodyWidth':page.evaluate('document.documentElement.scrollWidth'),'horizontalOverflow':page.evaluate('document.documentElement.scrollWidth>window.innerWidth'),'pageErrors':errors})
         # Pricing is an illustrative client-side chooser, not subscription enrollment.
-        page.get_by_role('button',name='Register interest in Focus').click()
+        page.get_by_role('button',name='Join early access · Focus').click()
         page.locator('#early-access').screenshot(path=str(out/f'{name}-signup.png'))
         assert 'Your interest: Focus' in page.locator('.tp-interest-note').inner_text()
         assert page.get_by_label('Work email',exact=True).input_value()==''

@@ -11,7 +11,7 @@ export const proposedPlans = [
     researchedLeads: 100,
     personalizedPages: 10,
     credits: 200,
-    audience: "Find your first repeatable outbound motion.",
+    audience: "Research 100 accounts. Make your chosen 10 pitches personal.",
   },
   {
     id: "momentum",
@@ -20,7 +20,8 @@ export const proposedPlans = [
     researchedLeads: 300,
     personalizedPages: 30,
     credits: 600,
-    audience: "Give a growing pipeline the personal treatment.",
+    audience:
+      "Research 300 accounts. Put 30 personal pages behind your outreach.",
   },
   {
     id: "studio",
@@ -29,7 +30,8 @@ export const proposedPlans = [
     researchedLeads: 700,
     personalizedPages: 70,
     credits: 1400,
-    audience: "More accounts. The same attention to context.",
+    audience:
+      "Research 700 accounts. Give 70 selected accounts their own page.",
   },
 ] as const;
 export type ProposedPlanId = (typeof proposedPlans)[number]["id"];

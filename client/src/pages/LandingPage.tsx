@@ -22,35 +22,11 @@ import { PitchGallery } from "@/components/landing/PitchGallery";
 import { PitchWorkbench } from "@/components/landing/PitchWorkbench";
 import { PricingLedger } from "@/components/landing/PricingLedger";
 import { proposedPlans, type ProposedPlanId } from "@shared/pricing";
+import { marketing } from "@shared/marketing";
 import "@/components/landing/landing.css";
 import "@/components/landing/refero.css";
 
-const faqs = [
-  [
-    "Is this available to buy?",
-    "Not yet. These are proposed monthly plans, not a checkout. Requesting early access adds you to the consented email list. No payment details are collected and no subscription starts.",
-  ],
-  [
-    "What does a credit cover?",
-    "The proposed model reserves 1 research credit per researched lead and 10 page credits per personalized page. Focus includes 100 research credits plus 100 page credits, so its 100 researched leads and 10 pages can both be included. Editing saved drafts and preparing outreach drafts are proposed to be included. Credit rollover and extra-credit prices are not finalized.",
-  ],
-  [
-    "Will agents send messages without me?",
-    "No. Choose which leads deserve a page, edit the drafts and review the final message before sending. Email can use Gmail or IMAP with SMTP. LinkedIn and X currently provide drafts for manual outreach; automatic social delivery is not enabled.",
-  ],
-  [
-    "Can I control how fast leads arrive?",
-    "Yes. Set a daily pace and pause or resume discovery and synchronization independently. Small provider runs feed the pipeline over time rather than dumping a huge batch into your workspace.",
-  ],
-  [
-    "Can it sound and look like my company?",
-    "Start with your website. Review real copy snippets, discovered logos, style clues and suggested ICPs. Add your design references, writing voice and instructions. Edit them during onboarding or later in Settings.",
-  ],
-  [
-    "Do I need every integration?",
-    "No. You can start with a website or GitHub link and review a researched lead. Apify, Gojiberry and Manus task adapters support connected workflows; they need your authorized accounts. Provider subscriptions or usage charges are separate and are not included in these proposed prices.",
-  ],
-];
+const faqs = marketing.faqs;
 export default function LandingPage() {
   const signup = api.public.signup.useMutation();
   const [email, setEmail] = useState(""),
@@ -107,9 +83,9 @@ export default function LandingPage() {
           <LeadloomWordmark />
         </Link>
         <nav aria-label="Primary navigation">
-          <a href="#the-work">The work</a>
-          <a href="#proof-pilot">For Proof</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#the-work">How it works</a>
+          <a href="#proof-pilot">From Proof</a>
+          <a href="#pricing">Plans</a>
         </nav>
         <div className="tp-header-actions">
           <button type="button" onClick={() => startLogin()}>
@@ -120,7 +96,7 @@ export default function LandingPage() {
             className="tp-small-cta"
             onClick={() => scrollTo("early-access")}
           >
-            Request access
+            {marketing.primaryCta}
             <ArrowRight size={14} />
           </button>
         </div>
@@ -130,20 +106,15 @@ export default function LandingPage() {
           <div className="tp-gallery-layout">
             <div className="tp-gallery-intro">
               <div className="tp-hero-kicker">
-                <span>A RESEARCH TEAM. A CREATIVE TEAM. YOUR NEXT PITCH.</span>
+                <span>{marketing.audience}</span>
               </div>
-              <h1 id="hero-title">
-                <span>Less</span>
-                <span>prospecting.</span>
-                <span>More</span>
-                <span>personal.</span>
+              <h1 id="hero-title" aria-label={marketing.headline.join(" ")}>
+                {marketing.headline.map(line => (
+                  <span key={line}>{line}</span>
+                ))}
               </h1>
               <div className="tp-hero-description">
-                <p>
-                  Find the right accounts. Know why they fit. Turn the best ones
-                  into a landing page and outreach draft that feels made for
-                  them—because it is.
-                </p>
+                <p>{marketing.description}</p>
               </div>
               <div className="tp-hero-actions">
                 <button
@@ -151,24 +122,25 @@ export default function LandingPage() {
                   className="tp-cta"
                   onClick={() => scrollTo("early-access")}
                 >
-                  Build my next pitch <ArrowRight size={17} />
+                  {marketing.primaryCta} <ArrowRight size={17} />
                 </button>
                 <button
                   type="button"
                   className="tp-text-cta"
                   onClick={() => scrollTo("the-work")}
                 >
-                  See one take shape <span aria-hidden="true">↓</span>
+                  {marketing.secondaryCta} <span aria-hidden="true">↓</span>
                 </button>
               </div>
-              <p className="tp-hero-fineprint">
-                Early access · Proposed plans from $99/month · No payment today
-              </p>
+              <div className="tp-hero-offer">
+                <strong>{marketing.offer}</strong>
+                <p className="tp-hero-fineprint">{marketing.priceNote}</p>
+              </div>
             </div>
             <PitchGallery onExplore={() => scrollTo("the-work")} />
           </div>
           <div className="tp-flow-rail">
-            <span>A CONSIDERED PIPELINE / YOUR PACE</span>
+            <span>THE PERSONAL PITCH SYSTEM / YOUR PACE</span>
             <ol>
               <li>
                 <span>01</span> Find
@@ -187,17 +159,114 @@ export default function LandingPage() {
               </li>
             </ol>
           </div>
-          <div id="the-work" className="tp-workbench-wrap">
+        </section>
+
+        <section className="tp-not-a-list" aria-labelledby="list-title">
+          <div className="tp-shell tp-contrast-layout">
+            <div className="tp-contrast-left">
+              <span className="tp-index">01 / WHY THE LIST ISN’T ENOUGH</span>
+              <h2 id="list-title">
+                Names don’t
+                <br />
+                <em>start conversations.</em>
+              </h2>
+              <div className="tp-mess" aria-label="Manual prospecting tasks">
+                <span>Find a company.</span>
+                <span>Research in 12 tabs.</span>
+                <span>Build a page from scratch.</span>
+                <span>Send the same pitch again.</span>
+              </div>
+              <p>
+                A contact list still leaves you with the hard part:
+                understanding the account and making your offer relevant. More
+                names don’t fix an interchangeable pitch.
+              </p>
+            </div>
+            <div className="tp-contrast-right">
+              <span className="tp-index">THE BETTER ALTERNATIVE</span>
+              <h2>
+                Fewer accounts.
+                <br />
+                <em>A stronger reason.</em>
+              </h2>
+              <ol>
+                <li>
+                  <span>01</span>
+                  <div>
+                    <h3>Know who fits</h3>
+                    <p>
+                      Compare each account with your ideal customer profile.
+                    </p>
+                  </div>
+                  <Check size={18} />
+                </li>
+                <li>
+                  <span>02</span>
+                  <div>
+                    <h3>Know why now</h3>
+                    <p>
+                      Review the public signals and source links. See what is
+                      still unknown.
+                    </p>
+                  </div>
+                  <Check size={18} />
+                </li>
+                <li>
+                  <span>03</span>
+                  <div>
+                    <h3>Make your offer theirs</h3>
+                    <p>
+                      Give the account a page that connects your offer to their
+                      context.
+                    </p>
+                  </div>
+                  <Check size={18} />
+                </li>
+                <li>
+                  <span>04</span>
+                  <div>
+                    <h3>Start with something relevant</h3>
+                    <p>
+                      Review a first message in your voice—not another blank
+                      text box.
+                    </p>
+                  </div>
+                  <Check size={18} />
+                </li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="the-work"
+          className="tp-example tp-shell"
+          aria-labelledby="example-title"
+        >
+          <div className="tp-section-intro">
+            <span className="tp-index">02 / THE PERSONAL PITCH SYSTEM</span>
+            <h2 id="example-title">
+              One account. One reason.
+              <br />
+              <em>One personal pitch.</em>
+            </h2>
+            <p>
+              Watch the handoff: a public signal becomes a research brief, the
+              account you select gets its own page, and the first message uses
+              the same context. Less rebuilding the story between tools.
+            </p>
+          </div>
+          <div className="tp-workbench-wrap">
             <div className="tp-workbench-caption">
-              <span>FROM A SIGNAL TO SOMETHING WORTH SENDING</span>
+              <span>CLICK THROUGH THE WORK—NOT A LIVE AGENT RUN</span>
               <span className="tp-handwritten">
-                Try the steps. Make the call. ↘
+                See why this account. Then see the pitch. ↘
               </span>
             </div>
             <PitchWorkbench />
           </div>
           <div className="tp-integrations">
-            <span>YOUR WORK. CONNECTED.</span>
+            <span>CONNECT THE TOOLS THAT DO THE WORK</span>
             <div>
               <span>
                 <Search size={15} />
@@ -216,180 +285,19 @@ export default function LandingPage() {
                 Gmail / IMAP
               </span>
             </div>
-            <small>Connect your own authorized accounts</small>
+            <small>Your accounts. Provider fees separate.</small>
+          </div>
+          <div className="tp-inline-next">
+            <p>Want this workflow for your offer?</p>
+            <button
+              type="button"
+              className="tp-text-cta"
+              onClick={() => scrollTo("early-access")}
+            >
+              {marketing.primaryCta} <ArrowRight size={14} />
+            </button>
           </div>
         </section>
-
-        <section className="tp-not-a-list" aria-labelledby="list-title">
-          <div className="tp-shell tp-contrast-layout">
-            <div className="tp-contrast-left">
-              <span className="tp-index">01 / THE OLD WAY</span>
-              <h2 id="list-title">
-                Another list.
-                <br />
-                <em>Another long week.</em>
-              </h2>
-              <div className="tp-mess" aria-label="Manual prospecting tasks">
-                <span>Find a name.</span>
-                <span>Open 12 tabs.</span>
-                <span>Write from scratch.</span>
-                <span>Copy. Paste. Hope.</span>
-              </div>
-              <p>
-                You don't need more names.
-                <br />
-                You need a reason to start a conversation.
-              </p>
-            </div>
-            <div className="tp-contrast-right">
-              <span className="tp-index">02 / THE BETTER BRIEF</span>
-              <h2>
-                A small queue.
-                <br />
-                <em>Ready for your judgment.</em>
-              </h2>
-              <ol>
-                <li>
-                  <span>01</span>
-                  <div>
-                    <h3>A lead that fits</h3>
-                    <p>Matched to your ICP, with gaps clearly marked.</p>
-                  </div>
-                  <Check size={18} />
-                </li>
-                <li>
-                  <span>02</span>
-                  <div>
-                    <h3>The reason behind the fit</h3>
-                    <p>Research and source links, not confident guesses.</p>
-                  </div>
-                  <Check size={18} />
-                </li>
-                <li>
-                  <span>03</span>
-                  <div>
-                    <h3>A page that makes the case</h3>
-                    <p>Your offer, your voice, their context.</p>
-                  </div>
-                  <Check size={18} />
-                </li>
-                <li>
-                  <span>04</span>
-                  <div>
-                    <h3>A draft you can stand behind</h3>
-                    <p>Email, LinkedIn or X. You decide what goes out.</p>
-                  </div>
-                  <Check size={18} />
-                </li>
-              </ol>
-            </div>
-          </div>
-        </section>
-
-        <section className="tp-method tp-shell" aria-labelledby="method-title">
-          <div className="tp-section-intro">
-            <span className="tp-index">03 / BUILT AROUND YOUR BUSINESS</span>
-            <h2 id="method-title">
-              You bring the offer.
-              <br />
-              <em>Agents bring the groundwork.</em>
-            </h2>
-          </div>
-          <div className="tp-method-row">
-            <div className="tp-method-number">01</div>
-            <div className="tp-method-copy">
-              <h3>
-                Start with your site.
-                <br />
-                Not a blank form.
-              </h3>
-              <p>
-                Share your website. Review real copy, discovered logos and
-                suggested customer profiles. Add the design references and voice
-                that make it yours.
-              </p>
-            </div>
-            <div className="tp-source-slip">
-              <span className="tp-index">ONBOARDING / REVIEW FIRST</span>
-              <div className="tp-source-url">
-                your-company.com <ArrowUpRight size={14} />
-              </div>
-              <div className="tp-slip-evidence">
-                <span>Offer & actual copy</span>
-                <span>Logo & style clues</span>
-                <span>Suggested ICPs</span>
-              </div>
-              <p>
-                Found on your site.
-                <br />
-                <strong>Changed by you.</strong>
-              </p>
-            </div>
-          </div>
-          <div className="tp-method-row">
-            <div className="tp-method-number">02</div>
-            <div className="tp-method-copy">
-              <h3>
-                Set the pace.
-                <br />
-                Keep the steering wheel.
-              </h3>
-              <p>
-                Run small discovery steps, qualify from evidence, and pick the
-                leads worth pursuing. Pause sourcing or synchronization whenever
-                you need to.
-              </p>
-            </div>
-            <div className="tp-pace-slip">
-              <span className="tp-index">EXAMPLE PACE / NOT A LIVE RUN</span>
-              <div className="tp-pace-days">
-                {["M", "T", "W", "T", "F"].map((day, i) => (
-                  <div key={i}>
-                    <span>{day}</span>
-                    <div>
-                      {Array.from({ length: i === 3 ? 0 : 3 }).map((_, j) => (
-                        <i key={j} />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="tp-pace-footer">
-                <span>Small daily queue</span>
-                <span>
-                  <Pause size={13} /> Pause anytime
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="tp-method-row">
-            <div className="tp-method-number">03</div>
-            <div className="tp-method-copy">
-              <h3>
-                Make the pitch specific.
-                <br />
-                Keep the send human.
-              </h3>
-              <p>
-                Generate a page around the lead's context. Edit it, publish when
-                ready, then review the outreach draft and exact recipient. No
-                surprise sends.
-              </p>
-            </div>
-            <div className="tp-approval-slip">
-              <span className="tp-index">THE FINAL STEP IS YOURS</span>
-              <h4>
-                Ready for
-                <br />
-                <em>your review.</em>
-              </h4>
-              <span className="tp-approval-stamp">
-                PAGE → DRAFT → YOUR CALL
-              </span>
-            </div>
-          </div>
-        </section>
-
         <section
           id="proof-pilot"
           className="tp-proof tp-shell"
@@ -402,17 +310,17 @@ export default function LandingPage() {
                 alt="Proof mark"
               />
               <span className="font-display">Proof</span>
-              <span className="tp-index">OWNER'S PILOT WORKSPACE</span>
+              <span className="tp-index">03 / FROM THE OWNER OF PROOF</span>
             </div>
             <h2 id="proof-title">
-              Built for considered outreach.
+              An owner’s standard
               <br />
-              <em>Starting with Proof.</em>
+              <em>for outreach.</em>
             </h2>
             <p>
-              An evidence-first approach to outreach: fewer names, a clearer
-              reason to start a conversation, and a pitch that reflects the
-              company behind it.
+              Proof’s owner, Leonid Bugaev, puts the goal simply: understand the
+              team, make the offer relevant, and keep the company’s voice. That
+              is the standard behind every part of the workflow.
             </p>
           </div>
           <div className="tp-quote-layout">
@@ -445,17 +353,128 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="tp-method tp-shell" aria-labelledby="method-title">
+          <div className="tp-section-intro">
+            <span className="tp-index">
+              04 / LESS SETUP. LESS STARTING OVER.
+            </span>
+            <h2 id="method-title">
+              Start with your site.
+              <br />
+              <em>Keep your judgment.</em>
+            </h2>
+          </div>
+          <div className="tp-method-row">
+            <div className="tp-method-number">01</div>
+            <div className="tp-method-copy">
+              <h3>
+                Skip the blank brief.
+                <br />
+                Share your website.
+              </h3>
+              <p>
+                Review the offer, real copy examples, logo and customer profiles
+                suggested from your website. Add your voice and design
+                references once. Change them here or in Settings whenever you
+                need.
+              </p>
+            </div>
+            <div className="tp-source-slip">
+              <span className="tp-index">
+                YOUR BRAND / NOT A GENERIC TEMPLATE
+              </span>
+              <div className="tp-source-url">
+                your-company.com <ArrowUpRight size={14} />
+              </div>
+              <div className="tp-slip-evidence">
+                <span>Offer & actual copy</span>
+                <span>Logo & style clues</span>
+                <span>Suggested ICPs</span>
+              </div>
+              <p>
+                Found on your site.
+                <br />
+                <strong>Approved by you.</strong>
+              </p>
+            </div>
+          </div>
+          <div className="tp-method-row">
+            <div className="tp-method-number">02</div>
+            <div className="tp-method-copy">
+              <h3>
+                Trade the contact dump
+                <br />
+                for a daily shortlist.
+              </h3>
+              <p>
+                Set the profile and discovery pace. Connected agents find and
+                qualify candidates in small steps. Or add a website or GitHub
+                link yourself. Pause sourcing or syncing independently—your
+                queue should fit your capacity.
+              </p>
+            </div>
+            <div className="tp-pace-slip">
+              <span className="tp-index">EXAMPLE PACE / NOT A LIVE RUN</span>
+              <div className="tp-pace-days">
+                {["M", "T", "W", "T", "F"].map((day, i) => (
+                  <div key={i}>
+                    <span>{day}</span>
+                    <div>
+                      {Array.from({ length: i === 3 ? 0 : 3 }).map((_, j) => (
+                        <i key={j} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="tp-pace-footer">
+                <span>A queue you can actually review</span>
+                <span>
+                  <Pause size={13} /> Pause anytime
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="tp-method-row">
+            <div className="tp-method-number">03</div>
+            <div className="tp-method-copy">
+              <h3>
+                Pick the account.
+                <br />
+                Review the pitch.
+              </h3>
+              <p>
+                Choose a researched lead to generate its landing page and first
+                message. Edit the details, publish the page when ready, and
+                review the exact email before sending. LinkedIn and X drafts
+                stay ready for manual outreach.
+              </p>
+            </div>
+            <div className="tp-approval-slip">
+              <span className="tp-index">
+                YOUR NAME IS ON IT. YOUR APPROVAL MATTERS.
+              </span>
+              <h4>
+                Agents prepare.
+                <br />
+                <em>You approve.</em>
+              </h4>
+              <span className="tp-approval-stamp">
+                PAGE → DRAFT → YOUR CALL
+              </span>
+            </div>
+          </div>
+        </section>
+
         <PricingLedger onInterest={registerInterest} />
 
         <section className="tp-faq tp-shell" aria-labelledby="faq-title">
           <div>
-            <span className="tp-index">
-              05 / THE SMALL PRINT, IN PLAIN LANGUAGE
-            </span>
+            <span className="tp-index">06 / BEFORE YOU JOIN</span>
             <h2 id="faq-title">
-              Good questions.
+              Less guesswork.
               <br />
-              <em>Clear answers.</em>
+              <em>Clear expectations.</em>
             </h2>
           </div>
           <div>
@@ -479,28 +498,26 @@ export default function LandingPage() {
         >
           <div className="tp-shell tp-access-layout">
             <div>
-              <span className="tp-index">
-                YOUR NEXT GOOD CONVERSATION STARTS HERE
-              </span>
+              <span className="tp-index">07 / THE NEXT STEP IS SMALL</span>
               <h2 id="access-title">
-                Less prospecting.
+                Stop starting
                 <br />
-                <em>More personal.</em>
+                <em>every pitch from zero.</em>
               </h2>
               <p>
-                Get on the early-access list. Bring your website.
-                <br />
-                We'll help you give the next pitch a reason.
+                Your next step is one email—not another project. Join the
+                early-access list for access announcements and product updates.
+                No setup to finish today.
               </p>
               <span className="tp-access-note">
-                No card. No automatic outreach. No billing enabled.
+                No card. No payment today. No messages sent without your review.
               </span>
             </div>
             <form onSubmit={submit}>
               <div className="tp-interest-note">
                 {interest
-                  ? `Your interest: ${proposedPlans.find(p => p.id === interest)?.name} · indicative pricing only`
-                  : "A considered pipeline. Not another contact dump."}
+                  ? `Your interest: ${proposedPlans.find(p => p.id === interest)?.name} · proposed plan`
+                  : "Your next pitch starts with the right account."}
               </div>
               <label htmlFor="early-access-email">Work email</label>
               <div className="tp-signup-row">
@@ -519,7 +536,7 @@ export default function LandingPage() {
                   type="submit"
                   disabled={signup.isPending}
                 >
-                  {signup.isPending ? "Joining…" : "Request early access"}
+                  {signup.isPending ? "Joining…" : marketing.primaryCta}
                   <ArrowRight size={15} />
                 </button>
               </div>
@@ -546,7 +563,8 @@ export default function LandingPage() {
                 />
               </div>
               <p className="tp-signup-note">
-                Requesting access does not enroll you in a plan.
+                Email list only. Workspace access is separate. No subscription
+                starts. Unsubscribe anytime.
               </p>
             </form>
           </div>
@@ -554,7 +572,7 @@ export default function LandingPage() {
       </main>
       <footer className="tp-footer tp-shell">
         <LeadloomWordmark />
-        <span>Find the right fit. Make it personal.</span>
+        <span>The right account. A relevant pitch. Your voice.</span>
         <div>
           <Link href="/privacy">Privacy</Link>
           <button type="button" onClick={() => startLogin()}>

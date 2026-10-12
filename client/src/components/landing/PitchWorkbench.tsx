@@ -39,11 +39,13 @@ export interface PitchWorkbenchProps {
 }
 
 const stageDescriptions: Record<StageId, string> = {
-  find: "A public signal is pinned before a lead becomes a story.",
-  qualify: "Evidence, working reason and unknowns stay in one brief.",
-  select: "An owner decides whether this is worth making personal.",
-  page: "The reason takes shape as a private, editable page proposal.",
-  outreach: "A first note is prepared for review — never sent here.",
+  find: "Start with a public signal so the pitch has a real reason behind it.",
+  qualify:
+    "See the fit, sources and unanswered questions without rebuilding the research.",
+  select: "Choose the account worth a personal page. Skip the rest.",
+  page: "Turn the approved context into a page that connects your offer to this account.",
+  outreach:
+    "Start with a relevant first message, not a blank screen. Nothing is sent here.",
 };
 
 const checksByStage: Record<StageId, string[]> = {
@@ -131,8 +133,8 @@ function FindStage() {
         </div>
         <h3>Hiring platform engineers</h3>
         <p className="pitch-workbench__sheet-copy">
-          A hiring signal is a starting thread, not a conclusion. Keep the
-          source beside the question it raises.
+          A public hiring post gives you something specific to investigate. Keep
+          the source beside the lead instead of guessing their intent.
         </p>
         <div className="pitch-workbench__signal-foot">
           <span>
@@ -196,8 +198,8 @@ function QualifyStage() {
           02
         </span>
         <p>
-          Turn a signal into a reason someone can recognize. Keep the gaps
-          visible so a person can decide what to ask next.
+          Get a reason to consider the account—and the gaps you still need to
+          check. A score should guide your review, not replace it.
         </p>
       </div>
     </div>
@@ -269,8 +271,9 @@ function SelectStage({
         <div className="pitch-workbench__selection-rule" aria-hidden="true" />
         <PaperLabel>Human boundary</PaperLabel>
         <p>
-          Research can arrange the evidence. An owner decides if the reason is
-          worth carrying forward.
+          Save the page work for accounts you actually want to pursue. Approving
+          this fictional lead shows the next step; it does not change your
+          database.
         </p>
       </div>
     </div>
@@ -345,7 +348,7 @@ function PageStage({ selected }: { selected: boolean }) {
         </div>
       </div>
       <div className="pitch-workbench__page-note">
-        <PaperLabel>Layer added</PaperLabel>
+        <PaperLabel>A pitch they can review</PaperLabel>
         <p>
           The page is a private proposal from Proof. It is not an endorsement by
           the prospect and cannot be published from this demo.
@@ -431,7 +434,7 @@ function OutreachStage() {
       </div>
       <div className="pitch-workbench__outreach-note">
         <span className="pitch-workbench__outreach-line" aria-hidden="true" />
-        <PaperLabel>Boundary held</PaperLabel>
+        <PaperLabel>You control the send</PaperLabel>
         <p>
           No recipient, provider or send action is attached to this illustrative
           draft.
@@ -520,7 +523,7 @@ function MarginSlip({ activeStage }: { activeStage: StageId }) {
           <PaperLabel>Margin note</PaperLabel>
           <span>{stage.number}</span>
         </div>
-        <h3>What’s checked</h3>
+        <h3>Why this step matters</h3>
         <ul>
           {checksByStage[activeStage].map(check => (
             <li key={check}>
@@ -577,7 +580,7 @@ export function PitchWorkbench({ onReplay }: PitchWorkbenchProps) {
             className="pitch-workbench__title-mark-thread"
             aria-hidden="true"
           />
-          <span id="pitch-workbench-title">Tailor the reason</span>
+          <span id="pitch-workbench-title">From research to their pitch</span>
         </div>
         <div className="pitch-workbench__demo-flag">
           <span className="pitch-workbench__live-dot" aria-hidden="true" />
@@ -634,11 +637,13 @@ export function PitchWorkbench({ onReplay }: PitchWorkbenchProps) {
                 {activeMeta.number} / {activeMeta.label}
               </span>
               <h2>
-                {activeStage === "find" && "Find a thread worth following."}
-                {activeStage === "qualify" && "Make the reason legible."}
-                {activeStage === "select" && "Choose what earns attention."}
-                {activeStage === "page" && "Give the context a place to land."}
-                {activeStage === "outreach" && "Prepare the first sentence."}
+                {activeStage === "find" && "Find a reason to reach out."}
+                {activeStage === "qualify" && "Know why the account fits."}
+                {activeStage === "select" && "Pick who gets a personal pitch."}
+                {activeStage === "page" &&
+                  "Show how your offer fits their world."}
+                {activeStage === "outreach" &&
+                  "Open with a reason—not a template."}
               </h2>
             </div>
             <span className="pitch-workbench__stage-note">

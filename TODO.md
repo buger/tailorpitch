@@ -98,3 +98,12 @@ Crash-fix evidence: ten actual React component-render regressions pass, includin
 ## Owner-approved Proof quotes — 12 October 2026
 
 Leonid Bugaev explicitly approved removal of the draft/testimonial warnings and attribution of the existing two perspective quotes to his name as Proof owner. Both interactive landing and crawler-visible initial HTML now use Leonid Bugaev — Owner, Proof. This approval concerns these quotes only: no performance metrics, fabricated customer outcomes, billing enablement or unlabeled live-demo claims were added.
+
+## Full landing offer/story rewrite
+
+- [x] Apply Hormozi value drivers to all marketing copy: clear audience and desired outcome, concrete mechanism/confidence, less effort and fewer handoffs, literal controls/no-card next step; no invented guarantees, timing, savings, scarcity or revenue results.
+- [x] Restructure outcome → problem/alternative → dedicated interactive mechanism → approved Proof perspective → simple onboarding/control steps → explicit value stack/pricing → objections → consistent early-access CTA; preserve the Refero visual direction, exact Leonid quotes, private login, consent/privacy and local demo controls.
+- [x] Keep $99 including up to100 researched leads and10 pages plus current higher illustrative plans and correct separate credit allocations; do not add billing. Explain provider costs and manual LinkedIn/X drafts. Synchronize initial HTML/social metadata and all page copy.
+- [x] Inspect actual desktop/mobile rendered hero, story, pricing and signup; validate scripts, build and tests and save through the enabled publication flow.
+
+Full-story evidence: shared headline/FAQs and initial public HTML are aligned; section-order/allowance/signup/quote tests pass. Actual desktop1440 and mobile390 screenshots inspected, zero JS page errors/horizontal overflow, local gallery/workbench/channel/pricing navigation retained. Focus remains99 with100researched and10pages; no billing or database mutation. All73tests/typecheck/build passed; final added assertion rechecked. Focused read-only review confirmed the four-driver story and prompted an explicit email-list-only caption and shorter closing copy. Owner role is used consistently and approved quotes remain verbatim.

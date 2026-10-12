@@ -20,15 +20,17 @@ export function PricingLedger({
       aria-labelledby="pricing-title"
     >
       <div className="tp-section-intro">
-        <span className="tp-index">04 / THE OFFER</span>
+        <span className="tp-index">05 / YOUR PERSONAL PITCH PACKAGE</span>
         <h2 id="pricing-title">
-          Less busywork.
+          Your next 10 pitches.
           <br />
-          <em>More room to sell.</em>
+          <em>Built around the right 100 leads.</em>
         </h2>
         <p>
-          Start with a focused pipeline. Spend your attention on the right
-          accounts, not another list you will never finish.
+          The proposed $99 Focus plan pairs up to 100 researched leads with 10
+          personalized landing pages. Research the shortlist. Make the accounts
+          you choose feel understood. Need more? Pick the same workflow with a
+          larger monthly allowance.
         </p>
       </div>
       <div className="tp-price-layout">
@@ -38,8 +40,8 @@ export function PricingLedger({
           aria-label="Proposed plans"
         >
           <div className="tp-ledger-top">
-            <span>MONTHLY PLAN / PROPOSAL</span>
-            <span>No billing enabled</span>
+            <span>PROPOSED MONTHLY PLANS</span>
+            <span>Early access · Not a checkout</span>
           </div>
           {proposedPlans.map((p, index) => (
             <button
@@ -65,13 +67,16 @@ export function PricingLedger({
             </button>
           ))}
           <p className="tp-price-footnote">
-            Illustrative prices and allowances. Not available to purchase. Final
-            pricing may change.
+            Proposed pricing—not available to purchase yet. No card is
+            collected. Final prices and allowances may change. Connected
+            provider fees are separate.
           </p>
         </div>
         <div className="tp-allocation" key={plan.id}>
           <div className="tp-allocation-head">
-            <span className="tp-index">YOUR PROPOSED MONTHLY ALLOCATION</span>
+            <span className="tp-index">
+              {plan.name.toUpperCase()} / HERE’S WHAT YOU GET
+            </span>
             <span className="tp-ticket-notch" aria-hidden="true">
               ✳
             </span>
@@ -95,19 +100,30 @@ export function PricingLedger({
             </div>
           </div>
           <p className="tp-credit-note">
-            Both allowances included: up to {plan.researchedLeads} researched
-            leads <strong>and</strong> {plan.personalizedPages} personalized
-            pages. Separate proposed allocations—not either/or.
+            Up to {plan.researchedLeads} researched leads <strong>and</strong>{" "}
+            {plan.personalizedPages} personalized pages. Both allowances are
+            included, with separate credit allocations. You don’t have to trade
+            your research budget for your pages.
           </p>
           <ul className="tp-plan-inclusions">
             <li>
-              <Check size={14} /> Company voice & visual references
+              <Check size={14} /> Research briefs with sources—not just contact
+              names
             </li>
             <li>
-              <Check size={14} /> Editable pages & outreach drafts
+              <Check size={14} /> Account-specific pages you can edit and
+              publish
             </li>
             <li>
-              <Check size={14} /> Adjustable sourcing pace & pause controls
+              <Check size={14} /> First-message drafts in your company’s voice
+            </li>
+            <li>
+              <Check size={14} /> Website-led brand setup and suggested customer
+              profiles
+            </li>
+            <li>
+              <Check size={14} /> A paced discovery queue, with pause and review
+              controls
             </li>
           </ul>
           <button
@@ -115,11 +131,11 @@ export function PricingLedger({
             className="tp-cta"
             onClick={() => onInterest(plan.id)}
           >
-            Register interest in {plan.name}
+            Join early access · {plan.name}
             <ArrowRight size={16} />
           </button>
           <span className="tp-no-charge">
-            Early-access list only. No card. No charge.
+            Register interest only. No payment or subscription starts.
           </span>
         </div>
       </div>
@@ -135,11 +151,12 @@ function CreditExample() {
     <div className="tp-credit-example">
       <div>
         <span className="tp-index">TRY THE MATH / FOCUS PLAN</span>
-        <h3>Know what the work costs.</h3>
+        <h3>See how your allowance works.</h3>
         <p>
-          A planning example, not a live balance. Editing saved drafts and
-          preparing outreach drafts are proposed to be included. Rollover and
-          extra-credit pricing are not finalized.
+          Move the sliders to plan your research and pages. This is an example,
+          not a live balance. Saved-draft editing and outreach drafts are
+          proposed to be included; rollover and extra-credit prices are not
+          finalized.
         </p>
       </div>
       <div className="tp-credit-controls">

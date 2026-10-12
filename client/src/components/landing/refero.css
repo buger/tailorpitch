@@ -818,3 +818,88 @@
     min-height: 570px;
   }
 }
+
+/* Outcome-first story: explicit offer, then problem → mechanism → proof → setup. */
+.tp-hero-offer {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid #bcb8b0;
+  max-width: 435px;
+}
+.tp-hero-offer strong {
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 600;
+  display: block;
+}
+.tp-landing .tp-hero-offer .tp-hero-fineprint {
+  margin-top: 7px;
+}
+.tp-example {
+  padding-top: 76px;
+}
+.tp-example .tp-section-intro > p {
+  max-width: 670px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.tp-example .tp-workbench-wrap {
+  margin-top: 29px;
+}
+.tp-inline-next {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  border-top: 1px solid #bcb8b0;
+  padding-top: 24px;
+}
+.tp-inline-next p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.tp-inline-next .tp-text-cta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+}
+.tp-landing .tp-pricing .tp-section-intro h2 {
+  max-width: 950px;
+}
+.tp-landing .tp-pricing .tp-section-intro p {
+  max-width: 680px;
+}
+.tp-landing .tp-plan-inclusions li {
+  align-items: flex-start;
+  line-height: 1.8;
+}
+.tp-landing .tp-plan-inclusions svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.tp-landing .tp-contrast-left > p {
+  max-width: 380px;
+}
+.tp-landing .tp-access-layout > div > p {
+  max-width: 450px;
+}
+@media (max-width: 800px) {
+  .tp-example {
+    padding-top: 50px;
+  }
+  .tp-hero-offer {
+    margin-top: 22px;
+  }
+  .tp-hero-offer strong {
+    font-size: 11px;
+  }
+  .tp-inline-next {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tp-landing .tp-workbench-caption {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

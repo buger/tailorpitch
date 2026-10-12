@@ -28,6 +28,8 @@ describe("owner-approved Proof quote attribution", () => {
     expect(source).not.toContain("Draft for Proof approval");
     expect(source).not.toContain("Not a verified testimonial");
     expect(source).not.toContain("generated draft positioning");
-    expect(source).toContain("No payment today");
+    expect(
+      readFileSync(new URL("../shared/marketing.ts", import.meta.url), "utf8")
+    ).toContain("No payment today");
   });
 });
