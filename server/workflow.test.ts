@@ -73,6 +73,24 @@ describe("company workflow boundaries", () => {
       code: "UNAUTHORIZED",
     });
     await expect(
+      caller.icpAgents.start({
+        icpId: 3,
+        name: "Blocked",
+        config: {
+          dailyTarget: 3,
+          maxDailyAttempts: 6,
+          intervalMinutes: 240,
+          timezone: "UTC",
+          weekdaysOnly: true,
+          startHour: 9,
+          endHour: 17,
+          allowedActorIds: ["apify/google-search-scraper"],
+          instructions: "Test",
+          execution: "local",
+        },
+      })
+    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(
       caller.icpAgents.toggle({ id: 1, enabled: true })
     ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.icpAgents.tick({ id: 1 })).rejects.toMatchObject({

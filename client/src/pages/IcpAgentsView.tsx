@@ -1,3 +1,9 @@
+import { IntakeControls } from "@/components/IntakeControls";
+import {
+  preferredIcpId,
+  startBlocker,
+  agentStateMessage,
+} from "@shared/agentReadiness";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import {
@@ -45,6 +51,7 @@ export function IcpAgentsView() {
     refetchInterval: 15000,
   });
   const save = api.icpAgents.save.useMutation(),
+    start = api.icpAgents.start.useMutation(),
     toggle = api.icpAgents.toggle.useMutation(),
     tick = api.icpAgents.tick.useMutation(),
     schedule = api.icpAgents.registerSchedule.useMutation(),
@@ -74,6 +81,7 @@ export function IcpAgentsView() {
       await query.refetch();
       return true;
     } catch (e) {
+      void query.refetch();
       setMessage({
         text: e instanceof Error ? e.message : "Agent action failed.",
         kind: "error",
@@ -82,7 +90,11 @@ export function IcpAgentsView() {
     }
   };
   const edit = (a?: Agent, icpId?: number) => {
-    const id = a?.icpId ?? icpId ?? query.data?.icps[0]?.id ?? 0;
+    const id =
+      a?.icpId ??
+      icpId ??
+      preferredIcpId(query.data?.icps ?? [], query.data?.sourceStates ?? []);
+    const source = query.data?.sourceStates.find(r => r.icpId === id);
     setEditor({
       icpId: id,
       name:
@@ -91,7 +103,11 @@ export function IcpAgentsView() {
       config:
         a?.config ??
         icpAgentConfigSchema.parse({
-          allowedActorIds: [agentSourceIds[0]],
+          allowedActorIds: [
+            agentSourceIds.find(actor => actor === source?.actorId) ??
+              agentSourceIds[0],
+          ],
+          dailyTarget: Math.min(3, source?.dailyLimit ?? 3),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
     });
@@ -111,6 +127,46 @@ export function IcpAgentsView() {
     );
   const data = query.data,
     total = data.agents.reduce((sum, a) => sum + a.delivered, 0);
+  const sourceState = editor
+    ? data.sourceStates.find(r => r.icpId === editor.icpId)
+    : undefined;
+  const blocked = editor
+    ? startBlocker({
+        source: sourceState,
+        ...data.controls,
+        workerActive: data.worker.active,
+        executor: editor.config.execution,
+      })
+    : null;
+  const submit = async (shouldStart: boolean) => {
+    if (!editor) return;
+    const parsed = icpAgentConfigSchema.safeParse(editor.config);
+    if (!parsed.success) {
+      setMessage({
+        text:
+          parsed.error.issues[0]?.message ??
+          "Check daily bounds, timezone and working hours.",
+        kind: "error",
+      });
+      return;
+    }
+    if (shouldStart && blocked) {
+      setMessage({ text: blocked, kind: "error" });
+      return;
+    }
+    const input = { ...editor, config: parsed.data };
+    const ok = await perform(
+      async () => {
+        if (!shouldStart) return save.mutateAsync(input);
+        const result = await start.mutateAsync(input);
+        return result;
+      },
+      shouldStart
+        ? "Agent enabled on the Cloud Computer. The next check follows its working hours and daily limits."
+        : "Agent saved paused. Resume after reviewing its policy."
+    );
+    if (ok) setEditor(null);
+  };
   const update = (values: Partial<IcpAgentConfig>) =>
     setEditor(x => (x ? { ...x, config: { ...x.config, ...values } } : x));
   return (
@@ -176,6 +232,49 @@ export function IcpAgentsView() {
           onDismiss={() => setMessage(undefined)}
         />
       )}
+      <IntakeControls />
+      <section className="ia-readiness" aria-label="ICP startup readiness">
+        <header>
+          <MonoLabel>Start here / ICP readiness</MonoLabel>
+          <p>
+            Choose an approved ICP, check that sourcing and sync are open, then
+            save and start. Saving paused alone does not enable an agent.
+          </p>
+        </header>
+        {data.sourceStates.map(r => {
+          const icp = data.icps.find(i => i.id === r.icpId);
+          return (
+            <div className="ia-ready-row" key={r.icpId}>
+              <div>
+                <strong>{icp?.criteria.name ?? "ICP"}</strong>
+                <span>{r.message}</span>
+              </div>
+              <StatusChip tone={r.state === "ready" ? "good" : "warn"}>
+                {r.state === "ready" ? "Approved" : "Needs review"}
+              </StatusChip>
+              {r.state === "ready" ? (
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    edit(
+                      data.agents.find(a => a.icpId === r.icpId),
+                      r.icpId
+                    )
+                  }
+                >
+                  {data.agents.some(a => a.icpId === r.icpId)
+                    ? "Configure agent"
+                    : "Configure & start"}
+                </Button>
+              ) : (
+                <Link href={`/app/sources?icpId=${r.icpId}`}>
+                  Review strategy <ArrowUpRight size={14} />
+                </Link>
+              )}
+            </div>
+          );
+        })}
+      </section>
       <div className="ia-roster">
         {!data.agents.length && (
           <section className="ia-empty">
@@ -268,6 +367,7 @@ export function IcpAgentsView() {
                 </span>
               </div>
             </div>
+            <p className="ia-state-note">{agentStateMessage(a.state)}</p>
             {a.lastError && (
               <div className="ia-error">Paused for review: {a.lastError}</div>
             )}
@@ -275,7 +375,12 @@ export function IcpAgentsView() {
               <div className="ia-actions">
                 <Button
                   variant="secondary"
-                  disabled={toggle.isPending}
+                  disabled={
+                    toggle.isPending ||
+                    (!a.enabled &&
+                      (data.controls.sourcingPaused ||
+                        data.controls.syncPaused))
+                  }
                   onClick={() =>
                     void perform(
                       () =>
@@ -289,6 +394,15 @@ export function IcpAgentsView() {
                   {a.enabled ? <Pause size={14} /> : <Play size={14} />}
                   {a.enabled ? "Pause agent" : "Resume agent"}
                 </Button>
+                {!a.enabled &&
+                  (data.controls.sourcingPaused ||
+                    data.controls.syncPaused) && (
+                    <span className="text-xs text-red-700">
+                      Resume company{" "}
+                      {data.controls.sourcingPaused ? "sourcing" : "sync"} above
+                      first.
+                    </span>
+                  )}
                 <Button variant="secondary" onClick={() => edit(a)}>
                   Edit pace & sources
                 </Button>
@@ -449,29 +563,13 @@ export function IcpAgentsView() {
       {editor && (
         <section className="ia-editor" aria-label="ICP agent configuration">
           <header>
-            <MonoLabel>Configure / saved paused</MonoLabel>
+            <MonoLabel>Configure / review & start</MonoLabel>
             <h2>One ICP. A clear mandate.</h2>
           </header>
           <form
             onSubmit={e => {
               e.preventDefault();
-              void (async () => {
-                let parsed: IcpAgentConfig;
-                try {
-                  parsed = icpAgentConfigSchema.parse(editor.config);
-                } catch {
-                  setMessage({
-                    text: "Check daily bounds, timezone and working hours. Choose at least one available source.",
-                    kind: "error",
-                  });
-                  return;
-                }
-                const ok = await perform(
-                  () => save.mutateAsync({ ...editor, config: parsed }),
-                  "Agent saved paused. Resume it explicitly after reviewing the policy."
-                );
-                if (ok) setEditor(null);
-              })();
+              void submit(false);
             }}
           >
             <label className="ia-select">
@@ -494,11 +592,27 @@ export function IcpAgentsView() {
               >
                 {data.icps.map(i => (
                   <option value={i.id} key={i.id}>
-                    {i.criteria.name}
+                    {i.criteria.name} —{" "}
+                    {data.sourceStates.find(r => r.icpId === i.id)?.state ===
+                    "ready"
+                      ? "approved"
+                      : "needs source review"}
                   </option>
                 ))}
               </select>
             </label>
+            <div className="ia-editor-readiness">
+              <strong>
+                {sourceState?.state === "ready"
+                  ? "Source strategy approved"
+                  : "Source review required"}
+              </strong>
+              <p>{sourceState?.message}</p>
+              {blocked && <p role="status">{blocked}</p>}
+              <Link href={`/app/sources?icpId=${editor.icpId}`}>
+                Review this ICP’s source strategy ↗
+              </Link>
+            </div>
             <TextInput
               label="Agent name"
               value={editor.name}
@@ -511,7 +625,7 @@ export function IcpAgentsView() {
                 label="Qualified leads per day · max 5"
                 type="number"
                 min={1}
-                max={5}
+                max={Math.min(5, sourceState?.dailyLimit ?? 5)}
                 value={editor.config.dailyTarget}
                 onChange={e => update({ dailyTarget: Number(e.target.value) })}
               />
@@ -633,8 +747,25 @@ export function IcpAgentsView() {
               outreach or landing-page publication.
             </p>
             <div className="ia-actions">
-              <Button disabled={save.isPending}>
-                {save.isPending ? "Saving…" : "Save ICP agent · paused"}
+              <Button
+                type="button"
+                disabled={save.isPending || start.isPending || Boolean(blocked)}
+                onClick={() => void submit(true)}
+              >
+                <Play size={14} />
+                {start.isPending
+                  ? "Starting…"
+                  : "Save & start on Cloud Computer"}
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={
+                  save.isPending ||
+                  start.isPending ||
+                  sourceState?.state !== "ready"
+                }
+              >
+                {save.isPending ? "Saving…" : "Save paused"}
               </Button>
               <Button
                 type="button"

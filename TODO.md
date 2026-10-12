@@ -211,3 +211,11 @@ Priority verification: 33 test files / 162 tests and TypeScript/build passed. Pu
 - [x] Regression/build/desktop-mobile checks, cloud deploy and complete GitHub sync.
 
 Verified: 34 test files / 167 tests; final affected regressions 10/10, compiler/build clean. Real generation returned "Using Proof in Hilbert", named prospect headline, concrete workflow and work removed, plus observed logo; no draft was saved. Live owner view, same-tab reload, owner published-page preview and anonymous rendered view each incremented analytics. Desktop/mobile inspected, no overflow or JS errors. Historical excluded views cannot be reconstructed; no backfill or unique-person claim. Source saved and GitHub synchronized after final checks.
+
+## ICP agent start and delivery repair
+- [x] Agents shows current source readiness per ICP and the company sourcing/sync pause switches; new configuration defaults to an approved, executable ICP instead of the first arbitrary profile.
+- [x] Owner can Save and start on the Cloud Computer or Save paused; invalid/missing source approvals and intake pauses are explicit and never silently bypassed.
+- [x] Paced cloud dispatch works with the approved source, maintains daily/interval limits and records actual outcomes without filler lead promises.
+- [x] Verify live startup, regression and mock-only UI checks, then deploy and sync complete source to GitHub.
+
+Evidence: approved ICP 30003/source plan 60001 defaults correctly; company sourcing reopened while sync remained unchanged. Scout 1 is enabled on the cloud worker with at most 3 qualified leads/day, 3 attempts/day, 240-minute interval and weekdays 09:00–17:00 UTC. One real Google run completed; malformed URL paused the old code, then the same signed provider result was re-reviewed without another scrape or resetting counters. The candidate was rejected for unproven dependencies, official initiative evidence and CI custody. Zero leads delivered; the scout remains enabled, awaiting its next eligible turn. Exact source collector now reads original GitHub issues/postmortem files, not substituted README content; observed repository identity is derived only from a sourced GitHub link. New correlation signatures remain stable after MySQL JSON key reordering. Final mock desktop/mobile startup covers real batched query envelopes and no overflow or live mutations.

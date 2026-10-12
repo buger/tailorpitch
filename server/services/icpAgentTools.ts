@@ -4,7 +4,7 @@ import { ENV } from "../_core/env";
 import { agentSourceIds, type IcpAgentConfig } from "../../shared/icpAgents";
 import { discoveryInput } from "./apifyInputs";
 import type { SourceActor } from "../../shared/sourcePlans";
-import { normalizePublicUrl } from "./publicEvidence";
+import { normalizePublicUrl, githubRepo } from "./publicEvidence";
 export function boundedAgentInput(
   actorId: string,
   query: string,
@@ -123,6 +123,16 @@ export function agentRunPath(actorId: string) {
     throw new Error("Tool not allowed.");
   return `actors/${actorId.replace("/", "~")}/runs?timeout=600&restartOnError=false&maxTotalChargeUsd=0.5`;
 }
+function canonicalInput(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalInput);
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, item]) => [key, canonicalInput(item)])
+    );
+  return value;
+}
 export function agentRunMarker(
   companyId: number,
   agentId: number,
@@ -141,7 +151,7 @@ export function agentRunMarker(
         agentId,
         cycleId,
         actorId,
-        input,
+        canonicalInput(input),
       ])
     )
     .digest("hex");
@@ -178,7 +188,10 @@ export function observedRecordUrls(records: unknown[]) {
     if (typeof x === "string") {
       for (const raw of x.match(/https?:\/\/[^\s<>"'\\]+/g) ?? []) {
         try {
-          result.add(normalizePublicUrl(raw.replace(/[),.;]+$/, "")));
+          const url = normalizePublicUrl(raw.replace(/[),.;]+$/, ""));
+          result.add(url);
+          const repo = githubRepo(url);
+          if (repo) result.add(normalizePublicUrl(repo.url));
         } catch {}
       }
     } else if (Array.isArray(x)) x.slice(0, 40).forEach(visit);

@@ -400,3 +400,125 @@
 .ia-editor {
   scroll-margin-top: 88px;
 }
+
+.ia-readiness {
+  border: 1px solid #dedbd3;
+  background: #fbfaf6;
+  margin-bottom: 28px;
+}
+.ia-readiness header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #dedbd3;
+}
+.ia-readiness header p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 8px;
+  color: #6b7066;
+}
+.ia-ready-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e7e3dc;
+}
+.ia-ready-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.ia-ready-row strong {
+  display: block;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.ia-ready-row span,
+.ia-ready-row a {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.ia-ready-row > div > span {
+  display: block;
+  color: #777d70;
+  margin-top: 5px;
+}
+.ia-ready-row > a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: underline;
+}
+.ia-editor-readiness {
+  border: 1px solid #dedbd3;
+  background: #f4f3ed;
+  padding: 16px;
+}
+.ia-editor-readiness strong {
+  font-size: 13px;
+}
+.ia-editor-readiness p,
+.ia-editor-readiness a {
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 6px;
+}
+.ia-state-note {
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 0 24px 14px;
+  color: #6b7066;
+}
+@media (max-width: 640px) {
+  .ia-ready-row {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  .ia-ready-row > div {
+    flex-basis: 100%;
+  }
+  .ia-ready-row > button,
+  .ia-ready-row > a {
+    margin-left: auto;
+  }
+}
+
+.ia-editor form {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ia-editor form > * {
+  min-width: 0;
+}
+.ia-editor fieldset {
+  min-width: 0;
+}
+.ia-select select {
+  width: 100%;
+  min-width: 0;
+}
+.ia-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 640px) {
+  .ia-editor {
+    padding: 20px;
+  }
+  .ia-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ia-editor .ia-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ia-editor .ia-actions button {
+    white-space: normal;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .ia-editor .ia-actions a {
+    margin-top: 6px;
+  }
+  .ia-editor form label,
+  .ia-editor legend {
+    overflow-wrap: anywhere;
+  }
+}

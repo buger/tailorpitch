@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pause, Play, RefreshCw } from "lucide-react";
 import { api } from "@/components/leadloom-types";
 import { MonoLabel, StatusChip } from "@/components/LeadloomUI";
@@ -8,15 +8,10 @@ export function IntakeControls() {
   const canManage = workspace.data?.role === "owner";
   const controls = api.intake.get.useQuery(undefined, { retry: false });
   const save = api.intake.save.useMutation();
-  const [sourcingPaused, setSourcingPaused] = useState(false);
-  const [syncPaused, setSyncPaused] = useState(false);
+  const utils = api.useUtils();
+  const sourcingPaused = controls.data?.sourcingPaused ?? false;
+  const syncPaused = controls.data?.syncPaused ?? false;
   const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!controls.data) return;
-    setSourcingPaused(controls.data.sourcingPaused);
-    setSyncPaused(controls.data.syncPaused);
-  }, [controls.data]);
 
   const toggle = async (key: "sourcingPaused" | "syncPaused") => {
     const next = {
@@ -27,9 +22,8 @@ export function IntakeControls() {
     setMessage(null);
     try {
       await save.mutateAsync(next);
-      setSourcingPaused(next.sourcingPaused);
-      setSyncPaused(next.syncPaused);
       await controls.refetch();
+      await utils.icpAgents.list.invalidate();
       setMessage("Saved. Existing provider work was not cancelled.");
     } catch (caught) {
       setMessage(
@@ -86,7 +80,11 @@ export function IntakeControls() {
               <Play className="h-4 w-4 text-sage-ink" />
             )}
             <StatusChip tone={sourcingPaused ? "warn" : "good"}>
-              {sourcingPaused ? "Paused" : "Open"}
+              {controls.data
+                ? sourcingPaused
+                  ? "Paused"
+                  : "Open"
+                : "Checking…"}
             </StatusChip>
           </span>
         </button>
@@ -116,7 +114,7 @@ export function IntakeControls() {
               <Play className="h-4 w-4 text-sage-ink" />
             )}
             <StatusChip tone={syncPaused ? "warn" : "good"}>
-              {syncPaused ? "Paused" : "Open"}
+              {controls.data ? (syncPaused ? "Paused" : "Open") : "Checking…"}
             </StatusChip>
           </span>
         </button>

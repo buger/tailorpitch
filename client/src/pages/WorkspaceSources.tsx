@@ -95,7 +95,12 @@ export function SourcesView({ workspace }: { workspace: Workspace }) {
     retry: false,
     staleTime: 600000,
   });
-  const [icpId, setIcpId] = useState(0);
+  const [icpId, setIcpId] = useState(() => {
+    const value = Number(
+      new URLSearchParams(window.location.search).get("icpId")
+    );
+    return Number.isSafeInteger(value) && value > 0 ? value : 0;
+  });
   const plans = api.sources.list.useQuery(
     { icpId },
     { enabled: icpId > 0, retry: false }
@@ -204,6 +209,15 @@ export function SourcesView({ workspace }: { workspace: Workspace }) {
         title="Find a reason. Then find the lead."
         description="Choose an ICP, tell us what would make an account worth contacting, and review the right Apify sources before any discovery runs."
       />
+      {plan?.approvedAt && !plan.stale && (
+        <div className="mb-5 border border-line p-4 text-sm">
+          <ShieldCheck size={16} className="inline mr-2" />
+          This ICP’s strategy is approved.{" "}
+          <Link className="underline ml-2" href="/app/agents">
+            Configure & start its cloud agent ↗
+          </Link>
+        </div>
+      )}
       <div className="mb-7 flex flex-wrap items-center gap-3 border-y border-line py-4 text-xs text-ink-muted">
         <ShieldCheck className="h-4 w-4 text-terracotta" />
         <span>Backend-managed Apify</span>

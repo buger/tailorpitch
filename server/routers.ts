@@ -7,6 +7,7 @@ import { saveEarlyAccessEmail } from "./services/emailSignups";
 import {
   listIcpAgents,
   saveIcpAgent,
+  saveAndStartIcpAgent,
   toggleIcpAgent,
   tickIcpAgent,
   reconcileIcpAgentCycle,
@@ -234,6 +235,23 @@ export const appRouter = router({
       )
       .mutation(({ ctx, input }) =>
         saveIcpAgent(ctx.company.id, input.icpId, input.name, input.config)
+      ),
+    start: ownerProcedure
+      .input(
+        z.object({
+          icpId: z.number().int().positive(),
+          name: z.string().trim().min(2).max(200),
+          config: icpAgentConfigSchema,
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        saveAndStartIcpAgent(
+          ctx.company.id,
+          input.icpId,
+          input.name,
+          input.config,
+          parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""
+        )
       ),
     toggle: ownerProcedure
       .input(

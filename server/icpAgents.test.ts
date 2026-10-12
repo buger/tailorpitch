@@ -135,6 +135,45 @@ describe("per ICP agent delivery rules", () => {
     ).toThrow();
     expect(agentRunPath(agentSourceIds[0])).toContain("maxTotalChargeUsd=0.5");
   });
+  it("keeps signed run bindings valid after MySQL reorders JSON keys", () => {
+    const a = agentRunMarker(1, 2, 3, agentSourceIds[0], {
+      z: { b: 2, a: 1 },
+      a: [{ x: 1, y: 2 }],
+    });
+    const b = agentRunMarker(1, 2, 3, agentSourceIds[0], {
+      a: [{ y: 2, x: 1 }],
+      z: { a: 1, b: 2 },
+    });
+    expect(a).toBe(b);
+    expect(
+      agentRunMarker(1, 2, 4, agentSourceIds[0], {
+        a: [{ y: 2, x: 1 }],
+        z: { a: 1, b: 2 },
+      })
+    ).not.toBe(a);
+  });
+  it("rejects missing/malformed/private candidate URLs before evidence fetch", () => {
+    const observed = new Set(["https://github.com/example/project"]);
+    for (const website of [
+      "",
+      "not-a-url",
+      "http://example.com",
+      "https://127.0.0.1/",
+    ]) {
+      expect(() =>
+        validateObservedCandidate(
+          { website, sourceUrl: "https://github.com/example/project" },
+          observed
+        )
+      ).toThrow();
+    }
+    expect(() =>
+      validateObservedCandidate(
+        { website: "https://github.com/example/project", sourceUrl: "" },
+        observed
+      )
+    ).toThrow();
+  });
   it("does not corrupt JSON when bounding large records, and observes rather than invents URLs", () => {
     const records = boundedRecords(
       Array.from({ length: 1000 }, () => ({
