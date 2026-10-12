@@ -37,7 +37,7 @@ export async function prepareInitialHtml(
       "How TailorPitch handles signup emails, company data, connected mailboxes and your privacy controls.";
     body = privacyBody;
   } else if (
-    /^\/app(?:\/(?:leads(?:\/\d+)?|icps|pages|outreach|inbox|settings|submissions))?$/.test(
+    /^\/app(?:\/(?:leads(?:\/\d+)?|icps|pages|outreach|inbox|settings|submissions|agents|onboarding))?$/.test(
       pathname
     )
   ) {

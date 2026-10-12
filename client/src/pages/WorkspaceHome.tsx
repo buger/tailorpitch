@@ -78,6 +78,30 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
           </StatusChip>
         }
       />
+      {workspace.role === "owner" &&
+        !workspace.company.onboardingCompletedAt && (
+          <section className="mb-7 flex flex-col gap-4 border border-terracotta/30 bg-terracotta-pale/40 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div>
+              <MonoLabel className="text-terracotta">
+                First owner pass / optional
+              </MonoLabel>
+              <h2 className="mt-2 font-display text-2xl tracking-[-.04em]">
+                Let the company website suggest a starting point.
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-muted">
+                Review real copy, observed style clues and editable ICP
+                hypotheses before saving anything. You can keep working
+                elsewhere while this remains open.
+              </p>
+            </div>
+            <a
+              href="/app/onboarding"
+              className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-sm bg-ink px-4 text-sm font-semibold text-paper hover:bg-ink/90"
+            >
+              Analyze company website <ArrowRight className="h-4 w-4" />
+            </a>
+          </section>
+        )}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {" "}
         <StatCard

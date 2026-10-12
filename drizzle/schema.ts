@@ -37,6 +37,7 @@ export const companies = mysqlTable("companies", {
   website: varchar("website", { length: 2000 }).notNull(),
   brand: json("brand").$type<Brand>().notNull(),
   seedVersion: int("seedVersion").default(0).notNull(),
+  onboardingCompletedAt: timestamp("onboardingCompletedAt"),
   publicOrigin: varchar("publicOrigin", { length: 2000 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
@@ -312,3 +313,28 @@ export const pipelineJobs = mysqlTable(
   },
   t => [uniqueIndex("pipeline_lead_stage").on(t.pipelineId, t.leadId, t.stage)]
 );
+
+export const intakeControls = mysqlTable("intakeControls", {
+  companyId: int("companyId").primaryKey(),
+  sourcingPaused: int("sourcingPaused").default(0).notNull(),
+  syncPaused: int("syncPaused").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export const analysisDrafts = mysqlTable("analysisDrafts", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").notNull(),
+  kind: mysqlEnum("kind", ["company", "lead"]).notNull(),
+  url: varchar("url", { length: 2000 }).notNull(),
+  result: json("result")
+    .$type<
+      | import("../shared/analysis").CompanyAnalysis
+      | import("../shared/analysis").LeadAnalysis
+    >()
+    .notNull(),
+  evidence: json("evidence")
+    .$type<import("../shared/analysis").AnalysisEvidence>()
+    .notNull(),
+  baseSignature: varchar("baseSignature", { length: 64 }).notNull(),
+  appliedAt: timestamp("appliedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

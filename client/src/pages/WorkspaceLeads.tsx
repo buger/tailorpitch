@@ -23,6 +23,8 @@ import {
   LeadEditor,
   type LeadEditorValues,
 } from "@/components/LeadEditor";
+import { LeadLinkIntake } from "@/components/LeadLinkIntake";
+import { IntakeControls } from "@/components/IntakeControls";
 import {
   Button,
   DrawerDialog,
@@ -64,6 +66,14 @@ type RunSyncMutation = ReturnType<typeof api.runs.sync.useMutation>;
 
 function leadStatusLabel(status: LeadRow["status"]): string {
   return status.replaceAll("_", " ");
+}
+
+function leadSourceLabel(source: string | null | undefined): string {
+  if (source === "github_intake") return "GitHub link";
+  if (source === "website_intake") return "Website link";
+  if (source === "manual_link") return "Manual link";
+  if (source === "apify") return "Provider sourcing";
+  return source ? source.replaceAll("_", " ") : "Manual";
 }
 
 function leadStatusTone(
@@ -125,6 +135,7 @@ export function LeadsView() {
   const [icpFilter, setIcpFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<LeadStatusFilter>("all");
   const [showAdd, setShowAdd] = useState(false);
+  const [showLinkIntake, setShowLinkIntake] = useState(false);
   const [showRun, setShowRun] = useState(false);
   const [syncingRunId, setSyncingRunId] = useState<number | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -187,6 +198,16 @@ export function LeadsView() {
               Find companies
             </Button>
             <Button
+              variant="secondary"
+              onClick={() => {
+                setActionError(null);
+                setShowLinkIntake(true);
+              }}
+            >
+              <FlaskConical className="h-4 w-4" />
+              Analyze a link
+            </Button>
+            <Button
               onClick={() => {
                 setActionError(null);
                 setShowAdd(true);
@@ -198,6 +219,7 @@ export function LeadsView() {
           </div>
         }
       />
+      <IntakeControls />
       <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_auto_auto_auto]">
         <label className="relative block">
           <Search className="absolute left-3 top-3 h-4 w-4 text-ink-muted" />
@@ -285,6 +307,13 @@ export function LeadsView() {
                   <Plus className="h-4 w-4" />
                   Add manually
                 </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowLinkIntake(true)}
+                >
+                  <FlaskConical className="h-4 w-4" />
+                  Analyze a link
+                </Button>
                 <Button variant="secondary" onClick={() => setShowRun(true)}>
                   Start a sourcing run
                 </Button>
@@ -294,7 +323,7 @@ export function LeadsView() {
         />
       ) : (
         <div className="overflow-x-auto border border-line bg-white">
-          <table className="min-w-[980px] w-full text-left">
+          <table className="min-w-[1100px] w-full text-left">
             <thead>
               <tr className="border-b border-line bg-paper">
                 <th className="px-5 py-3 font-mono text-[10px] uppercase tracking-[.12em] text-ink-muted">
@@ -302,6 +331,9 @@ export function LeadsView() {
                 </th>
                 <th className="px-5 py-3 font-mono text-[10px] uppercase tracking-[.12em] text-ink-muted">
                   Profile
+                </th>
+                <th className="px-5 py-3 font-mono text-[10px] uppercase tracking-[.12em] text-ink-muted">
+                  Source / context
                 </th>
                 <th className="px-5 py-3 font-mono text-[10px] uppercase tracking-[.12em] text-ink-muted">
                   Fit
@@ -342,6 +374,27 @@ export function LeadsView() {
                   </td>
                   <td className="px-5 py-4 text-xs text-ink-muted">
                     {lead.icpName || "Unassigned"}
+                  </td>
+                  <td className="max-w-[280px] px-5 py-4 text-xs text-ink-muted">
+                    <span className="font-semibold text-ink">
+                      {leadSourceLabel(lead.source)}
+                    </span>
+                    {lead.notes && (
+                      <p className="mt-1 line-clamp-2 leading-5">
+                        {lead.notes}
+                      </p>
+                    )}
+                    {lead.sourceUrl && (
+                      <a
+                        href={lead.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-terracotta underline"
+                      >
+                        <span className="truncate">{lead.sourceUrl}</span>
+                        <ExternalLink className="h-3 w-3 shrink-0" />
+                      </a>
+                    )}
                   </td>
                   <td className="px-5 py-4">{fitLabel(lead)}</td>
                   <td className="px-5 py-4">
@@ -389,6 +442,16 @@ export function LeadsView() {
             setShowAdd(false);
             await leads.refetch();
             setToast("Lead added.");
+          }}
+        />
+      )}
+      {showLinkIntake && (
+        <LeadLinkIntake
+          onClose={() => setShowLinkIntake(false)}
+          onSaved={async message => {
+            setShowLinkIntake(false);
+            await leads.refetch();
+            setToast(message || "Reviewed lead saved.");
           }}
         />
       )}

@@ -35,6 +35,11 @@ export function SettingsView({ workspace }: { workspace: Workspace }) {
         eyebrow="Settings / company workspace"
         title="Make the system sound like you."
         description="Brand instructions feed page and outreach generation. Credentials stay on the server and are cleared from the form after a successful connection."
+        action={
+          <a href="/app/onboarding">
+            <Button variant="secondary">Analyze website again</Button>
+          </a>
+        }
       />
       <div className="mb-8 flex gap-1 overflow-x-auto border-b border-line">
         {tabs.map(item => (

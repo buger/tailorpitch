@@ -1,3 +1,17 @@
+import { assertSyncOpen } from "./services/intakeControls";
+import { leadIdentity } from "./services/publicEvidence";
+import {
+  analyzeCompanyWebsite,
+  applyCompanyAnalysis,
+  analysisHistory,
+  analyzeLeadLink,
+  applyLeadAnalysis,
+} from "./services/analysis";
+import { intakeControlsSchema } from "../shared/analysis";
+import {
+  getIntakeControls,
+  saveIntakeControls,
+} from "./services/intakeControls";
 import { COOKIE_NAME } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -297,6 +311,52 @@ export const appRouter = router({
       return { success: true };
     }),
   }),
+  intake: router({
+    get: companyProcedure.query(({ ctx }) => getIntakeControls(ctx.company.id)),
+    save: ownerProcedure
+      .input(intakeControlsSchema)
+      .mutation(({ ctx, input }) => saveIntakeControls(ctx.company.id, input)),
+  }),
+  analysis: router({
+    history: companyProcedure.query(({ ctx }) =>
+      analysisHistory(ctx.company.id)
+    ),
+    company: ownerProcedure
+      .input(z.object({ url: safeUrl }))
+      .mutation(({ ctx, input }) => {
+        throttle(`analysis:${ctx.user.id}`, 3);
+        return analyzeCompanyWebsite(ctx.company, input.url);
+      }),
+    applyCompany: ownerProcedure
+      .input(
+        z.object({
+          id: z.number().int().positive(),
+          companyName: z.string().min(2).max(200),
+          website: safeUrl,
+          brand: brandSchema,
+          icps: z.array(icpSchema).max(3),
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        applyCompanyAnalysis(ctx.company.id, input)
+      ),
+    lead: companyProcedure
+      .input(
+        z.object({
+          url: safeUrl,
+          icpId: z.number().int().positive().nullable(),
+        })
+      )
+      .mutation(({ ctx, input }) => {
+        throttle(`analysis:${ctx.user.id}`, 3);
+        return analyzeLeadLink(ctx.company, input.url, input.icpId);
+      }),
+    applyLead: companyProcedure
+      .input(
+        z.object({ id: z.number().int().positive(), lead: leadInputSchema })
+      )
+      .mutation(({ ctx, input }) => applyLeadAnalysis(ctx.company.id, input)),
+  }),
   workspace: router({
     get: companyProcedure.query(async ({ ctx }) => {
       const d = await db(),
@@ -571,7 +631,7 @@ export const appRouter = router({
         const u = publicWebsite(input.website);
         if (input.icpId) await scopedRow(t.icps, input.icpId, ctx.company.id);
         const d = await db(),
-          domain = u.hostname.replace(/^www\./, "");
+          domain = leadIdentity(input.website);
         const [old] = await d
           .select()
           .from(t.leads)
@@ -620,13 +680,15 @@ export const appRouter = router({
           .set({
             ...fields,
             email: fields.email.toLowerCase(),
-            domain: u.hostname.replace(/^www\./, ""),
+            domain: leadIdentity(input.website),
             ...(lead.website !== input.website || lead.icpId !== input.icpId
               ? {
                   research: null,
                   pipelineSelectedAt: null,
                   score: null,
-                  status: "new" as const,
+                  status: (lead.status === "suppressed"
+                    ? "suppressed"
+                    : "new") as typeof lead.status,
                   researchedAt: null,
                 }
               : {}),
@@ -694,6 +756,7 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ ctx, input }) => {
+        await assertSyncOpen(ctx.company.id);
         const run = await scopedRow<typeof t.sourcingRuns.$inferSelect>(
           t.sourcingRuns,
           input.id,
@@ -818,33 +881,60 @@ export const appRouter = router({
           input.leadId,
           ctx.company.id
         );
+        await assertNotSuppressed(ctx.company.id, lead);
         const content = await generatePage(lead, ctx.company);
         const d = await db();
-        const [r] = await d.insert(t.pages).values({
-          companyId: ctx.company.id,
-          leadId: lead.id,
-          shareToken: opaque(),
-          title: `${ctx.company.name} for ${lead.companyName}`.slice(0, 200),
-          content,
-          brandSnapshot: ctx.company.brand,
-        });
-        if (lead.status !== "suppressed")
-          await d
-            .update(t.leads)
-            .set({ status: "page_ready" })
+        const id = await d.transaction(async tx => {
+          const [current] = await tx
+            .select()
+            .from(t.leads)
             .where(
               and(
                 eq(t.leads.id, lead.id),
                 eq(t.leads.companyId, ctx.company.id)
               )
+            )
+            .for("update");
+          await assertNotSuppressed(ctx.company.id, current);
+          if (
+            !current.research ||
+            current.updatedAt.getTime() !== lead.updatedAt.getTime()
+          )
+            throw new Error(
+              "Lead research changed during generation. No stale page draft was saved."
             );
+          const [r] = await tx
+            .insert(t.pages)
+            .values({
+              companyId: ctx.company.id,
+              leadId: lead.id,
+              shareToken: opaque(),
+              title: `${ctx.company.name} for ${lead.companyName}`.slice(
+                0,
+                200
+              ),
+              content,
+              brandSnapshot: ctx.company.brand,
+            });
+          await tx
+            .update(t.leads)
+            .set({ status: "page_ready" })
+            .where(
+              and(
+                eq(t.leads.id, lead.id),
+                eq(t.leads.companyId, ctx.company.id),
+                sql`${t.leads.status} <> 'suppressed'`
+              )
+            );
+          return r.insertId;
+        });
         await recordActivity(
           ctx.company.id,
           `Personalized page draft created for ${lead.companyName}`,
           "page",
           lead.id
         );
-        return { id: r.insertId };
+        return { id };
       }),
     save: companyProcedure
       .input(

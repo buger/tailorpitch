@@ -15,6 +15,7 @@ function Router() {
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/p/:token" component={PublicPage} />
       <Route path="/app" component={AppWorkspace} />
+      <Route path="/app/onboarding" component={AppWorkspace} />
       <Route path="/app/leads" component={AppWorkspace} />
       <Route path="/app/leads/:id" component={AppWorkspace} />
       <Route path="/app/agents" component={AppWorkspace} />

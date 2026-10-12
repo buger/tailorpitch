@@ -1,3 +1,5 @@
+import { leadIdentity, githubRepo } from "./publicEvidence";
+import { assertSourcingOpen, assertSyncOpen } from "./intakeControls";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { db, scopedRow, recordActivity } from "./tenant";
@@ -83,6 +85,7 @@ export async function startRun(
   companyId: number,
   args: { icpId?: number; leadId?: number; query?: string; limit?: number }
 ) {
+  if (!args.leadId) await assertSourcingOpen(companyId);
   const d = await db();
   let icp: typeof icps.$inferSelect | null = null;
   let lead: typeof leads.$inferSelect | null = null;
@@ -253,6 +256,7 @@ export async function startRun(
   }
 }
 export async function syncRun(companyId: number, id: number) {
+  await assertSyncOpen(companyId);
   const d = await db();
   let run = await scopedRow<typeof sourcingRuns.$inferSelect>(
     sourcingRuns,
@@ -473,7 +477,7 @@ export async function syncRun(companyId: number, id: number) {
         if (imported >= run.requestedLimit) break;
         try {
           const u = publicWebsite(item.url);
-          const domain = u.hostname.replace(/^www\./, "");
+          const domain = leadIdentity(u.href);
           if (
             excludedDomains.some(e => domain === e || domain.endsWith("." + e))
           )
@@ -484,7 +488,7 @@ export async function syncRun(companyId: number, id: number) {
               companyId,
               icpId: run.icpId,
               companyName: String(item.title ?? domain).slice(0, 200),
-              website: u.origin,
+              website: githubRepo(u.href)?.url ?? u.href,
               domain,
               source: "apify-search",
               sourceRunId: id,

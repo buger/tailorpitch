@@ -1,3 +1,11 @@
+import { collectEvidence, leadIdentity, githubRepo } from "./publicEvidence";
+import { clearUnobservedContacts } from "./contactEvidence";
+import { analyzeLead } from "./generation";
+import {
+  getIntakeControls,
+  assertSourcingOpen,
+  assertSyncOpen,
+} from "./intakeControls";
 import { and, eq, desc, inArray, sql, isNull } from "drizzle-orm";
 import { randomBytes } from "node:crypto";
 import { jwtVerify } from "jose";
@@ -370,7 +378,23 @@ async function importCandidate(job: Job, raw: unknown) {
   if (candidate) {
     const website = publicWebsite(candidate.website);
     publicWebsite(candidate.sourceUrl);
-    const domain = website.hostname.replace(/^www\./, "");
+    if (job.provider === "manus") {
+      const evidence = await collectEvidence(candidate.sourceUrl);
+      clearUnobservedContacts(candidate, JSON.stringify(evidence));
+    }
+    const [suppression] = candidate.email
+      ? await d
+          .select()
+          .from(t.suppressions)
+          .where(
+            and(
+              eq(t.suppressions.companyId, job.companyId),
+              eq(t.suppressions.email, candidate.email.toLowerCase()),
+              eq(t.suppressions.active, 1)
+            )
+          )
+      : [];
+    const domain = leadIdentity(website.href);
     const [company] = await d
       .select({ website: t.companies.website })
       .from(t.companies)
@@ -383,13 +407,14 @@ async function importCandidate(job: Job, raw: unknown) {
           icpId: job.configSnapshot.icpId,
           pipelineId: job.pipelineId,
           domain,
-          website: website.origin,
+          website: githubRepo(website.href)?.url ?? website.href,
           companyName: candidate.companyName,
           contactName: candidate.contactName,
           email: candidate.email.toLowerCase(),
           title: candidate.title,
           linkedinUrl: candidate.linkedinUrl,
           xUrl: candidate.xUrl,
+          status: suppression ? "suppressed" : "new",
           source: `${job.provider}-agent`,
           sourceUrl: candidate.sourceUrl,
           notes: `Observed source signal (requires qualification): ${candidate.signal}`,
@@ -410,7 +435,8 @@ async function importCandidate(job: Job, raw: unknown) {
   );
 }
 async function saveResearch(job: Job, raw: unknown) {
-  const research = researchSchema.parse(raw);
+  researchSchema.parse(raw); // Agent structured output is a hypothesis until independently grounded.
+
   const lead = await scopedRow<typeof t.leads.$inferSelect>(
     t.leads,
     job.leadId!,
@@ -422,6 +448,22 @@ async function saveResearch(job: Job, raw: unknown) {
     job.configSnapshot.icpId,
     job.companyId
   );
+  const [company] = await (await db())
+    .select()
+    .from(t.companies)
+    .where(eq(t.companies.id, job.companyId));
+  const evidence = await collectEvidence(lead.website);
+  const research = await analyzeLead(lead, icp, company, evidence.sources);
+  const currentLead = await scopedRow<typeof t.leads.$inferSelect>(
+    t.leads,
+    lead.id,
+    job.companyId
+  );
+  await assertLeadOpen(job.companyId, currentLead);
+  if (currentLead.website !== lead.website || currentLead.icpId !== lead.icpId)
+    throw new Error(
+      "Lead changed during provider research. No stale result was saved."
+    );
   const keys = (
     [
       "industries",
@@ -470,6 +512,7 @@ async function saveResearch(job: Job, raw: unknown) {
   );
 }
 async function syncJob(job: Job) {
+  await assertSyncOpen(job.companyId);
   if (job.sourceRunId) {
     const result = await syncRun(job.companyId, job.sourceRunId);
     const run = await scopedRow<typeof t.sourcingRuns.$inferSelect>(
@@ -551,6 +594,9 @@ async function syncJob(job: Job) {
   }
 }
 async function processJob(p: Pipeline, job: Job) {
+  await assertSyncOpen(p.companyId);
+  if (job.stage === "discover" && job.status === "queued")
+    await assertSourcingOpen(p.companyId);
   if (job.status === "running" || job.status === "waiting") {
     await syncJob(job);
     return;
@@ -863,6 +909,8 @@ async function processJob(p: Pipeline, job: Job) {
 export async function tickPipeline(companyId: number) {
   const d = await db();
   let p = await scopedPipeline(companyId);
+  const intake = await getIntakeControls(companyId);
+  if (intake.syncPaused) return { status: "sync_paused" };
   if (!p.enabled) return { status: "paused" };
   const now = new Date();
   const leaseToken = randomBytes(24).toString("hex");
@@ -948,6 +996,8 @@ export async function tickPipeline(companyId: number) {
         }
       }
     }
+    if ((await getIntakeControls(companyId)).sourcingPaused)
+      return { status: "sourcing_paused" };
     const window = pacingWindow(p.config, now);
     if (!p.config.discover || !window.allowed)
       return { status: "outside_discovery_window" };
@@ -1044,6 +1094,7 @@ export async function reconcilePipelineJob(
   sourceRunId?: number,
   manusTaskId?: string
 ) {
+  await assertSyncOpen(companyId);
   const job = await scopedRow<Job>(t.pipelineJobs, jobId, companyId);
   if (!["unknown", "starting"].includes(job.status))
     throw new Error("Only an interrupted job can be reconciled.");

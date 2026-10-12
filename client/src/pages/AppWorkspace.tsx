@@ -18,7 +18,8 @@ import {
   SubmissionsView,
 } from "@/pages/WorkspaceContent";
 import { AgentsView } from "./WorkspaceAgents";
-import { SettingsView } from "@/pages/WorkspaceSettings";
+import { SettingsView } from "./WorkspaceSettings";
+import { CompanyOnboarding } from "./CompanyOnboarding";
 
 export default function AppWorkspace() {
   const auth = useAuth();
@@ -44,7 +45,9 @@ export default function AppWorkspace() {
       />
     );
   let view = <OverviewView workspace={workspace.data} />;
-  if (location === "/app/agents") view = <AgentsView />;
+  if (location === "/app/onboarding")
+    view = <CompanyOnboarding workspace={workspace.data} />;
+  else if (location === "/app/agents") view = <AgentsView />;
   else if (location === "/app/icps") view = <IcpView />;
   else if (location === "/app/leads") view = <LeadsView />;
   else if (location.startsWith("/app/leads/"))
