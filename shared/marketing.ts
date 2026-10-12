@@ -1,47 +1,96 @@
-// Public marketing copy, not entitlements, promises of results, or billing configuration.
+// Public marketing copy; prices are proposals, never billing entitlements.
 export const marketing = {
-  title: "TailorPitch — Give them a reason to reply.",
-  audience: "FOR B2B FOUNDERS & SMALL OUTBOUND TEAMS",
-  headline: ["Give them", "a reason", "to reply."],
+  title: "TailorPitch — Find the right leads. Make every pitch personal.",
+  audience: "AI PROSPECTING, FROM YOUR OFFER TO YOUR OUTREACH",
+  headline: ["Find the right leads.", "Make every pitch personal."],
   description:
-    "Turn the right account into a researched brief, a landing page built for them and a first message in your voice. Let agents do the groundwork. You choose who gets the pitch.",
+    "Start with your website. TailorPitch analyzes your offer, helps define your ideal customers, then finds and qualifies leads. Create personalized pages and outreach for the ones you choose.",
+  sourceLine:
+    "Connect your lead sources. Add companies manually. Keep the final say.",
   primaryCta: "Join early access",
-  secondaryCta: "See a pitch take shape",
-  offer: "Up to 100 researched leads + 10 personal landing pages.",
-  priceNote: "Proposed from $99/month · No card. No payment today.",
+  secondaryCta: "Explore the full workflow",
+  offer: "100 researched leads + 10 personalized pages.",
+  priceNote: "Proposed from $99/month. No card. No payment today.",
   metaDescription:
-    "Research the right B2B leads. Create personal landing pages and outreach in your voice. Proposed from $99/month for 100 researched leads and 10 pages. Join early access.",
-  mechanismTitle: "One account. One reason. One personal pitch.",
-  proofTitle: "An owner’s standard for outreach.",
-  offerTitle: "Your next 10 pitches. Built around the right 100 leads.",
+    "Analyze your offer, define ICPs, find and qualify leads, then create personalized pages and outreach. Connect supported sources or add companies manually. Join early access.",
+  mechanismTitle:
+    "Your offer is the starting point. A personal pitch is the result.",
+  proofTitle: "Built around a more considered approach to outreach.",
+  offerTitle: "One workflow. A manageable shortlist.",
+  steps: [
+    {
+      id: "offer",
+      label: "Analyze your offer",
+      title: "Start with what makes your business worth choosing.",
+      description:
+        "Share your website. TailorPitch analyzes your proposition, real website copy and brand to suggest your offer and voice. Review and refine them before saving.",
+      output: "Your proposition, brand and voice",
+    },
+    {
+      id: "icp",
+      label: "Define your ICPs",
+      title: "Give your prospecting a clear idea of who fits.",
+      description:
+        "Turn your offer into suggested ideal customer profiles. Refine industries, company size, roles, keywords, signals and exclusions. You decide what a good-fit customer looks like.",
+      output: "Customer profiles you can review and edit",
+    },
+    {
+      id: "find",
+      label: "Find leads",
+      title: "Choose where your next leads come from.",
+      description:
+        "Use connected discovery sources to find companies against your profile. Connect supported tools, research a company website or GitHub link, or add a lead manually. Set a discovery pace that fits your capacity.",
+      output: "A queue of companies with source context",
+    },
+    {
+      id: "qualify",
+      label: "Qualify the fit",
+      title: "Understand the fit before you spend time on the pitch.",
+      description:
+        "Research each company against your criteria. Review source-backed facts, fit, relevant signals and unanswered questions. Choose which researched leads deserve a personalized page.",
+      output: "Research, fit criteria and your selected prospects",
+    },
+    {
+      id: "page",
+      label: "Personalize the page",
+      title: "Make your offer specific to their company.",
+      description:
+        "Generate a personal landing page from the selected company’s research and your saved brand. Explain why your offer is relevant, propose a starting point, then edit and publish when ready.",
+      output: "An editable, shareable page for that prospect",
+    },
+    {
+      id: "outreach",
+      label: "Prepare outreach",
+      title: "Start the conversation with the context already in place.",
+      description:
+        "Prepare a message in your voice that links to the published page. Review the exact email before sending, or take your LinkedIn and X drafts to those channels yourself.",
+      output: "A relevant first message, ready for your review",
+    },
+  ],
   faqs: [
     [
+      "Is this a lead finder or a landing-page builder?",
+      "It connects the whole workflow. Start with your offer and ideal customer profiles, find companies through connected sources or add them yourself, qualify the fit, then prepare personalized pages and outreach for your selected prospects.",
+    ],
+    [
+      "Can I bring my own lead sources?",
+      "Yes. Connect supported discovery tools including Apify, Gojiberry and Manus, add a company manually, or research a public website or GitHub link. Connected workflows use your authorized accounts. Provider subscriptions and usage fees are separate from TailorPitch’s proposed plans.",
+    ],
+    [
       "What happens when I join early access?",
-      "You join the TailorPitch email list for access and product updates. No card is collected, no subscription starts, and signing up does not automatically grant a company workspace. The prices shown are proposed plans, not a checkout.",
+      "You join the email list for access announcements and product updates. No card is collected and no subscription starts. Signup does not automatically grant a company workspace. There is no confirmed access date yet.",
     ],
     [
-      "Will this get me more replies?",
-      "A relevant pitch gives the prospect a clearer reason to engage. TailorPitch helps with the research, page and first message; it cannot guarantee replies, meetings or sales. The offer, audience and follow-through still matter.",
+      "How much control do I have?",
+      "Review the suggested offer and ICPs, set your discovery pace, and choose the researched leads that get a page. Edit pages and messages before publishing or sending. LinkedIn and X provide drafts for manual outreach, not automatic social delivery.",
     ],
     [
-      "Do I have to build the pages or write every message?",
-      "Start with your website and review the suggested brand, voice and ideal customer profiles. For a researched lead you select, generate a page and an outreach draft, then edit the details. You keep the final judgment without starting every pitch from scratch.",
+      "What does the proposed $99 plan include?",
+      "Up to 100 researched leads and 10 personalized pages per month, with both allowances included. Website-led setup, editable customer profiles, saved-draft editing and outreach drafts are proposed to be included. Final pricing may change; provider fees are separate.",
     ],
     [
-      "What exactly does the $99 plan include?",
-      "The proposed Focus plan includes up to 100 researched leads and 10 personalized landing pages per month. That is 100 research credits plus 100 page credits: 1 per researched lead and 10 per page. Both allowances are included. Saved-draft editing and outreach drafts are proposed to be included; rollover and extra-credit pricing are not finalized.",
-    ],
-    [
-      "Can I control the pace and what gets sent?",
-      "Yes. Set a daily discovery limit, pause or resume sourcing and synchronization independently, and choose which researched leads get a page. Publishing and sending are explicit actions. Email can use Gmail or IMAP with SMTP; LinkedIn and X provide drafts for manual outreach, not automatic social delivery.",
-    ],
-    [
-      "Do I need Apify, Gojiberry and Manus accounts?",
-      "Not all of them. Start with a public website or GitHub link for manual research, or connect a supported provider for ongoing discovery. Connected workflows require your own authorized accounts. Provider subscriptions and usage fees are separate from the proposed TailorPitch plans.",
-    ],
-    [
-      "Who is this not for?",
-      "Teams looking for thousands of contacts overnight or unreviewed mass outreach. TailorPitch is built for a manageable queue of accounts you want to understand and approach personally.",
+      "Will TailorPitch guarantee replies or meetings?",
+      "No. TailorPitch helps you choose prospects and prepare relevant pages and messages; it cannot guarantee replies, meetings or sales. Your offer, audience and follow-through still matter.",
     ],
   ],
 } as const;

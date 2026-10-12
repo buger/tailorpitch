@@ -104,7 +104,9 @@ describe("public HTML", () => {
     const r = await prepareInitialHtml(template, "/");
     expect(r.status).toBe(200);
     expect(r.html).toContain("<h1");
-    expect(r.html).toContain("Give them a reason to reply.");
+    expect(r.html).toContain(
+      "Find the right leads. Make every pitch personal."
+    );
     expect(r.html).toContain('name="description"');
     expect(r.html).not.toContain('rel="canonical"');
   });

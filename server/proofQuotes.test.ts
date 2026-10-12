@@ -20,11 +20,15 @@ describe("owner-approved Proof quote attribution", () => {
   });
   it("keeps React attribution synchronized and retains honest proposal/demo boundaries", () => {
     const source = readFileSync(
-      new URL("../client/src/pages/LandingPage.tsx", import.meta.url),
+      new URL(
+        "../client/src/components/landing/SignalLanding.tsx",
+        import.meta.url
+      ),
       "utf8"
     );
-    expect(source.match(/<strong>Leonid Bugaev<\/strong>/g)).toHaveLength(2);
-    expect(source.match(/<span>Owner, Proof<\/span>/g)).toHaveLength(2);
+    expect(source).toContain("<strong>Leonid Bugaev</strong>");
+    expect(source).toContain("<span>Owner, Proof</span>");
+    expect(source).toContain("Leonid Bugaev · Owner, Proof");
     expect(source).not.toContain("Draft for Proof approval");
     expect(source).not.toContain("Not a verified testimonial");
     expect(source).not.toContain("generated draft positioning");

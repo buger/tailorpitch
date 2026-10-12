@@ -8,22 +8,27 @@ const template = '<html><head></head><body><div id="root"></div></body></html>';
 describe("outcome-led landing story", () => {
   it("uses one outcome and clear price note across initial HTML and metadata", async () => {
     const { html } = await prepareInitialHtml(template, "/");
-    expect(marketing.headline.join(" ")).toBe("Give them a reason to reply.");
-    expect(html).toContain(`<title>${marketing.title}</title>`);
-    expect(html).toContain(
-      "Up to 100 researched leads + 10 personal landing pages."
+    expect(marketing.headline.join(" ")).toBe(
+      "Find the right leads. Make every pitch personal."
     );
+    expect(html).toContain(`<title>${marketing.title}</title>`);
+    expect(html).toContain("100 researched leads + 10 personalized pages.");
     expect(html).toContain("No payment today");
     expect(html).toContain("No card");
   });
-  it("orders problem, mechanism, owner proof, setup, offer, objections and CTA", async () => {
+  it("explains proposition and ICPs before discovery, qualification and personalized output", async () => {
     const { html } = await prepareInitialHtml(template, "/");
     let cursor = -1;
     for (const id of [
-      "problem",
       "the-work",
+      "flow-offer",
+      "flow-icp",
+      "flow-find",
+      "flow-qualify",
+      "flow-page",
+      "flow-outreach",
+      "your-sources",
       "proof-pilot",
-      "setup",
       "pricing",
       "questions",
       "early-access",
@@ -35,23 +40,15 @@ describe("outcome-led landing story", () => {
   });
   it("keeps the React story aligned with the initial HTML story", () => {
     const source = readFileSync(
-      new URL("../client/src/pages/LandingPage.tsx", import.meta.url),
+      new URL(
+        "../client/src/components/landing/SignalLanding.tsx",
+        import.meta.url
+      ),
       "utf8"
     );
-    let cursor = -1;
-    for (const marker of [
-      'className="tp-not-a-list"',
-      'id="the-work"',
-      'id="proof-pilot"',
-      'className="tp-method',
-      "<PricingLedger",
-      'className="tp-faq',
-      'id="early-access"',
-    ]) {
-      const n = source.indexOf(marker);
-      expect(n).toBeGreaterThan(cursor);
-      cursor = n;
-    }
+    expect(source).toContain("marketing.steps.map");
+    expect(source).toContain("marketing.description");
+    expect(source).toContain("marketing.headline");
     expect(source).toContain("marketing.primaryCta");
     expect(source).toContain("marketing.faqs");
     expect(source).toContain("Email list only. Workspace access is separate.");

@@ -1,0 +1,2770 @@
+/* Signal Studio reference lock: Linear's dark surfaces, neutral typography and
+   CTA-only lime. Operate contributes only the plotted connection geometry.
+  Shared application/Privacy styles stay outside this scope. */
+.signal-landing {
+  --s-bg: #08090a;
+  --s-panel: #101214;
+  --s-raised: #17191c;
+  --s-border: #292c31;
+  --s-text: #f7f8f8;
+  --s-muted: #a0a5ae;
+  --s-action: #e4f222;
+  --s-radius: 6px;
+  background: var(--s-bg);
+  color: var(--s-text);
+  font-family: Inter, "Space Grotesk", Arial, sans-serif;
+  font-feature-settings: "ss03";
+  font-size: 15px;
+  line-height: 1.6;
+  overflow: clip;
+  color-scheme: dark;
+}
+.signal-landing * {
+  box-sizing: border-box;
+}
+.signal-landing a {
+  color: inherit;
+  text-decoration: none;
+}
+.signal-landing button,
+.signal-landing summary {
+  cursor: pointer;
+}
+.signal-landing button {
+  font: inherit;
+}
+.signal-landing button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+.signal-landing :is(button, a, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--s-action);
+  outline-offset: 5px;
+}
+.signal-landing ::selection {
+  background: #e4f222;
+  color: #08090a;
+}
+.signal-landing h1,
+.signal-landing h2,
+.signal-landing h3,
+.signal-landing h4,
+.signal-landing p {
+  margin: 0;
+}
+.signal-landing section[id] {
+  scroll-margin-top: 105px;
+}
+.signal-shell {
+  width: min(1424px, calc(100% - 112px));
+  margin-inline: auto;
+}
+.signal-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgb(8 9 10 / 91%);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent;
+}
+.signal-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 60px;
+}
+.signal-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
+}
+
+.signal-header nav,
+.signal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 12px;
+}
+.signal-header nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #acb0b7;
+}
+.signal-header nav a:hover {
+  color: #fff;
+}
+
+.signal-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
+  padding: 8px 0;
+  color: #bec2c9;
+}
+
+.signal-skip {
+  position: fixed;
+  top: -100px;
+  left: 20px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--s-action);
+  color: #08090a !important;
+}
+.signal-skip:focus {
+  top: 15px;
+}
+.signal-hero {
+  padding-top: 8px;
+  padding-bottom: 20px;
+}
+.signal-hero-copy {
+  text-align: center;
+  max-width: 1020px;
+  margin: auto;
+}
+.signal-hero-kicker,
+.signal-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: #a7adb6;
+  line-height: 1.6;
+}
+.signal-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c0c8d0;
+  box-shadow: 0 0 9px #c0c8d040;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.signal-hero h1 {
+  font-size: clamp(40px, 4vw, 60px);
+  font-weight: 700;
+  letter-spacing: -2.6px;
+  line-height: 1.06;
+  margin-top: 10px;
+}
+.signal-hero-description {
+  max-width: 870px;
+  margin: 28px auto 0 !important;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #afb4bd;
+  letter-spacing: -0.2px;
+}
+.signal-hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+.signal-button,
+.signal-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 45px;
+  padding: 11px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--s-radius);
+  font-size: 13px !important;
+  font-weight: 500;
+  line-height: 1.5;
+  transition:
+    background-color 140ms ease-out,
+    transform 100ms ease-out,
+    border-color 140ms ease-out;
+}
+.signal-button {
+  background: var(--s-action);
+  color: #131504 !important;
+  border-color: #e4f222;
+}
+.signal-button:hover {
+  background: #f1fc60;
+}
+.signal-button:active,
+.signal-secondary:active {
+  transform: translateY(1px);
+}
+.signal-secondary {
+  background: #ffffff03;
+  border-color: #393d44;
+  color: #e7e9ed;
+}
+.signal-secondary:hover {
+  background: #ffffff09;
+  border-color: #666c76;
+}
+.signal-hero-note {
+  font-size: 11px;
+  color: #969ca6;
+  margin-top: 18px !important;
+}
+
+.signal-motion-control {
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ca2ac;
+  background: none;
+  padding: 7px;
+  font-size: 10px !important;
+}
+.signal-motion-control:hover {
+  color: #fff;
+}
+
+.signal-card {
+  background: linear-gradient(140deg, #17191b 0%, #0e1011 45%, #111314 100%);
+  border: 1px solid #42464b;
+  border-radius: 8px;
+  box-shadow:
+    0 3px 9px #0008,
+    0 0 34px #b8c3d010,
+    inset 0 1px 0 #ffffff05;
+  overflow: hidden;
+}
+
+.signal-offer-panel {
+  padding: 18px 20px 22px;
+}
+.signal-url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #ffffff12;
+  color: #c8ced7;
+  font-size: 10px;
+}
+.signal-url svg:last-child {
+  margin-left: auto;
+  color: #7f8793;
+}
+.signal-panel-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: #939eae;
+  margin-top: 18px;
+}
+.signal-offer-panel h4,
+.signal-icp-panel h4 {
+  font-size: 16px;
+  letter-spacing: -0.4px;
+  font-weight: 500;
+  margin-top: 9px;
+}
+.signal-offer-panel > p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #abb2bd;
+  margin-top: 8px;
+}
+.signal-brand-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.signal-brand-chips span {
+  font-size: 8px;
+  color: #b4bdca;
+  border: 1px solid #343b47;
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+.signal-icp-panel {
+  padding: 0 20px 20px;
+  border-top: 1px solid #ffffff10;
+}
+.signal-icp-panel dl {
+  margin: 13px 0 10px;
+  font-size: 10px;
+}
+.signal-icp-panel dl > div {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin: 7px 0;
+}
+.signal-icp-panel dt {
+  color: #949ca8;
+}
+.signal-icp-panel dd {
+  color: #d9dce2;
+  margin: 0;
+  text-align: right;
+}
+.signal-small-note {
+  font-size: 8px;
+  color: #8b95a3;
+}
+
+.signal-prospect-panel {
+  padding: 18px 18px 0;
+}
+
+.signal-company {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.signal-company-mark {
+  height: 30px;
+  width: 30px;
+  border-radius: 5px;
+  background: linear-gradient(145deg, #3a414e, #161a21);
+  display: grid;
+  place-items: center;
+  border: 1px solid #4b5360;
+  font-size: 18px;
+  font-weight: 500;
+}
+.signal-company strong {
+  display: block;
+  font-weight: 500;
+  font-size: 13px;
+}
+.signal-company > div > span {
+  display: block;
+  font-size: 8px;
+  color: #8b95a4;
+}
+.signal-badge {
+  font-size: 7px;
+  color: #bcc8dd;
+  border: 1px solid #414f66;
+  background: #242d3a;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+.signal-fit {
+  margin-top: 20px;
+  font-size: 10px;
+}
+.signal-fit > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ffffff0c;
+  color: #aab2bf;
+}
+.signal-fit > div > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #e0e6ee;
+}
+.signal-fit svg {
+  color: #b6c4d6;
+}
+.signal-fit .signal-unknown {
+  color: #949aa4 !important;
+}
+.signal-source-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  margin-top: 13px;
+  color: #8d98aa;
+}
+.signal-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  background: #ffffff05;
+  border-top: 1px solid #ffffff0b;
+  padding: 12px 0;
+  margin: 19px -18px 0;
+  color: #c3cbd8;
+}
+.signal-browser-bar {
+  height: 29px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 13px;
+  border-bottom: 1px solid #ffffff12;
+  font-size: 8px;
+  color: #9aa4b2;
+}
+.signal-browser-bar > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.signal-browser-bar i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #515a66;
+}
+
+.signal-outreach-panel {
+  border-top: 1px solid #363d48;
+  padding: 15px 18px;
+  background: #111418;
+}
+.signal-outreach-panel > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #d0d8e3;
+}
+.signal-draft {
+  font-family: monospace;
+  font-size: 7px;
+  margin-left: auto;
+  color: #94a0b2;
+  letter-spacing: 0.7px;
+}
+.signal-outreach-panel > p {
+  font-size: 9px;
+  color: #8f9bac;
+  line-height: 1.7;
+  margin-top: 6px;
+}
+
+.signal-section {
+  padding-block: 105px;
+}
+.signal-section-heading {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+#the-work > .signal-section-heading {
+  text-align: center;
+}
+#the-work {
+  padding-top: 45px;
+}
+#the-work .signal-section-heading > p {
+  margin-inline: auto;
+}
+#the-work h2 {
+  font-weight: 600;
+  font-size: clamp(30px, 3vw, 44px);
+  letter-spacing: -1.5px;
+}
+#the-work > .signal-section-heading > .signal-eyebrow::before,
+#the-work > .signal-section-heading > .signal-eyebrow::after {
+  content: "";
+  width: 64px;
+  height: 1px;
+  background: #34383d;
+}
+.signal-section h2,
+.signal-sources-section h2,
+.signal-faq h2,
+.signal-access h2 {
+  font-size: clamp(32px, 3.1vw, 44px);
+  font-weight: 500;
+  letter-spacing: -1.9px;
+  line-height: 1.15;
+  margin-top: 18px;
+}
+.signal-section h2 span {
+  color: #929aa7;
+}
+.signal-section-heading > p {
+  font-size: 14px;
+  color: #989faa;
+  line-height: 1.7;
+  max-width: 580px;
+  margin-top: 22px;
+}
+.signal-step-tabs {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin-top: 45px;
+  border-bottom: 1px solid #333842;
+  gap: 10px;
+}
+.signal-step-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 0;
+  color: #9099a6;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.signal-step-tabs button > span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  color: #677384;
+}
+.signal-step-tabs button[aria-selected="true"] {
+  border-bottom-color: #d4dbe5;
+  color: #f7f8f8;
+}
+.signal-step-tabs button[aria-selected="true"] > span {
+  color: #d4dbe5;
+}
+.signal-step-tabs button:hover {
+  color: white;
+}
+.signal-explorer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 440px;
+  background: #0e1012;
+  border: 1px solid #242931;
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+.signal-explorer-copy {
+  padding: 43px 46px;
+  animation: signal-reveal 220ms ease-out;
+}
+.signal-explorer-copy > svg {
+  display: block;
+  color: #b3bfce;
+  margin-bottom: 20px;
+}
+.signal-explorer-copy h3 {
+  font-size: 27px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  max-width: 370px;
+  margin-top: 14px;
+}
+.signal-explorer-copy > p {
+  font-size: 13px;
+  line-height: 1.8;
+  max-width: 420px;
+  color: #a4acb7;
+  margin-top: 18px;
+}
+.signal-output-label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 11px;
+  color: #c1cbd9;
+  margin-top: 23px;
+}
+.signal-output-label svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.signal-text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  border: 0;
+  background: none;
+  color: #e0e6ee;
+  font-size: 11px !important;
+  padding: 0;
+  margin-top: 25px;
+}
+.signal-explorer-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 38px 48px;
+  background: radial-gradient(
+    ellipse at 70% 40%,
+    #252b37 0%,
+    #15191f 52%,
+    #101317 100%
+  );
+  border-left: 1px solid #242a33;
+  min-width: 0;
+}
+.signal-example-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #818d9f;
+  margin-bottom: 18px;
+}
+.signal-explorer-preview > .signal-offer-panel,
+.signal-explorer-preview > .signal-icp-panel,
+.signal-explorer-preview > .signal-prospect-panel,
+.signal-explorer-preview > .signal-pitch-panel,
+.signal-explorer-preview > .signal-outreach-panel {
+  background: #14181f;
+  border: 1px solid #404957;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px #0003;
+}
+.signal-explorer-preview .signal-offer-panel {
+  padding: 28px;
+}
+.signal-explorer-preview .signal-offer-panel h4,
+.signal-explorer-preview .signal-icp-panel h4 {
+  font-size: 23px;
+}
+.signal-explorer-preview .signal-offer-panel > p {
+  font-size: 14px;
+}
+.signal-explorer-preview .signal-url {
+  font-size: 12px;
+}
+.signal-explorer-preview .signal-panel-meta {
+  font-size: 9px;
+}
+.signal-explorer-preview .signal-brand-chips span {
+  font-size: 10px;
+}
+.signal-explorer-preview .signal-icp-panel {
+  padding: 12px 27px 27px;
+}
+.signal-explorer-preview .signal-icp-panel dl {
+  font-size: 12px;
+  margin-block: 20px;
+}
+.signal-explorer-preview .signal-icp-panel dl > div {
+  padding-block: 6px;
+  border-bottom: 1px solid #ffffff0a;
+}
+.signal-explorer-preview .signal-small-note {
+  font-size: 10px;
+}
+.signal-explorer-preview .signal-prospect-panel {
+  padding: 24px 24px 0;
+}
+.signal-explorer-preview .signal-fit {
+  font-size: 12px;
+}
+.signal-explorer-preview .signal-company strong {
+  font-size: 17px;
+}
+.signal-explorer-preview .signal-company > div > span {
+  font-size: 10px;
+}
+.signal-explorer-preview .signal-badge {
+  font-size: 8px;
+}
+.signal-explorer-preview .signal-select {
+  margin-inline: -24px;
+  font-size: 11px;
+}
+.signal-explorer-preview .signal-source-link {
+  font-size: 10px;
+}
+.signal-source-preview {
+  min-width: 0;
+}
+.signal-source-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+.signal-source-options button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #414a58;
+  border-radius: 4px;
+  padding: 8px 9px;
+  background: #151a22;
+  color: #aeb9ca;
+  font-size: 9px;
+}
+.signal-source-options button[aria-pressed="true"] {
+  background: #333e50;
+  color: white;
+  border-color: #8797af;
+}
+.signal-source-detail {
+  padding: 24px;
+  border: 1px solid #3c4656;
+  background: #151b24;
+  border-radius: 6px;
+}
+.signal-source-detail h4 {
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+}
+.signal-source-detail > p {
+  font-size: 12px;
+  color: #a9b5c8;
+  margin-top: 13px;
+}
+.signal-example-field {
+  border: 1px solid #3f4b60;
+  background: #111720;
+  border-radius: 4px;
+  padding: 13px;
+  margin-top: 22px;
+  display: grid;
+  gap: 5px;
+}
+.signal-example-field span {
+  font-size: 9px;
+  color: #90a0b8;
+}
+.signal-example-field strong {
+  font-size: 12px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.signal-source-detail > small {
+  display: block;
+  font-size: 8px;
+  color: #8f9fb6;
+  margin-top: 14px;
+}
+.signal-outreach-panel.is-full {
+  padding: 25px;
+}
+.signal-outreach-panel.is-full > div {
+  font-size: 12px;
+}
+.signal-outreach-panel.is-full > p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 19px;
+  color: #b3bdcd;
+}
+.signal-mail-subject {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #ffffff12;
+  color: #e5eaf2 !important;
+}
+.signal-mail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  font-size: 11px;
+  border: 1px solid #40516c;
+  border-radius: 4px;
+  color: #cad8f0;
+  margin-top: 17px;
+}
+.signal-outreach-panel.is-full > p:last-child {
+  font-size: 9px;
+  color: #8d9aad;
+}
+.signal-sources-section {
+  border-block: 1px solid #252a31;
+  background: #101316;
+  padding-block: 74px;
+}
+.signal-sources-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 120px;
+  align-items: center;
+}
+.signal-sources-layout > div > p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #a1aab8;
+  max-width: 425px;
+  margin-top: 22px;
+}
+.signal-sources-layout .signal-source-fees {
+  font-size: 10px;
+  color: #8994a4;
+  margin-top: 17px;
+}
+.signal-intake-list > div:not(.signal-pace) {
+  display: flex;
+  gap: 19px;
+  align-items: center;
+  padding: 21px 0;
+  border-bottom: 1px solid #303742;
+}
+.signal-intake-list > div > svg {
+  color: #a5b1c2;
+  flex-shrink: 0;
+}
+.signal-intake-list > div > svg:last-child {
+  margin-left: auto;
+  color: #566376;
+}
+.signal-intake-list h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.signal-intake-list p {
+  font-size: 11px;
+  color: #9ba8ba;
+  margin-top: 4px;
+}
+.signal-pace {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #98a4b6;
+  padding-top: 23px;
+}
+.signal-founder {
+  padding-block: 65px 68px;
+  border-bottom: 1px solid #292d34;
+}
+.signal-founder > blockquote {
+  font-size: clamp(23px, 2.6vw, 36px);
+  max-width: 880px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -1px;
+  margin: 20px 0 23px;
+  color: #d6dce5;
+}
+.signal-founder-bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 35px;
+}
+.signal-founder-bottom > p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+.signal-founder-bottom strong {
+  font-weight: 500;
+}
+.signal-founder-bottom > p > span {
+  color: #8e99aa;
+  border-left: 1px solid #3b424d;
+  padding-left: 12px;
+}
+.signal-founder details {
+  max-width: 410px;
+  font-size: 10px;
+  color: #9da9bc;
+}
+.signal-founder summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  list-style: none;
+}
+.signal-founder details blockquote {
+  font-size: 13px;
+  margin: 15px 0 8px;
+  color: #c3cedd;
+}
+.signal-founder details > p {
+  font-size: 10px;
+}
+.signal-pricing-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  max-width: none;
+  gap: 30px;
+}
+.signal-pricing-heading > p {
+  max-width: 290px;
+  font-size: 13px;
+  margin: 0 0 5px !important;
+}
+.signal-plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 37px;
+}
+.signal-plan {
+  padding: 27px;
+  background: #101215;
+  border: 1px solid #30343d;
+  border-radius: 8px;
+}
+.signal-plan.is-featured {
+  background: linear-gradient(130deg, #242a34, #15191f);
+  border-color: #687587;
+}
+.signal-plan-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.signal-plan-top h3 {
+  font-size: 17px;
+  letter-spacing: -0.4px;
+  font-weight: 500;
+}
+.signal-plan-top > span {
+  font-size: 9px;
+  color: #9da9bd;
+}
+.signal-plan-price {
+  font-size: 44px;
+  letter-spacing: -2px;
+  line-height: 1.2;
+  margin-top: 28px;
+}
+.signal-plan-price > span {
+  font-size: 11px;
+  color: #a0acbf;
+  letter-spacing: 0;
+  margin-left: 8px;
+}
+.signal-allowances {
+  margin-block: 23px 28px;
+  padding-top: 17px;
+  border-top: 1px solid #ffffff13;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  color: #afb9c9;
+}
+.signal-allowances strong {
+  font-size: 15px;
+  font-weight: 500;
+  color: #eef2f8;
+  margin-right: 4px;
+}
+.signal-plan > button {
+  width: 100%;
+  justify-content: space-between;
+  font-size: 11px !important;
+  min-height: 40px;
+  padding-inline: 14px;
+}
+.signal-plan-included {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+  padding-block: 22px;
+  font-size: 10px;
+  border-bottom: 1px solid #282e38;
+  color: #a7b2c2;
+}
+.signal-plan-included > span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: #7f8da1;
+}
+.signal-plan-included p {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.signal-pricing-note {
+  font-size: 10px;
+  color: #8f9aab;
+  margin-top: 18px !important;
+  max-width: 850px;
+}
+.signal-credit-details {
+  max-width: 850px;
+  color: #aab5c6;
+  font-size: 11px;
+  margin-top: 14px;
+}
+.signal-credit-details summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  list-style: none;
+}
+.signal-credit-details p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #9ca9bb;
+  margin-top: 13px;
+}
+.signal-faq {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 70px;
+  padding-bottom: 90px;
+}
+.signal-faq h2 {
+  font-size: 39px;
+}
+.signal-faq details {
+  border-bottom: 1px solid #2b323c;
+}
+.signal-faq details:first-child {
+  border-top: 1px solid #2b323c;
+}
+.signal-faq summary {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  font-size: 13px;
+  padding: 21px 0;
+  color: #d8dfe9;
+}
+.signal-faq summary svg {
+  flex-shrink: 0;
+  color: #97a5ba;
+  transition: transform 160ms ease;
+}
+.signal-faq details[open] summary svg {
+  transform: rotate(45deg);
+}
+.signal-faq details p {
+  color: #a3afc1;
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 0 28px 24px 0;
+}
+.signal-access {
+  border-block: 1px solid #353d4b;
+  background: radial-gradient(
+    ellipse at 0% 100%,
+    #252e3e 0%,
+    #171d27 40%,
+    #10151d 85%
+  );
+  padding-block: 73px;
+}
+.signal-access-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 95px;
+  align-items: center;
+}
+.signal-access h2 {
+  font-size: 41px;
+}
+.signal-access-inner > div > p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #a5b2c6;
+  max-width: 380px;
+  margin-top: 19px;
+}
+.signal-signup > label:first-child {
+  display: block;
+  font-size: 11px;
+  color: #d4dce8;
+  margin-bottom: 9px;
+}
+.signal-input-row {
+  display: flex;
+  gap: 8px;
+}
+.signal-input-row > input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #4f5b6e;
+  border-radius: 6px;
+  background: #10151d;
+  color: #f0f4fa;
+  font-size: 12px;
+  padding: 12px 14px;
+  width: 100%;
+}
+.signal-input-row > input::placeholder {
+  color: #8a99af;
+}
+.signal-input-row > .signal-button {
+  font-size: 11px !important;
+  padding-inline: 13px;
+  gap: 12px;
+  white-space: nowrap;
+}
+.signal-consent {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin-top: 17px;
+  font-size: 10px;
+  line-height: 1.8;
+  color: #aab7cb;
+}
+.signal-consent input {
+  margin-top: 4px;
+  accent-color: #e4f222;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.signal-consent a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.signal-form-note {
+  font-size: 9px;
+  line-height: 1.7;
+  color: #8c9bb2;
+  margin-top: 13px !important;
+}
+.signal-error {
+  font-size: 12px;
+  color: #ffaaa7;
+  margin-top: 14px !important;
+}
+.signal-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.signal-success {
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #c6d5eb;
+}
+.signal-success h3 {
+  font-size: 24px;
+  letter-spacing: -0.6px;
+  margin-top: 15px;
+  font-weight: 500;
+  color: #f3f6fb;
+}
+.signal-success p {
+  font-size: 13px;
+  color: #a5b4c9;
+  margin-top: 10px;
+  max-width: 380px;
+}
+.signal-footer {
+  padding-block: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+.signal-footer > .signal-wordmark,
+.signal-footer .signal-wordmark {
+  font-size: 20px;
+}
+.signal-footer > span {
+  color: #77869a;
+  font-size: 10px;
+}
+.signal-footer > div {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  color: #9eacc0;
+  font-size: 10px;
+}
+.signal-footer small {
+  font-size: 9px;
+  color: #75859b;
+}
+.signal-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(510px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+  padding: 0;
+  border: 1px solid #505a6b;
+  border-radius: 12px;
+  background: #151b25;
+  color: #f2f6fd;
+  box-shadow: 0 20px 100px #0009;
+  overflow: auto;
+}
+.signal-dialog::backdrop {
+  background: #020408bf;
+  backdrop-filter: blur(5px);
+}
+.signal-dialog-inner {
+  position: relative;
+  padding: 39px;
+}
+.signal-dialog h2 {
+  font-size: 29px;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  font-weight: 500;
+  margin-top: 16px;
+}
+.signal-dialog-inner > p {
+  font-size: 12px;
+  color: #aebbd0;
+  margin-top: 16px;
+  margin-bottom: 28px;
+  line-height: 1.8;
+}
+.signal-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: none;
+  border: 0;
+  color: #a0aec4;
+  padding: 6px;
+}
+@keyframes signal-reveal {
+  from {
+    opacity: 0.3;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (min-width: 1600px) {
+  .signal-shell {
+    width: min(1424px, calc(100% - 112px));
+  }
+  .signal-hero h1 {
+    font-size: 66px;
+  }
+  .signal-hero {
+    padding-top: 48px;
+  }
+}
+@media (max-width: 1100px) {
+  .signal-shell {
+    width: calc(100% - 64px);
+  }
+  .signal-header nav {
+    gap: 20px;
+  }
+
+  .signal-badge {
+    display: none;
+  }
+
+  .signal-offer-panel,
+  .signal-icp-panel {
+    padding-inline: 14px;
+  }
+  .signal-icp-panel dl {
+    font-size: 9px;
+  }
+  .signal-brand-chips span {
+    font-size: 7px;
+  }
+
+  .signal-hero h1 {
+    font-size: 56px;
+    letter-spacing: -2.8px;
+  }
+  .signal-explorer-copy {
+    padding: 33px;
+  }
+  .signal-explorer-preview {
+    padding: 30px;
+  }
+  .signal-step-tabs {
+    gap: 5px;
+  }
+  .signal-step-tabs button {
+    font-size: 9px;
+    gap: 5px;
+  }
+  .signal-sources-layout {
+    gap: 60px;
+  }
+  .signal-plan {
+    padding: 23px;
+  }
+  .signal-plan-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .signal-access-inner {
+    gap: 45px;
+  }
+
+  .signal-footer > span {
+    display: none;
+  }
+}
+@media (max-width: 800px) {
+  .signal-header nav {
+    display: none;
+  }
+  .signal-header-inner {
+    min-height: 68px;
+  }
+  .signal-hero {
+    padding-top: 50px;
+  }
+  .signal-hero h1 {
+    font-size: 46px;
+    letter-spacing: -2.3px;
+  }
+  .signal-hero-description {
+    font-size: 15px;
+    max-width: 600px;
+  }
+
+  .signal-panel-meta {
+    font-size: 7px;
+  }
+  .signal-offer-panel h4,
+  .signal-icp-panel h4 {
+    font-size: 13px;
+  }
+  .signal-offer-panel > p {
+    font-size: 10px;
+  }
+
+  .signal-prospect-panel {
+    padding-inline: 12px;
+  }
+  .signal-fit {
+    font-size: 8px;
+  }
+  .signal-select {
+    font-size: 8px;
+    margin-inline: -12px;
+  }
+
+  .signal-outreach-panel {
+    padding: 12px;
+  }
+  .signal-outreach-panel > div {
+    font-size: 8px;
+  }
+
+  .signal-section {
+    padding-block: 75px;
+  }
+  .signal-section h2 {
+    font-size: 34px;
+  }
+  .signal-step-tabs {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 18px;
+    margin-top: 30px;
+  }
+  .signal-step-tabs button {
+    font-size: 10px;
+    padding: 12px 0;
+  }
+  .signal-explorer {
+    grid-template-columns: 1fr 1fr;
+  }
+  .signal-explorer-copy {
+    padding: 27px;
+  }
+  .signal-explorer-copy h3 {
+    font-size: 23px;
+  }
+  .signal-explorer-preview {
+    padding: 23px;
+  }
+  .signal-source-options {
+    display: grid;
+  }
+  .signal-source-options button {
+    justify-content: space-between;
+  }
+  .signal-source-detail {
+    padding: 16px;
+  }
+  .signal-source-detail h4 {
+    font-size: 17px;
+  }
+  .signal-explorer-preview .signal-offer-panel,
+  .signal-explorer-preview .signal-icp-panel {
+    padding: 18px;
+  }
+  .signal-explorer-preview .signal-icp-panel h4 {
+    font-size: 20px;
+  }
+  .signal-explorer-preview .signal-icp-panel dl {
+    font-size: 10px;
+  }
+  .signal-explorer-preview .signal-fit {
+    font-size: 10px;
+  }
+  .signal-sources-layout {
+    gap: 35px;
+  }
+  .signal-sources-section h2 {
+    font-size: 33px;
+  }
+  .signal-plan {
+    padding: 18px;
+  }
+  .signal-plan-price {
+    font-size: 37px;
+  }
+  .signal-allowances {
+    font-size: 10px;
+  }
+  .signal-plan > button {
+    font-size: 9px !important;
+    gap: 7px;
+    padding-inline: 9px;
+  }
+  .signal-pricing-heading > p {
+    max-width: 200px;
+    font-size: 12px;
+  }
+  .signal-plan-included {
+    gap: 16px;
+  }
+  .signal-plan-included > span {
+    width: 100%;
+  }
+  .signal-faq {
+    gap: 30px;
+    grid-template-columns: 0.8fr 1.3fr;
+  }
+  .signal-access-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .signal-access h2 {
+    font-size: 36px;
+  }
+  .signal-access-inner > div > p {
+    max-width: 470px;
+  }
+  .signal-signup {
+    max-width: 560px;
+  }
+  .signal-footer {
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .signal-shell {
+    width: calc(100% - 40px);
+  }
+  .signal-header-inner {
+    gap: 15px;
+    min-height: 64px;
+  }
+  .signal-wordmark {
+    font-size: 20px;
+    gap: 7px;
+  }
+
+  .signal-header-actions {
+    gap: 15px;
+  }
+
+  .signal-login {
+    font-size: 10px;
+    gap: 3px;
+  }
+  .signal-login svg {
+    display: none;
+  }
+  .signal-hero {
+    padding-top: 37px;
+    padding-bottom: 23px;
+  }
+  .signal-hero-kicker {
+    font-size: 8px;
+    letter-spacing: 0.9px;
+    gap: 6px;
+    max-width: 280px;
+    line-height: 1.8;
+  }
+  .signal-hero-kicker .signal-live-dot {
+    display: none;
+  }
+  .signal-hero h1 {
+    font-size: clamp(34px, 8.6vw, 46px);
+    letter-spacing: -1.8px;
+    line-height: 1.12;
+    margin-top: 17px;
+  }
+  .signal-hero h1 br {
+    display: none;
+  }
+  .signal-hero-description {
+    font-size: 13px;
+    line-height: 1.8;
+    margin-top: 18px !important;
+    max-width: 430px;
+  }
+  .signal-hero-actions {
+    gap: 8px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .signal-hero-actions .signal-button,
+  .signal-hero-actions .signal-secondary {
+    font-size: 10px !important;
+    min-height: 42px;
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .signal-hero-note {
+    font-size: 9px;
+    margin-top: 13px !important;
+  }
+
+  .signal-motion-control {
+    display: none;
+  }
+
+  .signal-scene-column[data-mobile-active="false"] {
+    display: none;
+  }
+
+  .signal-card {
+    margin-top: 0;
+  }
+
+  .signal-offer-panel {
+    padding: 17px 14px;
+  }
+  .signal-panel-meta {
+    font-size: 6px;
+    line-height: 1.6;
+    margin-top: 17px;
+    gap: 4px;
+  }
+  .signal-panel-meta svg {
+    width: 10px;
+    flex-shrink: 0;
+  }
+  .signal-offer-panel h4,
+  .signal-icp-panel h4 {
+    font-size: 14px;
+    line-height: 1.3;
+    margin-top: 9px;
+  }
+  .signal-offer-panel > p {
+    font-size: 10px;
+  }
+  .signal-url {
+    font-size: 8px;
+    gap: 4px;
+  }
+  .signal-url svg {
+    width: 11px;
+  }
+  .signal-url svg:last-child {
+    display: none;
+  }
+
+  .signal-icp-panel dl {
+    font-size: 9px;
+    margin-top: 16px;
+  }
+  .signal-icp-panel dl > div {
+    display: block;
+    margin: 11px 0;
+  }
+  .signal-icp-panel dd {
+    text-align: left;
+    font-size: 10px;
+    color: #d5deeb;
+    margin-top: 2px;
+  }
+  .signal-small-note {
+    font-size: 7px;
+  }
+  .signal-brand-chips {
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .signal-brand-chips span {
+    font-size: 7px;
+  }
+
+  .signal-fit {
+    font-size: 11px;
+    margin-top: 15px;
+  }
+  .signal-source-link {
+    font-size: 9px;
+  }
+  .signal-select {
+    font-size: 10px;
+  }
+  .signal-company strong {
+    font-size: 15px;
+  }
+  .signal-company > div > span {
+    font-size: 9px;
+  }
+  .signal-badge {
+    display: inline-block;
+    font-size: 7px;
+  }
+
+  .signal-outreach-panel > div {
+    font-size: 10px;
+  }
+  .signal-outreach-panel > p {
+    font-size: 10px;
+  }
+
+  .signal-section {
+    padding-block: 55px;
+  }
+  .signal-section-heading > p {
+    font-size: 12px;
+    margin-top: 17px;
+  }
+  .signal-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+  .signal-section h2,
+  .signal-sources-section h2,
+  .signal-faq h2,
+  .signal-access h2 {
+    font-size: 30px;
+    letter-spacing: -1.2px;
+    margin-top: 13px;
+  }
+  .signal-section h2 br {
+    display: none;
+  }
+  .signal-step-tabs {
+    gap: 0 12px;
+    margin-top: 23px;
+  }
+  .signal-step-tabs button {
+    font-size: 8px;
+    gap: 5px;
+    padding-block: 13px;
+  }
+  .signal-step-tabs button > span {
+    font-size: 7px;
+  }
+  .signal-explorer {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .signal-explorer-copy {
+    padding: 25px;
+  }
+  .signal-explorer-copy > svg {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 12px;
+  }
+  .signal-explorer-copy h3 {
+    font-size: 23px;
+    margin-top: 11px;
+    max-width: 330px;
+  }
+  .signal-explorer-copy > p {
+    font-size: 12px;
+    line-height: 1.8;
+    margin-top: 13px;
+  }
+  .signal-output-label {
+    font-size: 10px;
+    margin-top: 18px;
+  }
+  .signal-text-button {
+    font-size: 10px !important;
+    margin-top: 20px;
+  }
+  .signal-explorer-preview {
+    border-left: 0;
+    border-top: 1px solid #2d3745;
+    padding: 25px;
+    min-height: 260px;
+  }
+  .signal-example-label {
+    font-size: 7px;
+    margin-bottom: 12px;
+  }
+  .signal-explorer-preview .signal-icp-panel dl > div {
+    display: flex;
+  }
+  .signal-explorer-preview .signal-icp-panel dd {
+    margin: 0;
+  }
+  .signal-explorer-preview .signal-icp-panel dl {
+    font-size: 11px;
+  }
+  .signal-explorer-preview .signal-offer-panel {
+    padding: 23px;
+  }
+  .signal-source-options {
+    display: flex;
+  }
+  .signal-source-options button {
+    font-size: 8px;
+  }
+  .signal-source-options button > svg:last-child {
+    display: none;
+  }
+  .signal-source-detail {
+    padding: 20px;
+  }
+  .signal-sources-section {
+    padding-block: 47px;
+  }
+  .signal-sources-layout {
+    grid-template-columns: 1fr;
+    gap: 17px;
+  }
+  .signal-sources-layout > div > p {
+    font-size: 12px;
+    margin-top: 17px;
+  }
+  .signal-sources-layout .signal-source-fees {
+    font-size: 9px;
+  }
+  .signal-intake-list > div:not(.signal-pace) {
+    padding-block: 17px;
+  }
+  .signal-intake-list h3 {
+    font-size: 13px;
+  }
+  .signal-intake-list p {
+    font-size: 10px;
+  }
+  .signal-pace {
+    font-size: 9px;
+    padding-top: 17px;
+  }
+  .signal-founder {
+    padding-block: 43px;
+  }
+  .signal-founder > blockquote {
+    font-size: 24px;
+    line-height: 1.4;
+    letter-spacing: -0.7px;
+    margin-block: 17px 22px;
+  }
+  .signal-founder-bottom {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .signal-founder details {
+    max-width: 100%;
+  }
+  .signal-founder-bottom > p {
+    font-size: 10px;
+  }
+  .signal-pricing-heading {
+    display: block;
+  }
+  .signal-pricing-heading > p {
+    max-width: 300px;
+    margin-top: 17px !important;
+    font-size: 12px;
+  }
+  .signal-plans {
+    grid-template-columns: 1fr;
+    margin-top: 25px;
+    gap: 12px;
+  }
+  .signal-plan {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 15px;
+  }
+  .signal-plan-top {
+    justify-content: center;
+    gap: 3px;
+  }
+  .signal-plan-top h3 {
+    font-size: 20px;
+  }
+  .signal-plan-price {
+    font-size: 36px;
+    margin-top: 0;
+    align-self: center;
+  }
+  .signal-plan-price > span {
+    font-size: 9px;
+    margin-left: 5px;
+  }
+  .signal-allowances {
+    grid-column: 1/-1;
+    display: flex;
+    gap: 23px;
+    margin: 19px 0 21px;
+    padding-top: 14px;
+    font-size: 10px;
+  }
+  .signal-allowances strong {
+    font-size: 14px;
+  }
+  .signal-plan > button {
+    grid-column: 1/-1;
+    font-size: 11px !important;
+    padding-inline: 15px;
+  }
+  .signal-plan-included {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+    font-size: 9px;
+    padding-block: 20px;
+  }
+  .signal-plan-included > span {
+    grid-column: 1/-1;
+    font-size: 7px;
+  }
+  .signal-pricing-note {
+    font-size: 9px;
+    line-height: 1.8;
+    margin-top: 16px !important;
+  }
+  .signal-credit-details {
+    font-size: 10px;
+  }
+  .signal-credit-details p {
+    font-size: 10px;
+  }
+  .signal-faq {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding-bottom: 48px;
+  }
+  .signal-faq h2 br {
+    display: none;
+  }
+  .signal-faq summary {
+    font-size: 12px;
+    padding-block: 18px;
+  }
+  .signal-faq details p {
+    font-size: 11px;
+  }
+  .signal-access {
+    padding-block: 48px;
+  }
+  .signal-access-inner {
+    gap: 25px;
+  }
+  .signal-access-inner > div > p {
+    font-size: 12px;
+    margin-top: 16px;
+  }
+  .signal-input-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .signal-input-row > .signal-button {
+    min-height: 43px;
+    justify-content: space-between;
+    padding-inline: 15px;
+  }
+  .signal-input-row > input {
+    padding: 13px;
+    font-size: 13px;
+  }
+  .signal-consent {
+    font-size: 9px;
+  }
+  .signal-form-note {
+    font-size: 8px;
+  }
+  .signal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 19px;
+    padding-block: 27px;
+  }
+  .signal-footer > div {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .signal-dialog-inner {
+    padding: 31px 25px;
+  }
+  .signal-dialog h2 {
+    font-size: 27px;
+  }
+  .signal-dialog .signal-consent {
+    font-size: 10px;
+  }
+  .signal-dialog .signal-form-note {
+    font-size: 9px;
+  }
+}
+@media (max-width: 360px) {
+  .signal-shell {
+    width: calc(100% - 32px);
+  }
+  .signal-header-actions {
+    gap: 8px;
+  }
+  .signal-wordmark {
+    font-size: 18px;
+  }
+
+  .signal-hero h1 {
+    font-size: 34px;
+  }
+  .signal-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .signal-step-tabs {
+    gap: 0 7px;
+  }
+  .signal-step-tabs button {
+    font-size: 7px;
+  }
+  .signal-allowances {
+    gap: 14px;
+    font-size: 9px;
+  }
+  .signal-plan {
+    padding: 20px;
+  }
+
+  .signal-offer-panel {
+    padding-inline: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.signal-landing) {
+    scroll-behavior: auto;
+  }
+  .signal-landing *,
+  .signal-landing *::before,
+  .signal-landing *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (min-width: 900px) and (max-height: 900px) {
+  .signal-hero h1 {
+    font-size: 52px;
+  }
+  .signal-hero-description {
+    font-size: 15px;
+    max-width: 830px;
+  }
+}
+
+/* The hero follows the approved Signal Studio composition: a small upstream
+   brief, four airy stages, a dominant page preview, and silver connections. */
+.signal-overview {
+  margin-top: 64px;
+  position: relative;
+}
+.signal-foundation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 17px;
+  width: fit-content;
+  margin: 0 auto 40px;
+  padding: 12px 20px;
+  border-block: 1px solid #ffffff12;
+  background: linear-gradient(90deg, transparent, #ffffff03, transparent);
+  color: #d7dadd;
+  font-size: 11px;
+}
+.signal-foundation > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.signal-foundation-intro {
+  color: #8e969f;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 1.3px;
+}
+.signal-foundation-number {
+  color: #9099a4;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  margin-right: 3px;
+}
+.signal-foundation svg {
+  color: #b9c0c8;
+  flex-shrink: 0;
+}
+.signal-foundation-arrow {
+  color: #515860 !important;
+}
+.signal-scene {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.8fr 0.95fr 1.45fr 1fr;
+  gap: 40px;
+  isolation: isolate;
+}
+.signal-scene-column {
+  min-width: 0;
+  position: relative;
+}
+.signal-column-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+  min-height: 48px;
+}
+.signal-column-heading > span {
+  color: #e0e3e7;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.signal-column-heading h3 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.25px;
+  line-height: 1.6;
+}
+.signal-column-heading p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #aeb5be;
+  margin-top: 2px;
+  max-width: 225px;
+}
+.signal-discovery-preview {
+  display: grid;
+  grid-template-columns: 1.32fr 1fr;
+  gap: 34px;
+  align-items: center;
+  padding-top: 12px;
+}
+.signal-source-stack {
+  padding: 10px;
+  overflow: visible;
+}
+.signal-source-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 64px;
+  padding: 9px;
+  border: 1px solid #33383c;
+  border-radius: 6px;
+  background: linear-gradient(140deg, #1a1d1f, #111314);
+}
+.signal-source-tile + .signal-source-tile {
+  margin-top: 15px;
+}
+.signal-source-tile > svg {
+  flex-shrink: 0;
+  color: #d7dce1;
+}
+.signal-source-tile > svg:last-child {
+  margin-left: auto;
+  width: 10px;
+}
+.signal-source-tile strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.signal-source-tile span {
+  display: block;
+  color: #a5adb6;
+  font-size: 9px;
+  margin-top: 4px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.signal-candidate-list {
+  padding: 12px 10px;
+  position: relative;
+}
+.signal-candidate-list > strong {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #ffffff10;
+  white-space: nowrap;
+}
+.signal-candidate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+.signal-candidate > span {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #444b52;
+  background: #23282d;
+  color: #c5cdd6;
+}
+.signal-candidate > div {
+  flex: 1;
+  min-width: 0;
+}
+.signal-candidate > div > span {
+  display: block;
+  font-size: 9px;
+  color: #c5cbd2;
+}
+.signal-candidate i {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: #41484f;
+  margin-top: 4px;
+}
+.signal-qualification-card {
+  margin-top: 10px;
+  position: relative;
+}
+.signal-qualification-card > h4 {
+  margin: 0 14px;
+  padding: 14px 0 11px;
+  border-bottom: 1px solid #ffffff12;
+  font-size: 12px;
+  font-weight: 500;
+}
+.signal-qualification-card .signal-prospect-panel {
+  padding: 14px 14px 0;
+}
+.signal-qualification-card .signal-badge {
+  display: none;
+}
+.signal-qualification-card .signal-company > div > span {
+  font-size: 8px;
+}
+.signal-qualification-card .signal-company strong {
+  font-size: 16px;
+}
+.signal-qualification-card .signal-fit {
+  margin-top: 13px;
+  font-size: 10px;
+}
+.signal-qualification-card .signal-fit > div {
+  padding-block: 9px;
+}
+.signal-qualification-card .signal-fit svg {
+  color: #bcd59f;
+  width: 14px;
+  height: 14px;
+  padding: 1px;
+  border: 1px solid #749062;
+  border-radius: 50%;
+}
+.signal-qualification-card .signal-source-link {
+  font-size: 7px;
+  margin-top: 12px;
+}
+.signal-qualification-card .signal-select {
+  border: 1px solid #41484d;
+  background: linear-gradient(160deg, #2b3035, #16191c);
+  border-radius: 5px;
+  margin: 15px 0 13px;
+  padding: 9px 3px;
+  font-size: 8px;
+  color: #eceef0;
+  box-shadow: inset 0 1px 0 #ffffff0a;
+}
+.signal-output-card {
+  border-color: #636b73;
+  box-shadow:
+    0 0 26px #c2d2e51a,
+    0 12px 32px #0009,
+    inset 0 1px 0 #ffffff0d;
+}
+.signal-page-inner {
+  padding: 0;
+  background: #0d0f10;
+}
+.signal-page-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 17px;
+  border-bottom: 1px solid #ffffff16;
+  font-size: 8px;
+  font-weight: 500;
+}
+.signal-page-brand > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.signal-page-brand > span > span {
+  font-size: 18px;
+  line-height: 1;
+}
+.signal-page-brand small {
+  font-size: 7px;
+  letter-spacing: 0.7px;
+  color: #b2bac4;
+}
+.signal-page-composition {
+  position: relative;
+  min-height: 252px;
+  overflow: hidden;
+}
+.signal-architecture {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 39%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 71% 50%;
+  opacity: 0.84;
+  border-left: 1px solid #ffffff0b;
+}
+.signal-page-copy {
+  position: relative;
+  width: 65%;
+  padding: 13px 0 12px 17px;
+}
+.signal-page-copy h4 {
+  font-size: clamp(18px, 1.65vw, 25px);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.signal-proposal-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #ffffff12;
+  margin-right: 20px;
+}
+.signal-proposal-detail > svg {
+  flex-shrink: 0;
+  color: #c4cbd3;
+  margin-top: 2px;
+}
+.signal-proposal-detail strong {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  display: block;
+}
+.signal-proposal-detail p {
+  font-size: 8px;
+  color: #a2abb6;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.signal-draft-card {
+  padding: 12px;
+  margin-top: 12px;
+}
+.signal-draft-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 2px 3px 13px;
+  color: #e3e6ea;
+}
+.signal-draft-heading strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.signal-draft-heading svg {
+  flex-shrink: 0;
+}
+.signal-draft-body {
+  background: linear-gradient(130deg, #1b1e20, #111315);
+  border: 1px solid #343a40;
+  border-radius: 6px 6px 0 0;
+  padding: 11px;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #c8ced6;
+}
+.signal-draft-body p + p {
+  margin-top: 10px;
+}
+.signal-draft-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #353b42;
+  border-radius: 0 0 6px 6px;
+  padding: 10px;
+  font-size: 9px;
+  background: #15181a;
+  margin-top: 3px;
+}
+.signal-draft-link > svg:last-child {
+  margin-left: auto;
+}
+.signal-review-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #49515a;
+  border-radius: 5px;
+  padding: 9px 4px;
+  font-size: 9px;
+  background: linear-gradient(160deg, #2b3035, #16191c);
+  margin-top: 11px;
+  box-shadow: inset 0 1px 0 #ffffff0c;
+}
+.signal-overview-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #8e98a4;
+  font-size: 9px;
+  margin-top: 12px;
+}
+.signal-mobile-switch {
+  display: none;
+}
+.signal-field {
+  position: absolute;
+  inset: 68px 0 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: visible;
+}
+.signal-field svg,
+.signal-field canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.signal-field svg {
+  fill: none;
+  stroke: #d7e0ec;
+  stroke-width: 0.7;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 3px #d7e0ec88);
+}
+.signal-field svg.is-dim {
+  opacity: 0.26;
+}
+.signal-field canvas {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.signal-field canvas.is-ready {
+  opacity: 1;
+}
+.signal-field::before {
+  content: "";
+  position: absolute;
+  inset: -35px -20px;
+  background: radial-gradient(ellipse at 53% 52%, #b8cee015, transparent 65%);
+  filter: blur(18px);
+}
+.signal-source-tile::after,
+.signal-candidate-list::after,
+.signal-qualification-card::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e1e9f2;
+  box-shadow:
+    0 0 7px #dce9ff,
+    0 0 15px #c8ddff88;
+}
+.signal-motion-control {
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ca2ac;
+  background: none;
+  padding: 7px;
+  font-size: 9px !important;
+}
+.signal-motion-control:hover {
+  color: #fff;
+}
+@media (min-width: 1600px) {
+  .signal-hero {
+    padding-top: 26px;
+  }
+  .signal-hero h1 {
+    font-size: 60px;
+  }
+}
+@media (max-width: 1200px) and (min-width: 901px) {
+  .signal-scene {
+    gap: 24px;
+    grid-template-columns: 1.05fr 1fr 1.4fr 1fr;
+  }
+  .signal-discovery-preview {
+    grid-template-columns: 1fr;
+  }
+  .signal-candidate-list {
+    display: none;
+  }
+  .signal-source-stack {
+    padding: 10px;
+  }
+  .signal-column-heading {
+    gap: 8px;
+  }
+  .signal-column-heading > span {
+    font-size: 14px;
+  }
+  .signal-column-heading h3 {
+    font-size: 12px;
+  }
+  .signal-column-heading p {
+    font-size: 10px;
+  }
+  .signal-qualification-card .signal-fit > div {
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .signal-draft-heading strong {
+    font-size: 9px;
+  }
+  .signal-draft-body {
+    font-size: 9px;
+  }
+  .signal-page-copy h4 {
+    font-size: 18px;
+  }
+  .signal-proposal-detail {
+    gap: 6px;
+    margin-right: 8px;
+  }
+  .signal-proposal-detail p {
+    font-size: 7px;
+  }
+}
+@media (max-width: 900px) {
+  .signal-overview {
+    margin-top: 40px;
+  }
+  .signal-foundation {
+    gap: 12px;
+    padding: 13px 0;
+    width: 100%;
+    flex-wrap: wrap;
+    font-size: 11px;
+    margin-bottom: 32px;
+  }
+  .signal-foundation-intro {
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+  }
+  .signal-foundation > div {
+    gap: 6px;
+  }
+  .signal-foundation-number {
+    margin: 0;
+  }
+  .signal-mobile-switch {
+    display: flex;
+    gap: 4px;
+    border: 1px solid #33383e;
+    border-radius: 6px;
+    background: #0e1012;
+    padding: 4px;
+  }
+  .signal-mobile-switch button {
+    flex: 1;
+    border: 0;
+    border-radius: 3px;
+    color: #949da9;
+    background: transparent;
+    padding: 9px 3px;
+    font-size: 11px;
+  }
+  .signal-mobile-switch button[aria-pressed="true"] {
+    color: #f0f3f7;
+    background: #2a3037;
+  }
+  .signal-scene {
+    display: block;
+    margin-top: 19px;
+  }
+  .signal-scene-column {
+    max-width: 550px;
+    margin-inline: auto;
+  }
+  .signal-scene-column[data-mobile-active="false"] {
+    display: none;
+  }
+  .signal-field,
+  .signal-motion-control {
+    display: none;
+  }
+  .signal-column-heading {
+    min-height: 0;
+    margin-bottom: 15px;
+  }
+  .signal-column-heading p {
+    max-width: none;
+  }
+  .signal-discovery-preview {
+    grid-template-columns: 1.45fr 1fr;
+    gap: 38px;
+    padding-top: 0;
+  }
+  .signal-source-stack {
+    padding: 10px;
+  }
+  .signal-source-tile {
+    padding: 10px;
+    min-height: 62px;
+  }
+  .signal-source-tile strong {
+    font-size: 10px;
+  }
+  .signal-source-tile span {
+    font-size: 8px;
+  }
+  .signal-candidate-list {
+    padding: 15px 10px;
+  }
+  .signal-candidate-list > strong {
+    font-size: 10px;
+  }
+  .signal-candidate > div > span {
+    font-size: 9px;
+  }
+  .signal-source-tile::after,
+  .signal-candidate-list::after,
+  .signal-qualification-card::after {
+    display: none;
+  }
+  .signal-candidate-list::before {
+    content: "→";
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 44%;
+    color: #b6c0cc;
+  }
+  .signal-qualification-card {
+    margin-top: 0;
+  }
+  .signal-qualification-card .signal-fit {
+    font-size: 12px;
+  }
+  .signal-qualification-card .signal-source-link {
+    font-size: 10px;
+  }
+  .signal-qualification-card .signal-select {
+    font-size: 11px;
+  }
+  .signal-qualification-card > h4 {
+    font-size: 14px;
+  }
+  .signal-page-copy h4 {
+    font-size: 28px;
+  }
+  .signal-page-copy {
+    padding: 18px 0 18px 18px;
+  }
+  .signal-proposal-detail {
+    margin-top: 13px;
+    padding-top: 13px;
+  }
+  .signal-proposal-detail strong {
+    font-size: 12px;
+  }
+  .signal-proposal-detail p {
+    font-size: 10px;
+  }
+  .signal-page-brand {
+    font-size: 9px;
+    padding: 12px 18px;
+  }
+  .signal-draft-card {
+    margin-top: 0;
+    padding: 15px;
+  }
+  .signal-draft-heading strong {
+    font-size: 13px;
+  }
+  .signal-draft-body {
+    font-size: 12px;
+    padding: 15px;
+  }
+  .signal-draft-link,
+  .signal-review-message {
+    font-size: 11px;
+    padding: 12px;
+  }
+  .signal-overview-bottom {
+    margin-top: 17px;
+  }
+  #the-work {
+    padding-top: 48px;
+  }
+}
+@media (max-width: 600px) {
+  .signal-hero {
+    padding-top: 26px;
+  }
+  .signal-hero h1 {
+    font-weight: 650;
+    letter-spacing: -1.6px;
+  }
+  .signal-foundation {
+    gap: 9px;
+    font-size: 9px;
+  }
+  .signal-foundation > div > svg {
+    display: none;
+  }
+  .signal-foundation-number {
+    font-size: 8px;
+  }
+  .signal-foundation-arrow {
+    width: 12px;
+  }
+  .signal-column-heading h3 {
+    font-size: 13px;
+  }
+  .signal-column-heading > span {
+    font-size: 15px;
+  }
+  .signal-column-heading p {
+    font-size: 11px;
+  }
+  .signal-discovery-preview {
+    gap: 28px;
+    grid-template-columns: 1.5fr 1fr;
+  }
+  .signal-source-tile {
+    gap: 6px;
+    padding: 8px;
+  }
+  .signal-source-tile strong {
+    font-size: 10px;
+  }
+  .signal-source-tile span {
+    font-size: 8px;
+  }
+  .signal-source-tile > svg {
+    width: 15px;
+  }
+  .signal-source-tile > svg:last-child {
+    display: none;
+  }
+  .signal-candidate-list::before {
+    right: calc(100% + 7px);
+  }
+  .signal-candidate-list > strong {
+    font-size: 9px;
+  }
+  .signal-candidate > div > span {
+    font-size: 8px;
+  }
+  .signal-page-copy h4 {
+    font-size: 23px;
+  }
+  .signal-proposal-detail p {
+    font-size: 9px;
+  }
+  .signal-proposal-detail strong {
+    font-size: 11px;
+  }
+  .signal-mobile-switch button {
+    font-size: 10px;
+  }
+  .signal-overview-bottom {
+    font-size: 8px;
+  }
+  #the-work > .signal-section-heading > .signal-eyebrow::before,
+  #the-work > .signal-section-heading > .signal-eyebrow::after {
+    width: 25px;
+  }
+}
+@media (max-width: 360px) {
+  .signal-discovery-preview {
+    gap: 22px;
+    grid-template-columns: 1.45fr 1fr;
+  }
+  .signal-source-stack {
+    padding: 7px;
+  }
+  .signal-source-tile > svg {
+    display: none;
+  }
+  .signal-source-tile strong {
+    font-size: 9px;
+  }
+  .signal-source-tile span {
+    font-size: 7px;
+  }
+  .signal-candidate {
+    gap: 5px;
+  }
+  .signal-candidate > span {
+    width: 20px;
+    height: 20px;
+  }
+  .signal-candidate-list {
+    padding-inline: 8px;
+  }
+  .signal-foundation {
+    font-size: 8px;
+    gap: 6px;
+  }
+  .signal-page-copy h4 {
+    font-size: 20px;
+  }
+  .signal-proposal-detail {
+    gap: 7px;
+    margin-right: 10px;
+  }
+  .signal-proposal-detail p {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .signal-field canvas,
+  .signal-motion-control {
+    display: none;
+  }
+}
