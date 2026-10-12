@@ -63,6 +63,18 @@ describe("company workflow boundaries", () => {
     await expect(caller.intake.get()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });
+    await expect(caller.icpAgents.list()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    await expect(
+      caller.icpAgents.toggle({ id: 1, enabled: true })
+    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.icpAgents.tick({ id: 1 })).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    await expect(
+      caller.icpAgents.registerSchedule({ id: 1 })
+    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.sources.catalog()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });

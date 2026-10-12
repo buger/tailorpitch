@@ -1,3 +1,7 @@
+import {
+  registerIcpAgentRoutes,
+  startIcpAgentWorker,
+} from "../services/icpAgentWorker";
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
@@ -34,6 +38,7 @@ async function startServer() {
   registerMailboxRoutes(app);
   registerGojiberryRoutes(app);
   registerPipelineRoutes(app);
+  registerIcpAgentRoutes(app);
   registerPublicRoutes(app);
   await ensurePilot();
   // tRPC API
@@ -59,9 +64,11 @@ async function startServer() {
     process.exit(1);
   });
   const host = process.env.HOST || "0.0.0.0";
-  server.listen(port, host, () =>
-    console.log(`Server listening on http://${host}:${port}`)
-  );
+  server.listen(port, host, () => {
+    console.log(`Server listening on http://${host}:${port}`);
+    const stopWorker = startIcpAgentWorker();
+    server.on("close", stopWorker);
+  });
 }
 
 startServer().catch(error => {

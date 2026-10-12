@@ -1,3 +1,12 @@
+import {
+  listIcpAgents,
+  saveIcpAgent,
+  toggleIcpAgent,
+  tickIcpAgent,
+  reconcileIcpAgentCycle,
+  registerIcpAgentSchedule,
+} from "./services/icpAgents";
+import { icpAgentConfigSchema } from "../shared/icpAgents";
 import { assertRunBinding } from "./services/apifyRunBinding";
 import {
   sourceAnswersSchema,
@@ -209,6 +218,62 @@ async function publicPage(token: string) {
 }
 
 export const appRouter = router({
+  icpAgents: router({
+    list: companyProcedure.query(({ ctx }) => listIcpAgents(ctx.company.id)),
+    save: ownerProcedure
+      .input(
+        z.object({
+          icpId: z.number().int().positive(),
+          name: z.string().trim().min(2).max(200),
+          config: icpAgentConfigSchema,
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        saveIcpAgent(ctx.company.id, input.icpId, input.name, input.config)
+      ),
+    toggle: ownerProcedure
+      .input(
+        z.object({ id: z.number().int().positive(), enabled: z.boolean() })
+      )
+      .mutation(({ ctx, input }) =>
+        toggleIcpAgent(
+          ctx.company.id,
+          input.id,
+          input.enabled,
+          parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""
+        )
+      ),
+    tick: ownerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(({ ctx, input }) =>
+        tickIcpAgent(ctx.company.id, input.id, "local")
+      ),
+    reconcile: ownerProcedure
+      .input(
+        z.object({
+          cycleId: z.number().int().positive(),
+          externalId: z.string().max(100).optional(),
+          confirmedNoRun: z.boolean().default(false),
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        reconcileIcpAgentCycle(
+          ctx.company.id,
+          input.cycleId,
+          input.externalId,
+          input.confirmedNoRun
+        )
+      ),
+    registerSchedule: ownerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(({ ctx, input }) =>
+        registerIcpAgentSchedule(
+          ctx.company.id,
+          input.id,
+          parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""
+        )
+      ),
+  }),
   pipeline: router({
     get: companyProcedure.query(({ ctx }) => getPipeline(ctx.company.id)),
     save: ownerProcedure

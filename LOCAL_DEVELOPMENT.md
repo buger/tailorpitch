@@ -20,7 +20,7 @@ If the local server is stopped, run this from the project folder in the attached
 ```sh
 cd /Users/buger/tailorpitch
 MANUS_API_KEY="${MANUS_API_KEY:-$BUILT_IN_FORGE_API_KEY}" \
-  HOST=127.0.0.1 PORT=5175 pnpm dev
+  HOST=127.0.0.1 PORT=5175 TAILORPITCH_AGENT_WORKER=local pnpm dev
 ```
 
 The supplied built-in runtime credential was verified against the managed model catalog. The command passes it directly into the server's environment; no secret value is written into source, configuration files or Git. This does not provide a separate Manus v2 account task credential. Bundled Apify is now configured separately through the protected TailorPitch application secret; no customer token entry is needed.
@@ -62,3 +62,13 @@ Apify comes from the protected `TAILORPITCH_APIFY_API_TOKEN` environment value, 
 Provider syncing can be paused independently: it defers external fetch/import/start work while local drafts for already qualified/selected leads may continue if the pipeline itself is enabled. Running provider jobs are not cancelled. Interrupted starts are blocked until reconciled; recovery validates signed company/internal-run/plan correlation from provider INPUT and never attaches another tenant's run.
 
 This update passes 120 tests, TypeScript and a Mac build. Desktop/mobile Sources checks used intercepted fixtures, no production data writes or actor runs. Development still uses the shared managed database; schema migration 0008 is additive. Source changes remain on `local-development`, not published canonical main. Scheduled cloud callbacks still target published code, not this Mac.
+
+## Independent ICP agents
+
+`/app/agents` is now a per-ICP sourcing-agent roster, not just one company pipeline. Approve an ICP source strategy in Sources, configure its agent (default maximum **3 qualified lead deliveries/day**, **6 search turns/day**, 4 hours between new searches), select its allowed bounded Apify tools and save. New/saved agents are **paused**. Resume explicitly. Each turn chooses one allowed tool/query, examines at most ten provider records and qualifies at most one candidate. It counts actual new lead deliveries, not search rows. Unsupported ICP filters or undated/unsupported buying signals result in rejection rather than filler.
+
+The Mac application worker advances enabled **local** agents every minute while the server runs; their own hours, cadence, daily attempt/delivery caps and leases govern actual paid dispatch. No missed-day catch-up bursts. Five bounded discovery adapters are available for ICP agents (Google, LinkedIn posts/jobs/companies and career-site job descriptions). The career API minimum is ten source records, not ten lead deliveries. Optional contact/comment/reaction work is disabled. The legacy manual source-plan adapter status remains separate; choosing a specialist does not silently invoke Google.
+
+Daily delivery history is measured per ICP and timezone. Timezone cannot be changed after an agent's first turn because doing so would reset the meaning of its daily budget. Pause/resume and saved edits preserve history. A signed immutable provider-input marker binds interrupted starts to the owning company/agent/turn; ambiguous starts are paused for explicit recovery and never blindly replayed. Cloud hosted execution requires separately registered authenticated callbacks and this version published; localhost cannot receive those callbacks. Do not run a legacy discovery pipeline and an ICP agent for the same ICP.
+
+No real ICP agents, cycles or deliveries were created during validation; all roster interactions were isolated browser fixtures. The managed database migration adds tables only. The other agent's landing redesign (`5511a9dd`, `1d837a3a`) is present and preserved in our working branch.

@@ -385,3 +385,66 @@ export const sourcePlans = mysqlTable("sourcePlans", {
   approvedBy: int("approvedBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+/** Independent ICP agents. Legacy company pipelines are intentionally preserved. */
+export const icpAgents = mysqlTable(
+  "icpAgents",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    companyId: int("companyId").notNull(),
+    icpId: int("icpId").notNull(),
+    name: varchar("name", { length: 200 }).notNull(),
+    sourcePlanId: int("sourcePlanId").notNull(),
+    config: json("config")
+      .$type<import("../shared/icpAgents").IcpAgentConfig>()
+      .notNull(),
+    enabled: int("enabled").notNull().default(0),
+    scheduleTaskUid: varchar("scheduleTaskUid", { length: 100 }).unique(),
+    nextRunAt: timestamp("nextRunAt"),
+    leaseUntil: timestamp("leaseUntil"),
+    leaseToken: varchar("leaseToken", { length: 64 }),
+    lastTickAt: timestamp("lastTickAt"),
+    lastError: text("lastError"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  t => [uniqueIndex("icp_agent_company_icp").on(t.companyId, t.icpId)]
+);
+export const icpAgentCycles = mysqlTable("icpAgentCycles", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").notNull(),
+  agentId: int("agentId").notNull(),
+  dayKey: varchar("dayKey", { length: 10 }).notNull(),
+  status: varchar("status", { length: 40 }).notNull().default("planning"),
+  actorId: varchar("actorId", { length: 200 }),
+  externalId: varchar("externalId", { length: 100 }).unique(),
+  datasetId: varchar("datasetId", { length: 100 }),
+  decision: json("decision").$type<{
+    actorId: string;
+    query: string;
+    reason: string;
+  }>(),
+  input: json("input").$type<Record<string, unknown>>(),
+  contextHash: varchar("contextHash", { length: 64 }).notNull(),
+  sourcePlanId: int("sourcePlanId").notNull(),
+  candidatesExamined: int("candidatesExamined").notNull().default(0),
+  result: json("result").$type<Record<string, unknown>>(),
+  error: text("error"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export const icpAgentDeliveries = mysqlTable(
+  "icpAgentDeliveries",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    companyId: int("companyId").notNull(),
+    agentId: int("agentId").notNull(),
+    icpId: int("icpId").notNull(),
+    leadId: int("leadId").notNull(),
+    cycleId: int("cycleId").notNull().unique(),
+    dayKey: varchar("dayKey", { length: 10 }).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  t => [uniqueIndex("icp_agent_unique_delivery").on(t.companyId, t.leadId)]
+);

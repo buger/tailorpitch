@@ -20,7 +20,7 @@ import {
   SubmissionsView,
 } from "@/pages/WorkspaceContent";
 import { SourcesView } from "./WorkspaceSources";
-import { AgentsView } from "./WorkspaceAgents";
+import { IcpAgentsView } from "./IcpAgentsView";
 import { SettingsView } from "./WorkspaceSettings";
 import { CompanyOnboarding } from "./CompanyOnboarding";
 
@@ -82,7 +82,7 @@ export default function AppWorkspace() {
     view = <CompanyOnboarding workspace={workspace.data} />;
   else if (location === "/app/sources")
     view = <SourcesView workspace={workspace.data} />;
-  else if (location === "/app/agents") view = <AgentsView />;
+  else if (location === "/app/agents") view = <IcpAgentsView />;
   else if (location === "/app/icps") view = <IcpView />;
   else if (location === "/app/leads") view = <LeadsView />;
   else if (location.startsWith("/app/leads/"))
