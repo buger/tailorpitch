@@ -2768,3 +2768,19 @@
     display: none;
   }
 }
+
+/* Business setup is separate from the numbered lead-delivery pipeline. */
+.signal-pipeline-intro {
+  margin: 0 0 24px;
+  color: #aeb5be;
+  font:
+    10px/1.6 "IBM Plex Mono",
+    monospace;
+  letter-spacing: 1.2px;
+}
+@media (max-width: 900px) {
+  .signal-pipeline-intro {
+    margin-bottom: 16px;
+    font-size: 9px;
+  }
+}

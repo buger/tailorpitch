@@ -409,14 +409,14 @@ function PipelineOverview() {
   const [paused, setPaused] = useState(false);
   const stages = [
     {
-      number: "03",
+      number: "01",
       name: "Find",
       description: "Bring in leads from your chosen sources.",
       className: "signal-discovery-stage",
       preview: <DiscoveryPreview />,
     },
     {
-      number: "04",
+      number: "02",
       name: "Qualify",
       description: "Understand the fit before you make a move.",
       className: "signal-qualification-stage",
@@ -428,7 +428,7 @@ function PipelineOverview() {
       ),
     },
     {
-      number: "05",
+      number: "03",
       name: "Personal page",
       description: "A tailored proposal for the leads you choose.",
       className: "signal-page-stage",
@@ -439,7 +439,7 @@ function PipelineOverview() {
       ),
     },
     {
-      number: "06",
+      number: "04",
       name: "Outreach",
       description: "A personal first message, ready for your review.",
       className: "signal-outreach-stage",
@@ -448,22 +448,26 @@ function PipelineOverview() {
   ];
   return (
     <div className="signal-overview">
-      <div className="signal-foundation" aria-label="The first two steps">
+      <div
+        className="signal-foundation"
+        aria-label="Business setup before lead sourcing"
+      >
         <span className="signal-foundation-intro">
-          START WITH YOUR BUSINESS
+          FIRST, SET UP YOUR BUSINESS
         </span>
         <div>
-          <span className="signal-foundation-number">01</span>
           <Globe2 size={15} />
           <span>Analyze your offer</span>
         </div>
         <ArrowRight className="signal-foundation-arrow" size={15} />
         <div>
-          <span className="signal-foundation-number">02</span>
           <Target size={15} />
           <span>Define your ideal customers</span>
         </div>
       </div>
+      <p className="signal-pipeline-intro">
+        THEN, YOUR FOUR-STEP LEAD PIPELINE
+      </p>
       <div
         className="signal-mobile-switch"
         role="group"
