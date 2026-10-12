@@ -85,6 +85,8 @@ export const leads = mysqlTable(
     source: varchar("source", { length: 80 }).default("manual").notNull(),
     sourceUrl: varchar("sourceUrl", { length: 2000 }),
     sourceRunId: int("sourceRunId"),
+    pipelineId: int("pipelineId"),
+    pipelineSelectedAt: timestamp("pipelineSelectedAt"),
     status: mysqlEnum("status", [
       "new",
       "researching",
@@ -243,4 +245,70 @@ export const suppressions = mysqlTable(
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   t => [uniqueIndex("suppression_company_email").on(t.companyId, t.email)]
+);
+
+export const mcpOAuthSessions = mysqlTable("mcpOAuthSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").notNull(),
+  userId: int("userId").notNull(),
+  stateHash: varchar("stateHash", { length: 64 }).notNull().unique(),
+  encryptedPayload: text("encryptedPayload").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  consumedAt: timestamp("consumedAt"),
+});
+export const pipelines = mysqlTable("pipelines", {
+  id: int("id").autoincrement().primaryKey(),
+  companyId: int("companyId").notNull().unique(),
+  name: varchar("name", { length: 200 })
+    .notNull()
+    .default("Your prospecting agent"),
+  config: json("config")
+    .$type<import("../shared/pipeline").PipelineConfig>()
+    .notNull(),
+  enabled: int("enabled").notNull().default(0),
+  scheduleTaskUid: varchar("scheduleTaskUid", { length: 100 }).unique(),
+  scheduleId: varchar("scheduleId", { length: 100 }),
+  scheduleStatus: varchar("scheduleStatus", { length: 50 })
+    .notNull()
+    .default("not_registered"),
+  dayKey: varchar("dayKey", { length: 10 }),
+  discoveriesToday: int("discoveriesToday").notNull().default(0),
+  nextDiscoveryAt: timestamp("nextDiscoveryAt"),
+  leaseUntil: timestamp("leaseUntil"),
+  leaseToken: varchar("leaseToken", { length: 64 }),
+  lastTickAt: timestamp("lastTickAt"),
+  lastError: text("lastError"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow().onUpdateNow(),
+});
+export const pipelineJobs = mysqlTable(
+  "pipelineJobs",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    companyId: int("companyId").notNull(),
+    pipelineId: int("pipelineId").notNull(),
+    leadId: int("leadId"),
+    stage: mysqlEnum("stage", [
+      "discover",
+      "qualify",
+      "page",
+      "outreach",
+    ]).notNull(),
+    provider: varchar("provider", { length: 50 }).notNull(),
+    status: varchar("status", { length: 50 }).notNull().default("queued"),
+    sourceRunId: int("sourceRunId"),
+    manusTaskId: varchar("manusTaskId", { length: 100 }),
+    taskUrl: varchar("taskUrl", { length: 2000 }),
+    eventCursor: varchar("eventCursor", { length: 500 }),
+    result: json("result").$type<Record<string, unknown>>(),
+    error: text("error"),
+    configSnapshot: json("configSnapshot")
+      .$type<import("../shared/pipeline").PipelineConfig>()
+      .notNull(),
+    startedAt: timestamp("startedAt"),
+    completedAt: timestamp("completedAt"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow().onUpdateNow(),
+  },
+  t => [uniqueIndex("pipeline_lead_stage").on(t.pipelineId, t.leadId, t.stage)]
 );

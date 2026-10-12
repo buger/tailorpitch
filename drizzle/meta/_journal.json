@@ -29,6 +29,20 @@
       "when": 1791789721102,
       "tag": "0003_loose_the_call",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1791790157021,
+      "tag": "0004_natural_mauler",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1791790870712,
+      "tag": "0005_burly_the_hood",
+      "breakpoints": true
     }
   ]
 }

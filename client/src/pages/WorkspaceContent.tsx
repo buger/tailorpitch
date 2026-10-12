@@ -844,7 +844,7 @@ export function OutreachView() {
             <EmptyState
               icon={Send}
               title="No outreach drafts"
-              description="Leadloom will not send anything automatically. Generate a draft from researched context, then review it before any action."
+              description="TailorPitch will not send anything automatically. Generate a draft from researched context, then review it before any action."
             />
           ) : null}
         </div>
@@ -1460,7 +1460,7 @@ export function SubmissionsView() {
       <SectionHeader
         eyebrow="Submissions / consented interest"
         title="Who raised a hand."
-        description="Submissions from public personalized pages and the Leadloom early-access list. Consent text is retained with each record."
+        description="Submissions from public personalized pages and the TailorPitch early-access list. Consent text is retained with each record."
       />
       {list.isLoading && <LoadingState label="Loading submissions" />}
       {list.error && (

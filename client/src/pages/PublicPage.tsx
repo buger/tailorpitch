@@ -38,7 +38,7 @@ export default function PublicPage() {
             href="/"
             className="mt-7 inline-flex text-sm font-semibold underline"
           >
-            Back to Leadloom
+            Back to TailorPitch
           </Link>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function PublicPage() {
         <span>{company.name}</span>
         <Link href="/" className="inline-flex items-center gap-2">
           <ArrowLeft className="h-3 w-3" />
-          Built with Leadloom
+          Built with TailorPitch
         </Link>
       </footer>
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}

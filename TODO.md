@@ -1,4 +1,4 @@
-# Leadloom implementation outcomes
+# TailorPitch implementation outcomes
 
 - [x] Public SaaS landing page explains lead sourcing, research, personalized pages and outreach; validates and persists consented early-access emails, with success/error states, privacy page and custom-domain-ready relative routing.
 - [x] Real Manus login protects private data. Only `hello@reqproof.com` initially owns the single Proof company pilot. Other authenticated accounts see access pending, never the pilot data. Companies and memberships support future company registration and teams; protected reads/writes enforce server-resolved tenant scope.
@@ -16,3 +16,19 @@
 TypeScript checking, 17 automated tests, and the production build pass. Production serving was checked locally for initial landing HTML, private noindex metadata, health and all 13 declared page routes. Public Preview responds successfully; unauthenticated lead API rejects with HTTP 401; missing prospect URL returns 404. A real AI page-generation call returned schema-valid personalized content without storing a test lead or page. Read-only integration review was completed and confirmed interrupted-run, opt-out, final-payload and consent-scope issues were corrected.
 
 Proof seed contains two editable ICP hypotheses; no fake leads, pages, outreach or connected accounts are inserted. Apify and Gmail/IMAP require owner configuration, so provider-dependent live scraping, mailbox login and delivery have not been exercised with the owner's accounts. LinkedIn and X use manual outreach, as approved. The app is a preview, not a published or domain-bound service. Company registration/invitation UI remains future scope; tenant/member models exist now. Before broader production launch, configure a dedicated stable CREDENTIAL_ENCRYPTION_KEY before adding integrations, complete any applicable Google OAuth verification, and apply operational mailbox/data retention policies.
+
+## TailorPitch extension outcomes
+
+- [ ] Rebrand SaaS as TailorPitch, retain Proof company branding, and configure tailorpitch.com through Cloudflare and platform-issued domain records; connection is claimed only after actual verification.
+- [ ] Gojiberry uses real MCP discovery, dynamic client registration, S256 PKCE, browser/user/company-bound state, callback code exchange, encrypted token persistence/refresh, safe discovered tool schemas, and one authorized read-only integration test; missing login remains explicit.
+- [x] Manus v2 verifies the account, creates/resumes bounded agent tasks, records real events/task URLs, parses strict structured results, checks waiting/background states, and keeps external account credentials encrypted per tenant.
+- [x] A flexible durable pipeline covers find → research/qualify → human selection → private page draft → optional outreach draft. No automatic publication or messaging. Stage jobs, leases, failures and provider IDs survive restarts.
+- [x] Editable pacing starts at one candidate per cycle, up to 3 candidates/day, 240 minutes between discoveries and weekday local 09:00–17:00. Daily caps, stage selection, working windows, pause/resume, bounded Apify requests and no duplicate paid retries are enforced server-side.
+- [ ] Authenticated published Heartbeat owns recurring execution and maps actual schedule identity to the pipeline. Configured, unpublished and running states remain distinct; no detached Sandbox scheduling loop or unapproved ongoing paid work.
+- [ ] Type/build/tests and a read-only extension review check OAuth/tenant/pipeline connections. Final checkpoint and handoff report actual integration, domain and scheduler status.
+
+## TailorPitch extension evidence and remaining activation steps
+
+TypeScript checks, 34 automated tests and the production build pass. The 14-page manifest matches source, including Agents & pipeline. Unauthenticated agent API and unsigned Heartbeat return 401. Read-only review confirmed lease ownership, schedule idempotence, stale research selection and pending OAuth disconnect defects; corrected with random lease tokens, serialized UID reuse, current-lead guards and OAuth-session cleanup.
+
+A live Gojiberry check successfully discovered the provider, dynamically registered a public client, and returned a matching-state S256 PKCE authorization URL with the exact MCP resource. No account tokens were granted: owner login and a real tool call remain pending. Manus lifecycle regression tests used mocked HTTP and did not launch real account tasks. No integrations or active recurring pipelines were inserted during the build. Cloudflare access was not accepted, so tailorpitch.com remains unbound. Production publication, owner login, provider credentials and schedule activation remain next steps. Nothing was sent or scraped against the owner's accounts.

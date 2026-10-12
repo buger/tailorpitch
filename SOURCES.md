@@ -14,3 +14,11 @@ Proof’s product name is **Proof** in prose; ReqProof is the domain form. The p
 - https://docs.x.com/x-api/direct-messages/manage/introduction — X messaging requires an eligible developer app and user OAuth access.
 
 No paid scrape, outbound message or social post was run during development. LinkedIn/X are explicit manual-draft workflows until an authorized delivery adapter is selected. API credentials are entered in owner-only application settings, encrypted per company/provider, and not bundled into client code.
+
+## TailorPitch integration extension
+
+Gojiberry’s official MCP setup is described at https://gojiberry.ai/how-to-do-outreach-claude-linkedin-mcp . The actual tool catalog must be authenticated and inspected before operations are assumed. On October 12, 2026, https://mcp.gojiberry.ai/mcp returned HTTP 401 with RFC 9728 resource metadata at https://mcp.gojiberry.ai/.well-known/oauth-protected-resource/mcp and scopes `mcp:tools claudeai`. The authorization server metadata at https://mcp.gojiberry.ai/.well-known/oauth-authorization-server declares dynamic registration, authorization-code and refresh grants, and S256 PKCE. This supports a real redirect/callback integration, not a static-token imitation.
+
+Manus v2 lifecycle and structured outputs: https://open.manus.ai/docs/v2/task-lifecycle and https://open.manus.ai/docs/v2/structured-output . Reusable task IDs support later turns; a stopped main agent is not complete when background-job state is true or unknown. Stable agent profiles, not independently pinned version aliases, are used. No billing or account entitlement assumptions are made.
+
+The owner confirmed Cloudflare as the DNS provider for tailorpitch.com. The Cloudflare access request was not accepted; no DNS changes were made. Domain binding remains pending authorized DNS access and actual platform-issued records.

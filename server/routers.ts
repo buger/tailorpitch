@@ -42,6 +42,31 @@ import {
 import { storagePut } from "./storage";
 import { saveIntegration } from "./services/credentials";
 
+import { pipelineConfigSchema } from "../shared/pipeline";
+import {
+  getPipeline,
+  savePipeline,
+  togglePipeline,
+  tickPipeline,
+  selectPipelineLead,
+  registerPipelineSchedule,
+  retryPipelineJob,
+  reconcilePipelineJob,
+} from "./services/pipeline";
+import {
+  startGojiberry,
+  bindGojiberryStateCookie,
+  statusGojiberry,
+  listGojiberryTools,
+  testGojiberry,
+  disconnectGojiberry,
+} from "./services/gojiberry";
+import {
+  connectManus,
+  statusManus,
+  disconnectManus,
+} from "./services/manusAgent";
+import { parse as parseCookie } from "cookie";
 const companyProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const tenant = await requireCompany(ctx.user);
   return next({ ctx: { ...ctx, ...tenant } });
@@ -97,7 +122,7 @@ async function reconcileInterruptedSends(companyId: number) {
 }
 
 const consentText =
-  "I agree to receive occasional Leadloom updates. You can unsubscribe anytime.";
+  "I agree to receive occasional TailorPitch updates. You can unsubscribe anytime.";
 const publicSubmission = z.object({
   email: z.string().email().max(320),
   consent: z.literal(true),
@@ -157,6 +182,110 @@ async function publicPage(token: string) {
 }
 
 export const appRouter = router({
+  pipeline: router({
+    get: companyProcedure.query(({ ctx }) => getPipeline(ctx.company.id)),
+    save: ownerProcedure
+      .input(
+        z.object({
+          name: z.string().min(1).max(200),
+          config: pipelineConfigSchema,
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        savePipeline(ctx.company.id, input.name, input.config)
+      ),
+    toggle: ownerProcedure
+      .input(z.object({ enabled: z.boolean() }))
+      .mutation(({ ctx, input }) =>
+        togglePipeline(
+          ctx.company.id,
+          input.enabled,
+          parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""
+        )
+      ),
+    tick: ownerProcedure.mutation(({ ctx }) => tickPipeline(ctx.company.id)),
+    select: ownerProcedure
+      .input(
+        z.object({ leadId: z.number().int().positive(), selected: z.boolean() })
+      )
+      .mutation(({ ctx, input }) =>
+        selectPipelineLead(ctx.company.id, input.leadId, input.selected)
+      ),
+    retry: ownerProcedure
+      .input(z.object({ jobId: z.number().int().positive() }))
+      .mutation(({ ctx, input }) =>
+        retryPipelineJob(ctx.company.id, input.jobId)
+      ),
+    reconcile: ownerProcedure
+      .input(
+        z.object({
+          jobId: z.number().int().positive(),
+          sourceRunId: z.number().int().positive().optional(),
+          manusTaskId: z.string().min(1).max(100).optional(),
+        })
+      )
+      .mutation(({ ctx, input }) =>
+        reconcilePipelineJob(
+          ctx.company.id,
+          input.jobId,
+          input.sourceRunId,
+          input.manusTaskId
+        )
+      ),
+    registerSchedule: ownerProcedure.mutation(({ ctx }) =>
+      registerPipelineSchedule(
+        ctx.company.id,
+        parseCookie(ctx.req.headers.cookie ?? "")[COOKIE_NAME] ?? ""
+      )
+    ),
+  }),
+  gojiberry: router({
+    status: companyProcedure.query(({ ctx }) =>
+      statusGojiberry(ctx.company.id)
+    ),
+    connect: ownerProcedure
+      .input(z.object({ origin: z.string().url() }))
+      .mutation(async ({ ctx, input }) => {
+        const r = await startGojiberry(
+          ctx.company.id,
+          ctx.user.id,
+          input.origin
+        );
+        bindGojiberryStateCookie(ctx.res, r.state, input.origin);
+        return { url: r.url };
+      }),
+    listTools: ownerProcedure.query(({ ctx }) =>
+      listGojiberryTools(ctx.company.id)
+    ),
+    test: ownerProcedure
+      .input(
+        z.object({
+          name: z.string().min(1).max(200),
+          args: z.record(z.string(), z.unknown()),
+        })
+      )
+      .mutation(({ ctx, input }) => testGojiberry(ctx.company.id, input)),
+    disconnect: ownerProcedure.mutation(async ({ ctx }) => {
+      await disconnectGojiberry(ctx.company.id);
+      return { success: true };
+    }),
+  }),
+  manus: router({
+    status: companyProcedure.query(({ ctx }) => statusManus(ctx.company.id)),
+    connect: ownerProcedure
+      .input(z.object({ apiKey: z.string().min(10).max(1000) }))
+      .mutation(({ ctx, input }) => connectManus(ctx.company.id, input.apiKey)),
+    test: ownerProcedure.mutation(async ({ ctx }) => {
+      const saved = await import("./services/credentials").then(m =>
+        m.getIntegration<{ apiKey: string }>(ctx.company.id, "manus")
+      );
+      if (!saved) throw new Error("Connect your Manus account first.");
+      return connectManus(ctx.company.id, saved.config.apiKey);
+    }),
+    disconnect: ownerProcedure.mutation(({ ctx }) =>
+      disconnectManus(ctx.company.id)
+    ),
+  }),
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => ctx.user),
@@ -495,6 +624,7 @@ export const appRouter = router({
             ...(lead.website !== input.website || lead.icpId !== input.icpId
               ? {
                   research: null,
+                  pipelineSelectedAt: null,
                   score: null,
                   status: "new" as const,
                   researchedAt: null,

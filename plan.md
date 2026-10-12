@@ -1,8 +1,8 @@
-# Leadloom — company-based prospecting SaaS
+# TailorPitch — company-based prospecting SaaS
 
 ## Product scope
 
-Leadloom helps a company define its ideal customer profiles, find matching leads with Apify, research each lead, create a personalized landing page, and prepare or deliver email, LinkedIn and X outreach. The public Leadloom landing page collects early-access emails. The private application requires real Manus account login.
+TailorPitch helps a company define its ideal customer profiles, find matching leads with Apify, research each lead, create a personalized landing page, and prepare or deliver email, LinkedIn and X outreach. The public TailorPitch landing page collects early-access emails. The private application requires real Manus account login.
 
 The first release has one hardcoded pilot company: **Proof**, at https://reqproof.com/. “ReqProof” is the domain form; the product’s official prose name is Proof. The architecture must support company registration and teams later, rather than treating each login as a separate tenant.
 
@@ -26,7 +26,7 @@ Email follows the user's selected options: connect Gmail with OAuth or connect I
 
 ### Public website
 
-A marketing landing page for Leadloom explaining the source → research → personalize → outreach workflow and collecting email with consent. Persist signups, validate and deduplicate emails, include success/error states and a small privacy page. Use meaningful initial HTML and appropriate metadata. Private routes and personalized prospect URLs are noindex. Canonical and sharing origins come from an explicitly configured public origin; do not guess a future domain. Keep all application links relative so hosting and custom-domain binding later do not require rewriting the app.
+A marketing landing page for TailorPitch explaining the source → research → personalize → outreach workflow and collecting email with consent. Persist signups, validate and deduplicate emails, include success/error states and a small privacy page. Use meaningful initial HTML and appropriate metadata. Private routes and personalized prospect URLs are noindex. Canonical and sharing origins come from an explicitly configured public origin; do not guess a future domain. Keep all application links relative so hosting and custom-domain binding later do not require rewriting the app.
 
 ## Implementation
 
@@ -53,7 +53,7 @@ Use one-time seed/migration records for the pilot company and suggested ICPs; ne
 
 **Principles:** content before decoration; sources beside claims; one clear next action; sharp distinctions between draft, ready and actually sent.
 
-**Color philosophy:** warm ivory surfaces and deep charcoal keep research readable; a terracotta accent gives Leadloom a recognizable action color; subdued olive marks qualified states without suggesting certainty. Proof pages use its official paper #f3f0e9, ink #24302a and sage #7fa34e accent, never sage headlines.
+**Color philosophy:** warm ivory surfaces and deep charcoal keep research readable; a terracotta accent gives TailorPitch a recognizable action color; subdued olive marks qualified states without suggesting certainty. Proof pages use its official paper #f3f0e9, ink #24302a and sage #7fa34e accent, never sage headlines.
 
 **Layout:** narrow persistent left navigation, spacious asymmetric heading/action rows, a full-width lead table, and a contextual research/detail panel. The landing page uses an editorial split with large left-aligned typography and a typographic workflow illustration, not generic stock imagery.
 
@@ -63,16 +63,34 @@ Use one-time seed/migration records for the pilot company and suggested ICPs; ne
 
 **Animation:** 150–200 ms hover and drawer transitions, subtle opacity/vertical entrance, no perpetual decoration; respect reduced motion.
 
-**Typography:** Bricolage Grotesque for the Leadloom wordmark and display headings, DM Sans for application copy, IBM Plex Mono for compact record labels. Proof pages use Iowan Old Style/Baskerville/Georgia headings, Space Grotesk body, and its official wordmark.
+**Typography:** Bricolage Grotesque for the TailorPitch wordmark and display headings, DM Sans for application copy, IBM Plex Mono for compact record labels. Proof pages use Iowan Old Style/Baskerville/Georgia headings, Space Grotesk body, and its official wordmark.
 
 **Brand essence:** a focused prospecting workspace that turns researched fit into a relevant conversation. Personality: discerning, clear, personal.
 
 **Voice:** direct and specific, never claims of guaranteed conversion. Examples: “Find the right fit. Make it personal.” and “Research first. Reach out with a reason.”
 
-**Wordmark:** Leadloom in a tightly set display face beside two interlocking bent strokes, suggesting a lead and its personalized path without a generic sparkle logo.
+**Wordmark:** TailorPitch in a tightly set display face beside two interlocking bent strokes, suggesting a lead and its personalized path without a generic sparkle logo.
 
 **Signature color:** kiln terracotta #bf5839, used for the primary action and one small brand detail.
 
 ## Current decisions requiring user input
 
 Scope is approved. The pilot owner is `hello@reqproof.com`. Apify and mailbox credentials are not configured yet. The app will provide owner-only integration setup and clearly show disconnected states until configured. Gmail OAuth requires protected client credentials; IMAP/SMTP and Apify can be connected through HTTPS company settings with encrypted server-side storage. Automatic LinkedIn/X sending remains a separate provider setup decision; implement draft/manual workflow plus provider-ready architecture now.
+
+## TailorPitch extension — October 12, 2026
+
+The SaaS name is **TailorPitch**, with the user-owned `tailorpitch.com` domain. Rebrand public and private product copy, metadata, logo and titles, while retaining Proof as the pilot company and keeping existing encrypted credential derivation identifiers stable. Actual DNS/domain binding requires provider access and verified platform-issued records; do not invent an A/CNAME target or claim connectivity before verification.
+
+Implement Gojiberry as a **tenant-owned remote MCP integration** using the official SDK and the server's live RFC 9728/RFC 8414 discovery metadata at `https://mcp.gojiberry.ai/mcp`. It supports authorization code, refresh tokens, S256 PKCE and dynamic client registration. Redirect the owner to Gojiberry and exchange the returned authorization code server-side. Persist client registration, state and verifier encrypted, bind state to the initiating browser/user/company, consume callbacks once, and refresh encrypted tokens. A connect/test operation discovers the actual tool catalog and runs only an owner-selected read-only tool with its real schema. No guessed tool arguments or automatic messaging/campaign enrollment.
+
+Add an **Agents & pipeline** workspace, not a theatrical activity animation. Show actual durable stage jobs, provider run/task IDs and status. A configured agent stays available and resumes in bounded turns; it is not an infinite task or an always-running Sandbox loop. Application-native Heartbeat invokes the published backend independently of process lifetime. A durable tenant job queue, leases, retries and idempotence handle Discovery → Research & qualify → human selection → Page draft → Outreach draft. Page publication and outbound sending keep their separate explicit review controls. Users can enable/disable blocks, choose source provider and ICP, edit instructions, pause/resume the pipeline and change pacing.
+
+Initial editable pace: one candidate per discovery cycle, up to **3 new candidates/day**, at least **240 minutes between discovery starts**, weekdays and a selectable local 09:00–17:00 work window. A hard cap and small Apify run inputs prevent accidental large batches. One active paid provider operation per pipeline; no duplicate discovery/research after uncertain creation; reuse external actor IDs and bounded Apify runs. Lack of qualified results is not concealed or compensated with indiscriminate volume. These are product pacing defaults, not artificial withholding of already-paid results.
+
+Use **Manus API v2** for agentic public-source research or discovery when selected. Keep the account API key encrypted per company, separate from the Webdev project's platform AI key; verify via `user.me`. Persist task ID and URL, retrieve actual activity and strict structured results, check both main-agent status and `has_running_background_jobs`, preserve waiting/unknown states, and never auto-approve external confirmation requests. Continue a stored research/discovery thread with `task.sendMessage` when safe and re-arm structured output each turn; store a fresh per-turn cursor to prevent replaying old extraction. No assumption that model versions can independently be selected by a `2.0` name. Webhook receipt can accelerate synchronization, but authenticated durable Heartbeat reconciliation remains the backbone.
+
+The architecture uses new `shared/pipeline.ts` contracts, additive schema tables/columns, `server/services/gojiberry.ts`, `server/services/manusAgent.ts`, `server/services/pipeline.ts`, feature procedures integrated into the existing company/owner middleware, and `client/src/pages/WorkspaceAgents.tsx`. Leave account setup and unpublished scheduler state honest. Do not start recurring paid sourcing or send real outreach during implementation; a single bounded integration test is permitted after the owner's authorization.
+
+### Final pacing and recovery choices
+
+The 3-candidate/day figure is the initial default, not a hidden immutable subscription gate. The owner can explicitly choose 1–30 candidates/day; the server enforces the chosen cap, one imported candidate per discovery turn, and at least 240 minutes between discovery starts. The default 09:00–17:00 weekday window typically yields at most two cycles in an eight-hour day. Already accepted results are not withheld to manufacture retention. Processing and qualification may continue outside the discovery window so existing paid work can settle. Unknown external starts are never automatically repeated: owner recovery links an existing matching Apify/Manus run, while definitively failed local/read-only stages can be explicitly retried. Pipeline leases have random ownership tokens and compare-and-set release; schedule registration serializes on the company pipeline row and reuses its persisted task UID.

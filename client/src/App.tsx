@@ -9,24 +9,36 @@ import PublicPage from "./pages/PublicPage";
 import AppWorkspace from "./pages/AppWorkspace";
 
 function Router() {
-  return <Switch>
-    <Route path="/" component={LandingPage} />
-    <Route path="/privacy" component={PrivacyPage} />
-    <Route path="/p/:token" component={PublicPage} />
-    <Route path="/app" component={AppWorkspace} />
-    <Route path="/app/leads" component={AppWorkspace} />
-    <Route path="/app/leads/:id" component={AppWorkspace} />
-    <Route path="/app/icps" component={AppWorkspace} />
-    <Route path="/app/pages" component={AppWorkspace} />
-    <Route path="/app/outreach" component={AppWorkspace} />
-    <Route path="/app/inbox" component={AppWorkspace} />
-    <Route path="/app/settings" component={AppWorkspace} />
-    <Route path="/app/submissions" component={AppWorkspace} />
-    <Route path="/404" component={NotFound} />
-    <Route component={NotFound} />
-  </Switch>;
+  return (
+    <Switch>
+      <Route path="/" component={LandingPage} />
+      <Route path="/privacy" component={PrivacyPage} />
+      <Route path="/p/:token" component={PublicPage} />
+      <Route path="/app" component={AppWorkspace} />
+      <Route path="/app/leads" component={AppWorkspace} />
+      <Route path="/app/leads/:id" component={AppWorkspace} />
+      <Route path="/app/agents" component={AppWorkspace} />
+      <Route path="/app/icps" component={AppWorkspace} />
+      <Route path="/app/pages" component={AppWorkspace} />
+      <Route path="/app/outreach" component={AppWorkspace} />
+      <Route path="/app/inbox" component={AppWorkspace} />
+      <Route path="/app/settings" component={AppWorkspace} />
+      <Route path="/app/submissions" component={AppWorkspace} />
+      <Route path="/404" component={NotFound} />
+      <Route component={NotFound} />
+    </Switch>
+  );
 }
 
 export default function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="light"><TooltipProvider><Toaster /><Router /></TooltipProvider></ThemeProvider></ErrorBoundary>;
+  return (
+    <ErrorBoundary>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
 }

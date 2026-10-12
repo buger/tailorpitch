@@ -21,6 +21,7 @@ import {
   TextInput,
   Toast,
 } from "@/components/LeadloomUI";
+import { TailorPitchIntegrations } from "@/components/TailorPitchIntegrations";
 import { GmailSetup } from "@/components/GmailSetup";
 
 const tabs = ["Brand & voice", "Integrations", "Domain"] as const;
@@ -47,7 +48,12 @@ export function SettingsView({ workspace }: { workspace: Workspace }) {
         ))}
       </div>
       {tab === "Brand & voice" && <BrandSettings workspace={workspace} />}
-      {tab === "Integrations" && <IntegrationSettings />}
+      {tab === "Integrations" && (
+        <>
+          <TailorPitchIntegrations />
+          <IntegrationSettings />
+        </>
+      )}
       {tab === "Domain" && <DomainSettings workspace={workspace} />}
     </>
   );
