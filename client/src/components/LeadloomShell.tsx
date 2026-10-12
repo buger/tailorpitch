@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import {
   BarChart3,
+  Building2,
   BookOpen,
   ChevronDown,
   FileText,
@@ -15,12 +16,7 @@ import {
   X,
 } from "lucide-react";
 import type { Workspace } from "./leadloom-types";
-import {
-  LeadloomMark,
-  LeadloomWordmark,
-  MonoLabel,
-  StatusChip,
-} from "./LeadloomUI";
+import { LeadloomWordmark, MonoLabel, StatusChip } from "./LeadloomUI";
 
 const nav = [
   { href: "/app", label: "Overview", icon: BarChart3 },
@@ -166,7 +162,7 @@ export function LeadloomShell({
               {workspace.role}
             </StatusChip>
             <div className="flex items-center gap-2 text-xs text-ink-muted">
-              <LeadloomMark size={16} />
+              <Building2 size={16} aria-hidden="true" />
               {workspace.company.name}
             </div>
           </div>

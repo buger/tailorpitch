@@ -35,12 +35,13 @@ import { proposedPlans } from "@shared/pricing";
 import { startLogin } from "@/const";
 import { api } from "@/components/leadloom-types";
 import { SignalField } from "./SignalField";
+import { TailorPitchWordmark } from "@/components/TailorPitchWordmark";
 import "./signal.css";
 
 const icons = [Fingerprint, Target, Search, SlidersHorizontal, Layers3, Mail];
 
 function Wordmark() {
-  return <span className="signal-wordmark">TailorPitch</span>;
+  return <TailorPitchWordmark className="signal-wordmark" />;
 }
 
 function SignupForm() {

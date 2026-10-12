@@ -75,6 +75,19 @@ select:focus-visible {
   font-weight: 400;
   letter-spacing: -0.06em;
 }
+.tailorpitch-wordmark {
+  display: inline-flex;
+  align-items: center;
+  font-family: Inter, "Space Grotesk", Arial, sans-serif;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
+}
+.tailorpitch-wordmark-compact {
+  font-size: 20px;
+}
 .workspace-surface {
   background: #f6f4ef;
 }

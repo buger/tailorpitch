@@ -10,53 +10,10 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export function LeadloomMark({
-  size = 28,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-    >
-      <path
-        d="M7 7h9v5h-4v8h8v-4h5v9H7V7Z"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M25 25h-9v-5h4v-8h-8v4H7V7h18v18Z"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { TailorPitchWordmark } from "./TailorPitchWordmark";
 
 export function LeadloomWordmark({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <LeadloomMark className="text-terracotta" size={compact ? 20 : 23} />
-      <span
-        className={cn(
-          "editorial-wordmark",
-          compact ? "text-[23px]" : "text-[29px]"
-        )}
-      >
-        TailorPitch
-      </span>
-    </div>
-  );
+  return <TailorPitchWordmark compact={compact} className="text-[#08090a]" />;
 }
 
 export function MonoLabel({
