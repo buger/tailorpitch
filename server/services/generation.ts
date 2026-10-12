@@ -1,3 +1,4 @@
+import { personalizedPageOfferInstructions } from "../../shared/pageOffer";
 import type { ProgressReporter } from "../../shared/operations";
 import { clearUnobservedContacts } from "./contactEvidence";
 import { z } from "zod";
@@ -204,7 +205,8 @@ export async function generatePage(
   );
   return generate(
     pageContentSchema,
-    "Create a highly personalized proposal landing page from the selling company to this prospect. Use the saved voice and website instructions, uploaded visual assets and inspiration notes. Do not claim the prospect is a customer or has approved the proposal. Build a concrete low-pressure proposed first engagement, not made-up outcomes. Describe uncertain pains conditionally. The headline should name or unmistakably address the prospect. The saved company.brand logo and colors are authoritative. Assets classified historical_layout_only can inspire only abstract spacing, serif hierarchy, thin rules and layout rhythm. Never reinterpret their historical red marks as the current company identity, and never reproduce the exploration contact sheet, text or named entities. Select editorial/minimal/bold layout to reflect these constraints and the owner instructions. designNotes explains the design choices. ctaText should invite the actual next step. Do not print internal research scores or private notes. Inspiration URL notes are supplied by the owner; do not claim their pages were fetched.",
+    "Create a highly personalized proposal landing page from the selling company to this prospect. Use the saved voice and website instructions, uploaded visual assets and inspiration notes. Do not claim the prospect is a customer or has approved the proposal. Build a concrete low-pressure proposed first engagement, not made-up outcomes. Describe uncertain pains conditionally. The headline should name or unmistakably address the prospect. The saved company.brand logo and colors are authoritative. Assets classified historical_layout_only can inspire only abstract spacing, serif hierarchy, thin rules and layout rhythm. Never reinterpret their historical red marks as the current company identity, and never reproduce the exploration contact sheet, text or named entities. Select editorial/minimal/bold layout to reflect these constraints and the owner instructions. designNotes explains the design choices. ctaText should invite the actual next step. Do not print internal research scores or private notes. Inspiration URL notes are supplied by the owner; do not claim their pages were fetched." +
+      personalizedPageOfferInstructions,
     {
       company: {
         name: company.name,

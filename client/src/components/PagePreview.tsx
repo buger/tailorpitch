@@ -9,12 +9,14 @@ export function PagePreview({
   companyName,
   leadName,
   preview = false,
+  ctaHref,
 }: {
   content: PageContent;
   brand: Brand;
   companyName: string;
   leadName?: string;
   preview?: boolean;
+  ctaHref?: string;
 }) {
   const style = {
     "--preview-paper": brand.backgroundColor,
@@ -32,8 +34,8 @@ export function PagePreview({
   };
   const Cta = () => (
     <a
-      href={brand.bookingUrl}
-      target="_blank"
+      href={ctaHref ?? brand.bookingUrl}
+      target={ctaHref ? undefined : "_blank"}
       rel="noreferrer"
       style={ctaStyle}
       className={cn(

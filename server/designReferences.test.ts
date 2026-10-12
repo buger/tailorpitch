@@ -99,6 +99,14 @@ describe("stored organization visual references", () => {
           )
       )
     ).toBe(true);
+    const prompt = content
+      .filter(p => p.type === "text")
+      .map(p => p.text)
+      .join(" ");
+    expect(prompt).toContain("Alex Hormozi-inspired");
+    expect(prompt).toContain("desired outcome");
+    expect(prompt).toContain("No fake scarcity");
+    expect(prompt).toContain("contact form");
     expect(request.response_format?.type).toBe("json_schema");
   });
 });

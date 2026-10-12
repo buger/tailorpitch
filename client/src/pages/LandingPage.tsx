@@ -53,6 +53,20 @@ export function PrivacyPage() {
           </section>
           <section>
             <h2 className="font-display text-2xl tracking-[-.04em]">
+              Personalized-page forms and analytics
+            </h2>
+            <p className="mt-3 text-ink-muted">
+              When you submit a personalized-page form, your email and consent
+              are saved for the company that created the proposal. Published
+              pages count anonymous tab-session opens, not unique people. Repeat
+              refreshes in one tab are deduplicated; signed-in previews and
+              recognized crawlers are excluded. No IP address, fingerprint or
+              visitor identity is stored by page analytics. Browser privacy
+              tools may prevent tracking.
+            </p>
+          </section>
+          <section>
+            <h2 className="font-display text-2xl tracking-[-.04em]">
               Your choices
             </h2>
             <p className="mt-3 text-ink-muted">

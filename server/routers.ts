@@ -1,3 +1,8 @@
+import {
+  getPageAnalytics,
+  recordPageOpen,
+  shouldCountPageOpen,
+} from "./services/pageAnalytics";
 import { saveEarlyAccessEmail } from "./services/emailSignups";
 import {
   listIcpAgents,
@@ -1003,11 +1008,22 @@ export const appRouter = router({
     }),
   }),
   pages: router({
+    analytics: companyProcedure
+      .input(idInput)
+      .query(({ ctx, input }) => getPageAnalytics(ctx.company.id, input.id)),
     list: companyProcedure.query(async ({ ctx }) => {
       const rows = await (
         await db()
       )
-        .select({ page: t.pages, companyName: t.leads.companyName })
+        .select({
+          page: t.pages,
+          companyName: t.leads.companyName,
+          opensToday: sql<number>`(SELECT COUNT(*) FROM pageVisits WHERE pageVisits.pageId = ${t.pages.id} AND pageVisits.companyId = ${t.pages.companyId} AND pageVisits.createdAt >= UTC_DATE())`,
+          lastOpened: sql<
+            string | null
+          >`(SELECT MAX(createdAt) FROM pageVisits WHERE pageVisits.pageId = ${t.pages.id} AND pageVisits.companyId = ${t.pages.companyId})`,
+          submissions: sql<number>`(SELECT COUNT(*) FROM submissions WHERE submissions.pageId = ${t.pages.id} AND submissions.companyId = ${t.pages.companyId})`,
+        })
         .from(t.pages)
         .innerJoin(
           t.leads,
@@ -1018,7 +1034,13 @@ export const appRouter = router({
         )
         .where(eq(t.pages.companyId, ctx.company.id))
         .orderBy(desc(t.pages.id));
-      return rows.map(r => ({ ...r.page, companyName: r.companyName }));
+      return rows.map(r => ({
+        ...r.page,
+        companyName: r.companyName,
+        opensToday: Number(r.opensToday),
+        lastOpened: r.lastOpened,
+        submissions: Number(r.submissions),
+      }));
     }),
     get: companyProcedure.input(idInput).query(async ({ ctx, input }) => {
       const page = await scopedRow<typeof t.pages.$inferSelect>(
@@ -1168,7 +1190,10 @@ export const appRouter = router({
           "page",
           page.leadId
         );
-        return { success: true };
+        return {
+          success: true,
+          publicPath: input.published ? `/p/${page.shareToken}` : null,
+        };
       }),
   }),
   outreach: router({
@@ -1714,6 +1739,14 @@ export const appRouter = router({
     ),
   }),
   public: router({
+    trackPageOpen: publicProcedure
+      .input(z.object({ token: tokenInput, visitKey: z.string().uuid() }))
+      .mutation(async ({ ctx, input }) => {
+        if (!shouldCountPageOpen(ctx.user, ctx.req.headers["user-agent"] ?? ""))
+          return { recorded: false };
+        throttle(`page-open:${ipKey(ctx.req)}`, 60);
+        return recordPageOpen(input.token, input.visitKey);
+      }),
     signup: publicProcedure
       .input(publicSubmission)
       .mutation(async ({ ctx, input }) => {
@@ -1728,7 +1761,15 @@ export const appRouter = router({
           page: {
             id: row.page.id,
             content: row.page.content,
-            brandSnapshot: row.page.brandSnapshot,
+            brandSnapshot: {
+              ...row.page.brandSnapshot,
+              offer: "",
+              voice: "",
+              websiteInstructions: "",
+              outreachInstructions: "",
+              approvedClaims: "",
+              inspiration: [],
+            },
             title: row.page.title,
             shareToken: row.page.shareToken,
           },

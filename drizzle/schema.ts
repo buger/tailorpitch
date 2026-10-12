@@ -448,3 +448,16 @@ export const icpAgentDeliveries = mysqlTable(
   },
   t => [uniqueIndex("icp_agent_unique_delivery").on(t.companyId, t.leadId)]
 );
+
+// Anonymous tab-session opens only: no IP address, email, fingerprint or visitor identity.
+export const pageVisits = mysqlTable(
+  "pageVisits",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    companyId: int("companyId").notNull(),
+    pageId: int("pageId").notNull(),
+    visitKey: varchar("visitKey", { length: 36 }).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  t => [uniqueIndex("page_tab_visit_unique").on(t.pageId, t.visitKey)]
+);

@@ -86,6 +86,10 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
     { id: selected?.id ?? 0 },
     { enabled: Boolean(selected), retry: false }
   );
+  const pageAnalytics = api.pages.analytics.useQuery(
+    { id: selected?.id ?? 0 },
+    { enabled: Boolean(selected), retry: false }
+  );
   const generate = api.pages.generate.useMutation();
   const save = api.pages.save.useMutation();
   const publish = api.pages.setPublished.useMutation();
@@ -108,6 +112,9 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
       const generatedRow: PageRow = {
         ...generated.page,
         companyName: generated.lead.companyName,
+        opensToday: 0,
+        lastOpened: null,
+        submissions: 0,
       };
       const refreshed = await pages.refetch();
       const pageRow =
@@ -151,7 +158,11 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
     try {
       await publish.mutateAsync({ id: page.id, published: shouldPublish });
       await pages.refetch();
-      showToast(shouldPublish ? "Page published." : "Page unpublished.");
+      showToast(
+        shouldPublish
+          ? "Published — your public link is ready. No login is required to open it."
+          : "Page unpublished. The public link no longer opens."
+      );
     } catch (error) {
       showToast(errorMessage(error, "Publishing failed."), "error");
     }
@@ -182,7 +193,7 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
       <SectionHeader
         eyebrow="Pages / personalized proposals"
         title="A page worth sharing."
-        description="Generated pages stay private until someone explicitly publishes them. Each preview uses the saved company brand snapshot."
+        description="Generated pages stay private until someone explicitly publishes them. Published pages have a public link that opens without login, a contact form and basic page-open analytics."
       />
       {selectedLeadId && (
         <div className="mb-5 flex items-center justify-between gap-3 border border-terracotta/25 bg-terracotta-pale/40 px-4 py-3 text-sm">
@@ -215,6 +226,14 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
               pending={generate.isPending || operation.busy}
             />
           )}
+          <Button
+            variant="ghost"
+            className="mb-3"
+            onClick={() => void pages.refetch()}
+            disabled={pages.isFetching}
+          >
+            <RefreshCw className="h-4 w-4" /> Refresh page stats
+          </Button>
           {pages.isLoading && <LoadingState label="Loading page drafts" />}
           {pages.error && (
             <ErrorState
@@ -242,13 +261,13 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
               return (
                 <div
                   key={page.id}
-                  className={`flex items-center justify-between gap-4 border bg-white p-5 ${
+                  className={`flex flex-col items-start justify-between gap-4 border bg-white p-5 sm:flex-row sm:items-center ${
                     selectedLeadId === page.leadId
                       ? "border-terracotta/50 ring-1 ring-terracotta/20"
                       : "border-line"
                   }`}
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 w-full sm:flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusChip tone={isPublished ? "good" : "neutral"}>
                         {isPublished ? "Published" : "Draft"}
@@ -263,6 +282,26 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
                     <p className="mt-1 truncate text-xs text-ink-muted">
                       {page.companyName || `Lead #${page.leadId}`}
                     </p>
+                    <p className="mt-3 text-xs text-ink-muted">
+                      <strong>{page.views ?? 0}</strong> opens ·{" "}
+                      {page.opensToday ?? 0} today (UTC) ·{" "}
+                      <strong>{page.submissions ?? 0}</strong> form signups
+                    </p>
+                    <p className="mt-1 text-[11px] text-ink-muted">
+                      {page.lastOpened
+                        ? `Last opened: ${new Date(page.lastOpened).toLocaleString()}`
+                        : "Not opened by an anonymous visitor yet"}
+                    </p>
+                    {isPublished && (
+                      <a
+                        className="mt-2 block truncate font-mono text-[10px] text-terracotta underline"
+                        href={publishedLink(page)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {publishedLink(page)}
+                      </a>
+                    )}
                   </div>
                   <div className="flex shrink-0 flex-wrap justify-end gap-1">
                     <Button
@@ -328,8 +367,12 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
               endorsement by the prospect.
             </li>
             <li>
-              • Public share links contain an opaque token and never expose
-              private research notes.
+              • Public share links require no login, contain an opaque token and
+              never expose private research notes.
+            </li>
+            <li>
+              • Opens count anonymous tab sessions, not unique people. Refreshes
+              in the same tab and signed-in previews are excluded.
             </li>
             <li>
               • Publishing and unpublishing always require an explicit
@@ -354,6 +397,42 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
                 "The page preview could not be loaded."
               }
               onRetry={() => void selectedPage.refetch()}
+            />
+          )}
+          {pageAnalytics.data && (
+            <section className="mb-6 border border-line bg-paper p-5">
+              <h3 className="font-semibold">Page activity</h3>
+              <p className="mt-2 text-sm">
+                {pageAnalytics.data.totalOpens} opens ·{" "}
+                {pageAnalytics.data.opensToday} today (UTC) ·{" "}
+                {pageAnalytics.data.submissions} form signups
+              </p>
+              <p className="mt-2 text-xs text-ink-muted">
+                {pageAnalytics.data.measurement}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3 text-xs">
+                {pageAnalytics.data.days.length ? (
+                  pageAnalytics.data.days.map(day => (
+                    <span key={day.day}>
+                      {day.day}: <strong>{day.opens}</strong>
+                    </span>
+                  ))
+                ) : (
+                  <span>No page opens in the last 14 days.</span>
+                )}
+              </div>
+              <Link
+                href="/app/submissions"
+                className="mt-3 inline-block text-xs underline"
+              >
+                Review captured emails
+              </Link>
+            </section>
+          )}
+          {pageAnalytics.error && (
+            <ErrorState
+              message="Page analytics could not load."
+              onRetry={() => void pageAnalytics.refetch()}
             />
           )}
           {selectedPage.data && (

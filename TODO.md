@@ -179,3 +179,11 @@ Cloud verification: 139 tests/28 files, typecheck/build pass, real public owner 
 - [x] Isolated tests pass without adding production test emails; build/restart cloud service and back up source on local-development.
 
 Evidence: 143 tests/29 files pass, typecheck/build pass. Live owner email list HTTP 200 with 2 preserved rows, dates/consent retained; invalid public email and absent consent rejected HTTP 400, anonymous email-list access HTTP 401. Live bundle contains the new review heading and CSV export. No test emails saved or mail sent.
+
+## Public personalized pages, CTA and simple analytics
+- [x] Published personalized pages have a separate anonymous HTTPS share URL; drafts remain private/404 and public page/logo does not need login. Explicit publish/copy/open controls make this clear.
+- [x] Primary CTA opens branded email consent form; saved records attribute page and company, with working success/error states and secondary booking link.
+- [x] Record basic anonymous visible page opens durably with refresh deduplication; show per-page total/today/last opened and form submission counts with honest tab-session measurement, no visitor identification.
+- [x] Generation uses Hormozi-inspired offer/story/copy rules while preserving evidence and saved design/voice; no fabricated claims. Tests/migration/build pass; visually inspect public page with non-production fixtures, deploy cloud and back up source.
+
+Evidence: 152 tests/31 files pass; mocked page/form transaction tests, real strict-SQL daily analytics query, additive migration, compiler and production build pass. Desktop/mobile public-page fixtures verify CTA anchors, consent validation, saved-success/error retry, same-tab view-key reuse and zero overflow. Existing Hilbert draft remains private (404); no fake visitor events or test emails stored, no outreach sent.
