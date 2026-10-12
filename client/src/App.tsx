@@ -19,6 +19,7 @@ function Router() {
       <Route path="/app/onboarding" component={AppWorkspace} />
       <Route path="/app/leads" component={AppWorkspace} />
       <Route path="/app/leads/:id" component={AppWorkspace} />
+      <Route path="/app/sources" component={AppWorkspace} />
       <Route path="/app/agents" component={AppWorkspace} />
       <Route path="/app/icps" component={AppWorkspace} />
       <Route path="/app/pages" component={AppWorkspace} />

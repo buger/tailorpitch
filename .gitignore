@@ -117,3 +117,6 @@ design-references/
 
 # Local read-only visual review outputs
 .visual-review/
+
+# Task-local validation scripts, browser profiles and tool dependencies
+.work/

@@ -1,3 +1,5 @@
+import { providerJobNeedsSync } from "./apifyRunBinding";
+import { requireSourcePlan } from "./sourcePlans";
 import { collectEvidence, leadIdentity, githubRepo } from "./publicEvidence";
 import { clearUnobservedContacts } from "./contactEvidence";
 import { analyzeLead } from "./generation";
@@ -22,6 +24,7 @@ import {
 } from "../../shared/pipeline";
 import { researchSchema } from "../../shared/domain";
 import { startRun, syncRun, publicWebsite } from "./apify";
+import { hasManagedApify, getApifyStatus } from "./apifyAccess";
 import {
   generatePage,
   generateDraft,
@@ -93,7 +96,7 @@ export async function getPipeline(companyId: number) {
     leads,
     icps,
     integrations: {
-      apify: ready("apify"),
+      apify: hasManagedApify() || ready("apify"),
       manus: ready("manus"),
       gojiberry: ready("gojiberry"),
     },
@@ -141,12 +144,21 @@ export async function savePipeline(
   return { success: true };
 }
 async function ensureReady(p: Pipeline) {
+  if (p.config.discover && p.config.source === "apify")
+    await requireSourcePlan(p.companyId, p.config.icpId);
   const providers = new Set<string>();
   if (p.config.discover) providers.add(p.config.source);
   if (p.config.qualify) providers.add(p.config.researchProvider);
-  for (const provider of providers)
-    if (!(await getIntegration(p.companyId, provider)))
+  for (const provider of providers) {
+    if (provider === "apify") {
+      if (!(await getApifyStatus(p.companyId)).connected)
+        throw new Error(
+          "TailorPitch sourcing is not ready. Ask the app owner to complete Apify setup."
+        );
+    } else if (!(await getIntegration(p.companyId, provider))) {
       throw new Error(`Connect ${provider} before enabling this pipeline.`);
+    }
+  }
 }
 export async function togglePipeline(
   companyId: number,
@@ -594,7 +606,7 @@ async function syncJob(job: Job) {
   }
 }
 async function processJob(p: Pipeline, job: Job) {
-  await assertSyncOpen(p.companyId);
+  if (providerJobNeedsSync(job)) await assertSyncOpen(p.companyId);
   if (job.stage === "discover" && job.status === "queued")
     await assertSourcingOpen(p.companyId);
   if (job.status === "running" || job.status === "waiting") {
@@ -664,6 +676,14 @@ async function processJob(p: Pipeline, job: Job) {
       : undefined;
     if (lead) await assertLeadOpen(p.companyId, lead);
     if (job.provider === "apify") {
+      const sourcePlan =
+        job.stage === "discover"
+          ? await requireSourcePlan(p.companyId, icp.id)
+          : null;
+      if (sourcePlan && p.config.dailyLimit > sourcePlan.answers.dailyLimit)
+        throw new Error(
+          "Pipeline daily volume exceeds the reviewed source strategy. Lower the pace or review a new strategy."
+        );
       const created = await startRun(
         p.companyId,
         job.stage === "discover"
@@ -910,7 +930,6 @@ export async function tickPipeline(companyId: number) {
   const d = await db();
   let p = await scopedPipeline(companyId);
   const intake = await getIntakeControls(companyId);
-  if (intake.syncPaused) return { status: "sync_paused" };
   if (!p.enabled) return { status: "paused" };
   const now = new Date();
   const leaseToken = randomBytes(24).toString("hex");
@@ -945,8 +964,11 @@ export async function tickPipeline(companyId: number) {
       .orderBy(t.pipelineJobs.id)
       .limit(1);
     if (existing) {
-      await processJob(p, existing);
-      return { status: existing.status, jobId: existing.id };
+      if (!intake.syncPaused || !providerJobNeedsSync(existing)) {
+        await processJob(p, existing);
+        return { status: existing.status, jobId: existing.id };
+      }
+      // Provider work is deferred, but already imported/selected leads can still produce local drafts.
     }
     // Work already accepted into the pipeline is staged gradually; no new discovery is needed to qualify it.
     const candidates = await d
@@ -964,7 +986,7 @@ export async function tickPipeline(companyId: number) {
     for (const lead of candidates) {
       let stage: Job["stage"] | undefined;
       let provider = "generation";
-      if (p.config.qualify && !lead.research) {
+      if (!intake.syncPaused && p.config.qualify && !lead.research) {
         stage = "qualify";
         provider = p.config.researchProvider;
       } else if (lead.research && lead.pipelineSelectedAt && p.config.pages)
@@ -996,6 +1018,8 @@ export async function tickPipeline(companyId: number) {
         }
       }
     }
+    if ((await getIntakeControls(companyId)).syncPaused)
+      return { status: "sync_paused" };
     if ((await getIntakeControls(companyId)).sourcingPaused)
       return { status: "sourcing_paused" };
     const window = pacingWindow(p.config, now);

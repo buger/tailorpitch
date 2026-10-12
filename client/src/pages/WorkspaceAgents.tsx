@@ -1021,7 +1021,7 @@ export function WorkspaceAgents() {
                 onChange={value => updateConfig("icpId", Number(value))}
                 hint={
                   !data.icps.length
-                    ? "Create an ICP in Profiles before saving this agent."
+                    ? "Create an ICP in ICPs before saving this agent."
                     : "The profile anchors discovery and qualification."
                 }
               >
@@ -1032,6 +1032,18 @@ export function WorkspaceAgents() {
                   </option>
                 ))}
               </SelectField>
+              {config.source === "apify" && (
+                <div className="border border-line bg-paper p-4 text-xs leading-5">
+                  <strong>Source strategy comes first.</strong> Review the
+                  buying signals and actor recommendations for this ICP before
+                  enabling discovery. The approved query and daily ceiling are
+                  enforced by the backend; approval alone does not start this
+                  agent.
+                  <a href="/app/sources" className="mt-2 block underline">
+                    Review Sources & strategy →
+                  </a>
+                </div>
+              )}
               <div className="grid gap-5 sm:grid-cols-2">
                 <SelectField
                   label="Discovery source"

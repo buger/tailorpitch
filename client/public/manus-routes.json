@@ -1,19 +1,68 @@
 {
   "routes": [
-    { "path": "/", "title": "TailorPitch — Give them a reason to reply." },
-    { "path": "/privacy", "title": "Privacy — TailorPitch" },
-    { "path": "/app", "title": "Overview — TailorPitch" },
-    { "path": "/app/onboarding", "title": "Company onboarding — TailorPitch" },
-    { "path": "/app/leads", "title": "Leads — TailorPitch" },
-    { "path": "/app/leads/:id", "title": "Lead detail — TailorPitch" },
-    { "path": "/app/icps", "title": "Profiles — TailorPitch" },
-    { "path": "/app/pages", "title": "Pages — TailorPitch" },
-    { "path": "/app/outreach", "title": "Outreach — TailorPitch" },
-    { "path": "/app/inbox", "title": "Inbox — TailorPitch" },
-    { "path": "/app/settings", "title": "Settings — TailorPitch" },
-    { "path": "/app/submissions", "title": "Submissions — TailorPitch" },
-    { "path": "/p/:token", "title": "Personalized page — TailorPitch" },
-    { "path": "/unsubscribe/:token", "title": "Unsubscribe — TailorPitch" },
-    { "path": "/app/agents", "title": "Agents & pipeline — TailorPitch" }
+    {
+      "path": "/",
+      "title": "TailorPitch \u2014 Give them a reason to reply."
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy \u2014 TailorPitch"
+    },
+    {
+      "path": "/app",
+      "title": "Overview \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/onboarding",
+      "title": "Company onboarding \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/leads",
+      "title": "Leads \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/leads/:id",
+      "title": "Lead detail \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/icps",
+      "title": "Profiles \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/pages",
+      "title": "Pages \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/outreach",
+      "title": "Outreach \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/inbox",
+      "title": "Inbox \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/settings",
+      "title": "Settings \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/submissions",
+      "title": "Submissions \u2014 TailorPitch"
+    },
+    {
+      "path": "/p/:token",
+      "title": "Personalized page \u2014 TailorPitch"
+    },
+    {
+      "path": "/unsubscribe/:token",
+      "title": "Unsubscribe \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/agents",
+      "title": "Agents & pipeline \u2014 TailorPitch"
+    },
+    {
+      "path": "/app/sources",
+      "title": "Sources & strategy \u2014 TailorPitch"
+    }
   ]
 }

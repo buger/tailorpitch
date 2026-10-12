@@ -125,3 +125,24 @@ Progress evidence: four operation kinds / five UI entry points connected to scop
 - [x] Verify add/remove/undo/edit/selection and apply payload via safe API fixtures, desktop/mobile layout, targeted regressions, type checking and production build; save the updated version.
 
 ICP evidence: Refero Anam and Cycle full screens inspected; Section03 full-width collection visually inspected on desktop/mobile. Add/Edit/Include/Remove/Undo, stable selection, manual profiles beyond three AI suggestions, selected-only apply payload, blank-field feedback, zero-profile apply, and applied/member read-only states passed with intercepted fixtures (zero backend requests forwarded). Eight new state/schema regressions passed; complete suite98tests, type checks and production build passed. No saved ICP was deleted; no provider or company-analysis request was triggered. Existing review/apply owner and brand concurrency boundaries retained.
+
+## Bundled Apify activation
+
+- [x] A protected application-owned token powers manual Apify lead discovery, research and the existing paced pipeline. Customers are not asked to connect Apify; no secret is returned to the browser or stored in source. Only the protected app-wide credential is accepted; the obsolete customer-token API and fallback are disabled without deleting any saved legacy records.
+- [x] Settings and Agents report the effective bundled provider availability; an owner can verify account and required actor access without starting a scrape. Company/customer disconnect cannot remove the app-wide account.
+- [x] Real sourcing/research remains tenant-scoped and deduplicated, respects sourcing/sync pause controls, bounds page count/runtime/charges, and prevents duplicate starts after uncertain outcomes. No recurring pipeline, page publication or outreach is automatically enabled.
+- [ ] Validate protected token and actor access, run bounded end-to-end provider checks, regressions/type/build, and save the complete implementation with accurate local versus published status.
+
+
+## Native Apify source planning
+
+- [x] Ask editable company/ICP-specific questions before sourcing: desired engagement, active trigger and recency, company constraints/exclusions, buyer roles, evidence requirements, preferred/avoided sources and daily pace. The provided attachment has recommendations only, so original unseen questions are not presented as verbatim.
+- [x] Inspect a verified Apify actor catalog through the backend account, then propose relevant discovery, evidence and contact sources with reasons, current schema/pricing caveats and bounded inputs rather than blindly using one generic Google query. Preserve the supplied Proof cohort distinctions and official API alternatives.
+- [x] Persist reviewable per-company/per-ICP plans; allow edits and explicit approval before discovery. Invalidate stale criteria snapshots, and distinguish executable adapters from proposed or unsupported integrations. Do not auto-enable recurring pipelines, scrape, publish pages or contact people.
+- [x] Validate anonymous/tenant/schema/limits guards and UI review flows with mock fixtures; save working local code and report verified versus pending actor execution honestly.
+
+### Native source validation and activation boundary
+
+Backend account identity and both main actors verified; all nine catalog actors returned current input schemas. Google and crawler bounded inputs validated against live default schemas, including opaque tenant/internal-run correlation. One actual source recommendation passed strict validation without storing a plan or importing any lead. The review found and corrected stale active-run reuse, obsolete personal-token paths, unsafe shared-account run adoption, provider-sync overreach, same-plan approval state, query-preview mismatch and missing source-query error/retry feedback.
+
+Full suite: 120 tests in 24 files passed, TypeScript and production build passed. Actual desktop/mobile private-screen fixtures tested questionnaire, genuine pending request, recommendation, proposed-only specialist source status, current-query approval, no page errors/overflow, and zero private API forwarding. SourcePlans and sourcingRuns remain zero rows after validation. No actor run, recurring agent, publication or outreach was started. Source execution stays pending owner selection/approval, with Google discovery + website research adapters ready, specialist execution adapters explicitly not activated. Local-only branch saved separately from canonical main; production unchanged by this source code update. Shared database has the additive 0008 schema only.

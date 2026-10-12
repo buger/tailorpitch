@@ -23,7 +23,7 @@ MANUS_API_KEY="${MANUS_API_KEY:-$BUILT_IN_FORGE_API_KEY}" \
   HOST=127.0.0.1 PORT=5175 pnpm dev
 ```
 
-The supplied built-in runtime credential was verified against the managed model catalog. The command passes it directly into the server's environment; no secret value is written into source, configuration files or Git. This does not provide a separate Manus v2 account task credential or configure Apify.
+The supplied built-in runtime credential was verified against the managed model catalog. The command passes it directly into the server's environment; no secret value is written into source, configuration files or Git. This does not provide a separate Manus v2 account task credential. Bundled Apify is now configured separately through the protected TailorPitch application secret; no customer token entry is needed.
 
 The port is this session's local setting, not the production port. If another process occupies it, select a free port through the project's local runtime configuration and use that same port in the command. Do not stop Castly or silently switch ports.
 
@@ -50,3 +50,15 @@ The migration passed TypeScript checking, all 100 regression tests and a Mac pro
 Native language-server registration was unavailable because the local launcher could not find its MCP registration CLI. The existing TypeScript compiler is the reliable checking fallback.
 
 Use the existing managed Git workflow to sync code with Manus. Do not reinitialize or replace `.git`. The imported cloud history and local branch are retained; this migration does not itself push a new cloud version or publish a deployment.
+
+## Bundled Apify and source planning
+
+Open [Sources & strategy](http://127.0.0.1:5175/app/sources), select an ICP, review the desired engagement, current trigger, account filters, buyer roles, exclusions, evidence requirements, source preferences, recency and daily candidate allowance. **Recommend Apify sources** uses the current company/ICP context and live actor catalog, saves an editable strategy, and does not start a run. Edit the source/query and approve explicitly, then start a bounded run in Leads or save a paced agent in Agents.
+
+Account authentication, nine actor schemas, Google/crawler input validation and real AI recommendations have been checked. A live scrape/import has not been run because no source strategy has yet been chosen and approved. Google discovery and website research execution adapters are present; the seven specialist actor adapters are proposed/catalog-verified only and cannot silently fall back to Google. Optional contacts are not automatically enriched.
+
+Apify comes from the protected `TAILORPITCH_APIFY_API_TOKEN` environment value, never a customer UI token or source file. Settings can verify account/actor access without starting work. Existing legacy stored Apify records are ignored by this runtime; they were not deleted. Provider starts use a 10-minute timeout and a $0.50 maximum charge parameter (matching Google's currently published minimum); no optional paid AI/contact/prospecting add-ons. One-page searches may return multiple provider results, but imports and repeated starts respect the approved daily allowance (UTC); search result candidates are not guaranteed qualified leads.
+
+Provider syncing can be paused independently: it defers external fetch/import/start work while local drafts for already qualified/selected leads may continue if the pipeline itself is enabled. Running provider jobs are not cancelled. Interrupted starts are blocked until reconciled; recovery validates signed company/internal-run/plan correlation from provider INPUT and never attaches another tenant's run.
+
+This update passes 120 tests, TypeScript and a Mac build. Desktop/mobile Sources checks used intercepted fixtures, no production data writes or actor runs. Development still uses the shared managed database; schema migration 0008 is additive. Source changes remain on `local-development`, not published canonical main. Scheduled cloud callbacks still target published code, not this Mac.
