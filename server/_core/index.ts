@@ -58,8 +58,9 @@ async function startServer() {
     console.error("Server failed:", error.message);
     process.exit(1);
   });
-  server.listen(port, "0.0.0.0", () =>
-    console.log(`Server listening on port ${port}`)
+  const host = process.env.HOST || "0.0.0.0";
+  server.listen(port, host, () =>
+    console.log(`Server listening on http://${host}:${port}`)
   );
 }
 
