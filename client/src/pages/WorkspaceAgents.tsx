@@ -876,7 +876,7 @@ export function WorkspaceAgents() {
     }
   };
 
-  if (pipeline.isLoading || !config) {
+  if (pipeline.isLoading || (!pipeline.error && pipeline.data && !config)) {
     return (
       <div className="flex min-h-48 items-center justify-center border border-line bg-white">
         <Loader2 className="mr-3 h-4 w-4 animate-spin text-terracotta" />
@@ -887,7 +887,7 @@ export function WorkspaceAgents() {
     );
   }
 
-  if (pipeline.error || !pipeline.data) {
+  if (pipeline.error || !pipeline.data || !config) {
     return (
       <div className="border border-red-200 bg-red-50 p-5 text-sm leading-6 text-red-800">
         {pipeline.error?.message || "The agent workspace could not be loaded."}
@@ -951,7 +951,11 @@ export function WorkspaceAgents() {
           <MonoLabel>Agent state</MonoLabel>
           <div className="mt-3 flex items-center gap-2">
             <StatusChip tone={enabled ? "good" : "neutral"}>
-              {enabled ? "Enabled" : "Paused"}
+              {!data.pipeline
+                ? "Not configured"
+                : enabled
+                  ? "Enabled"
+                  : "Paused"}
             </StatusChip>
             {data.pipeline?.lastError && (
               <StatusChip tone="bad">Needs attention</StatusChip>

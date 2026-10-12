@@ -211,9 +211,13 @@ export function OverviewView({ workspace }: { workspace: Workspace }) {
               ? "Loading saved pipeline state…"
               : pipeline.error
                 ? "Pipeline status unavailable. Open agent controls to retry."
-                : pipeline.data?.pipeline.enabled
-                  ? "Pipeline enabled. Work follows your stage choices and daily limits."
-                  : "Pipeline paused. Nothing new starts until you enable the agent pipeline."}
+                : !pipeline.data
+                  ? "Pipeline status unavailable. Open agent controls to retry."
+                  : !pipeline.data.pipeline
+                    ? "No agent pipeline configured yet. Open agent controls to set your profile and pace."
+                    : pipeline.data.pipeline.enabled
+                      ? "Pipeline enabled. Work follows your stage choices and daily limits."
+                      : "Pipeline paused. Nothing new starts until you enable the agent pipeline."}
           </p>
         </div>
         <a
