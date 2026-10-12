@@ -1,3 +1,4 @@
+import { OwnerLogin } from "@/components/OwnerLogin";
 import { startLogin } from "@/const";
 import { useState } from "react";
 import { loginErrorMessage } from "@shared/authMessages";
@@ -45,6 +46,14 @@ export default function AppWorkspace() {
     retry: false,
   });
   if (auth.loading) return <LoadingState label="Checking your session" />;
+  if (!auth.user && window.__MANUS_CONFIG__?.authMode === "owner-password")
+    return (
+      <OwnerLogin
+        initialError={loginErrorMessage(
+          new URLSearchParams(window.location.search).get("login_error")
+        )}
+      />
+    );
   if (!auth.user)
     return (
       <LoginGate

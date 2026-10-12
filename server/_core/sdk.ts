@@ -1,4 +1,10 @@
-import { AXIOS_TIMEOUT_MS, COOKIE_NAME, ONE_YEAR_MS, decodeOAuthState } from "@shared/const";
+import { passwordVersion } from "../services/ownerPassword";
+import {
+  AXIOS_TIMEOUT_MS,
+  COOKIE_NAME,
+  ONE_YEAR_MS,
+  decodeOAuthState,
+} from "@shared/const";
 import { ForbiddenError } from "@shared/_core/errors";
 import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
@@ -211,10 +217,18 @@ class SDKServer {
         algorithms: ["HS256"],
       });
       const { openId, appId, name } = payload as Record<string, unknown>;
+      if (
+        process.env.TAILORPITCH_AUTH_MODE === "owner-password" &&
+        !String(openId).startsWith("cron_") &&
+        (payload.authMethod !== "owner-password" ||
+          payload.authVersion !== passwordVersion())
+      )
+        return null;
 
       if (
         !isNonEmptyString(openId) ||
-        (!isNonEmptyString(appId) || appId !== ENV.appId) ||
+        !isNonEmptyString(appId) ||
+        appId !== ENV.appId ||
         typeof name !== "string"
       ) {
         console.warn("[Auth] Session payload missing required fields");
@@ -263,7 +277,8 @@ class SDKServer {
     if (!sessionToken && req.path.startsWith("/api/scheduled/")) {
       const ticket = cookies.get("app_session_id");
       const identity = await this.verifySession(ticket);
-      if (identity?.openId.startsWith(CRON_OPEN_ID_PREFIX)) sessionToken = ticket;
+      if (identity?.openId.startsWith(CRON_OPEN_ID_PREFIX))
+        sessionToken = ticket;
     }
 
     // 2. Fallback to the Authorization header (Preview auto-login via
@@ -295,7 +310,18 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, sync from OAuth server automatically
+    // Owner-password mode never creates or links identities through a legacy provider.
+    if (!user && process.env.TAILORPITCH_AUTH_MODE === "owner-password") {
+      throw ForbiddenError("Owner account not found");
+    }
+    if (
+      user &&
+      process.env.TAILORPITCH_AUTH_MODE === "owner-password" &&
+      user.email?.trim().toLowerCase() !== "leonsbox@gmail.com"
+    ) {
+      throw ForbiddenError("Owner account access is no longer approved");
+    }
+    // Existing Manus-hosted login retains its identity synchronization behavior.
     if (!user) {
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionToken ?? "");

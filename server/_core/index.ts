@@ -1,4 +1,9 @@
 import {
+  allowedLoginOrigin,
+  registerOwnerPasswordRoutes,
+} from "../services/ownerPassword";
+import { registerCloudStorage } from "../services/cloudStorage";
+import {
   registerIcpAgentRoutes,
   startIcpAgentWorker,
 } from "../services/icpAgentWorker";
@@ -19,6 +24,7 @@ import { ensurePilot } from "../services/tenant";
 
 async function startServer() {
   const app = express();
+  app.set("trust proxy", "loopback");
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -34,6 +40,8 @@ async function startServer() {
     res.set("Cache-Control", "private, no-store");
     next();
   });
+  registerOwnerPasswordRoutes(app);
+  registerCloudStorage(app);
   registerOAuthRoutes(app);
   registerMailboxRoutes(app);
   registerGojiberryRoutes(app);
@@ -41,6 +49,20 @@ async function startServer() {
   registerIcpAgentRoutes(app);
   registerPublicRoutes(app);
   await ensurePilot();
+  // Password-mode company writes are browser-origin-bound, not merely cookie-bound.
+  app.use("/api/trpc", (req, res, next) => {
+    if (
+      process.env.TAILORPITCH_AUTH_MODE === "owner-password" &&
+      !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
+      !allowedLoginOrigin(req)
+    ) {
+      res
+        .status(403)
+        .json({ error: "Open the TailorPitch dashboard to make changes." });
+      return;
+    }
+    next();
+  });
   // tRPC API
   app.use(
     "/api/trpc",

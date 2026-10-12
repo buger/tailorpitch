@@ -57,7 +57,11 @@ export function PagePreview({
         <div className="flex items-center gap-3">
           {brand.logoUrl ? (
             <img
-              src={brand.logoUrl}
+              src={
+                brand.logoUrl.startsWith("/manus-storage/") && !preview
+                  ? `${brand.logoUrl}?page=${encodeURIComponent(window.location.pathname.split("/").pop() || "")}`
+                  : brand.logoUrl
+              }
               alt={`${companyName} logo`}
               className="h-9 max-w-28 object-contain"
             />

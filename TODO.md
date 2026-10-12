@@ -157,3 +157,18 @@ Full suite: 120 tests in 24 files passed, TypeScript and production build passed
 
 
 Per-ICP completion evidence: TypeScript clean; 129 regressions/25 files pass; Mac production build passes. Five bounded discovery inputs validated against live default schemas without actor execution. Desktop/mobile fixture checks verified independent pause/resume, preserved counters and seven-day history, save-paused semantics, no overflow or page errors, and the other agent's landing redesign. Reviewer findings corrected: six attempt maximum, exact fetched-source/date calendar validation, transaction-scoped pause/source rechecks, lease invalidation and renewal, guarded cycle transitions, compare-and-set recovery and verified provider event pricing. No real agent/cycle/delivery was configured; actual low-volume scraping awaits an approved strategy and explicit resume. Source implementation remains local, separate from production.
+
+## Native Google login and public Cloud Computer cutover
+
+- [ ] Native Google login verifies signed identity, audience, issuer, expiry, nonce, PKCE and a single-use browser-bound state; only approved account linking preserves memberships. Unknown accounts receive a readable access error. Login and Gmail grants stay separate.
+- [ ] Existing organization reference assets are authorized on private reads; published page asset access matches an actual published page. No arbitrary presign proxy.
+- [ ] Cloud Computer HTTPS/public origin and reboot-safe service are tested before DNS changes; preserve landing updates and all existing managed data/AI/Apify credentials.
+- [ ] Exact Google web client setup and protected credentials are supplied. Verify owner login end-to-end before claiming it succeeds; no credentials printed or committed.
+- [ ] Save tested source to the local-development branch, confirm DNS/TLS/anonymous boundaries and provide honest migration state.
+
+## Approved temporary owner login and live cloud cutover
+- [x] leonsbox@gmail.com plus password accesses existing real owner; wrong email/password returns clear error; secure eight-hour revocable sessions, rate limiting and anti-CSRF checks work. No password in chat, Git or browser storage.
+- [x] Private company assets and exact published-page logos work without arbitrary presign access.
+- [x] Reboot-safe HTTPS cloud app serves tailorpitch.com and www redirect; retained landing design and managed data/AI/Apify work. No real agents or outreach enabled by migration.
+
+Cloud verification: 139 tests/28 files, typecheck/build pass, real public owner login/workspace HTTP 200, anonymous HTTP 401, authenticated original reference image HTTP 200, AI/Apify authentication HTTP 200. No providers launched. Native Google remains deferred in favor of expressly approved owner/password.
