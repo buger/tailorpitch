@@ -314,7 +314,7 @@ function clientMetadata(redirectUri: string): OAuthClientMetadata {
     token_endpoint_auth_method: "none",
     grant_types: ["authorization_code", "refresh_token"],
     response_types: ["code"],
-    client_name: "Leadloom Gojiberry integration",
+    client_name: "TailorPitch Gojiberry integration",
     scope: GOJIBERRY_SCOPE,
   };
 }

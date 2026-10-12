@@ -8,10 +8,7 @@ import {
   discoveryResultSchema,
   type PipelineConfig,
 } from "../../shared/pipeline";
-import {
-  researchSchema,
-  type Research,
-} from "../../shared/domain";
+import { researchSchema, type Research } from "../../shared/domain";
 import type { companies, icps, leads } from "../../drizzle/schema";
 
 type Company = typeof companies.$inferSelect;
@@ -80,10 +77,14 @@ const PAGE_CURSOR_PREFIX = "page:";
 function toManusSchema(input: unknown): JsonSchema {
   const clean = (value: unknown, depth: number, path: string): unknown => {
     if (depth > 5) {
-      throw new Error(`Structured output schema is nested too deeply at ${path}`);
+      throw new Error(
+        `Structured output schema is nested too deeply at ${path}`
+      );
     }
     if (Array.isArray(value)) {
-      return value.map((item, index) => clean(item, depth + 1, `${path}[${index}]`));
+      return value.map((item, index) =>
+        clean(item, depth + 1, `${path}[${index}]`)
+      );
     }
     if (!value || typeof value !== "object") return value;
 
@@ -92,7 +93,8 @@ function toManusSchema(input: unknown): JsonSchema {
     const sourceType = source.type;
     if (sourceType !== undefined) result.type = sourceType;
     if (source.enum !== undefined) result.enum = source.enum;
-    if (typeof source.description === "string") result.description = source.description;
+    if (typeof source.description === "string")
+      result.description = source.description;
     if (typeof source.$ref === "string") result.$ref = source.$ref;
 
     if (source.anyOf && Array.isArray(source.anyOf)) {
@@ -112,7 +114,11 @@ function toManusSchema(input: unknown): JsonSchema {
     }
 
     const properties = source.properties;
-    if (properties && typeof properties === "object" && !Array.isArray(properties)) {
+    if (
+      properties &&
+      typeof properties === "object" &&
+      !Array.isArray(properties)
+    ) {
       const cleanProperties: Record<string, unknown> = {};
       for (const [name, property] of Object.entries(
         properties as Record<string, unknown>
@@ -139,7 +145,7 @@ function toManusSchema(input: unknown): JsonSchema {
     return result;
   };
 
-  const result = clean(input, 1, "$" );
+  const result = clean(input, 1, "$");
   if (!result || typeof result !== "object" || Array.isArray(result)) {
     throw new Error("Structured output schema must be an object");
   }
@@ -200,14 +206,15 @@ function visibleText(value: unknown): string {
   const object = asRecord(value);
   if (!object) return "";
   if (typeof object.text === "string") return redactVisibleText(object.text);
-  if (typeof object.content === "string") return redactVisibleText(object.content);
+  if (typeof object.content === "string")
+    return redactVisibleText(object.content);
   if (object.content !== undefined) return visibleText(object.content);
   return "";
 }
 
 function truncatePrompt(value: string): string {
   if (value.length <= MAX_PROMPT_CHARS) return value;
-  return `${value.slice(0, MAX_PROMPT_CHARS)}\n[truncated by Leadloom]`;
+  return `${value.slice(0, MAX_PROMPT_CHARS)}\n[truncated by TailorPitch]`;
 }
 
 function promptJson(value: unknown): string {
@@ -222,7 +229,9 @@ function connectorIds(config: PipelineConfig): string[] {
   return Array.from(
     new Set(
       (Array.isArray(config.manusConnectorIds) ? config.manusConnectorIds : [])
-        .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+        .filter(
+          (id): id is string => typeof id === "string" && id.trim().length > 0
+        )
         .map(id => id.trim())
     )
   ).slice(0, 10);
@@ -231,7 +240,9 @@ function connectorIds(config: PipelineConfig): string[] {
 function buildPrompt(input: StartManusAgentInput): string {
   const { stage, config, company, icp, lead, knownDomains = [] } = input;
   const commonPolicy = `You are a read-only evidence researcher for TailorPitch. Perform exactly one ${
-    stage === "discover" ? "public-company discovery" : "company qualification research"
+    stage === "discover"
+      ? "public-company discovery"
+      : "company qualification research"
   } turn and return only the requested structured result.
 
 Safety and evidence rules:
@@ -522,7 +533,9 @@ function sanitizeEvent(event: TaskMessage): ManusEvent | undefined {
   let status: string | undefined;
 
   if (type === "user_message") {
-    message = visibleText(asRecord(event.user_message)?.content ?? event.user_message);
+    message = visibleText(
+      asRecord(event.user_message)?.content ?? event.user_message
+    );
   } else if (type === "assistant_message") {
     message = visibleText(
       asRecord(event.assistant_message)?.content ?? event.assistant_message
@@ -530,7 +543,9 @@ function sanitizeEvent(event: TaskMessage): ManusEvent | undefined {
   } else if (type === "status_update") {
     const statusInfo = extractStatusUpdate(event.status_update);
     status = statusInfo.status;
-    message = statusInfo.waiting?.description ?? (status ? `Agent status: ${status}` : "Agent status updated.");
+    message =
+      statusInfo.waiting?.description ??
+      (status ? `Agent status: ${status}` : "Agent status updated.");
   } else if (type === "error_message") {
     // Provider error bodies can contain request details. The UI receives only
     // a safe generic event; the task state below also uses a generic error.
@@ -682,7 +697,8 @@ export async function startManusAgent(
               structured_output_schema: schema,
             }
           );
-          if (!usableApiKey(send.task_id)) throw genericManusError("message send");
+          if (!usableApiKey(send.task_id))
+            throw genericManusError("message send");
           return {
             taskId: previousTaskId,
             taskUrl: taskUrl(previousTaskId, detail.task_url),
@@ -709,14 +725,22 @@ export async function inspectManusAgent(
   try {
     apiKey = (await storedManusConfig(companyId)).apiKey;
   } catch {
-    return { ...base, state: "unknown", error: "Unable to inspect the Manus task." };
+    return {
+      ...base,
+      state: "unknown",
+      error: "Unable to inspect the Manus task.",
+    };
   }
 
   let detail: TaskDetail;
   try {
     detail = await taskDetail(apiKey, input.taskId);
   } catch {
-    return { ...base, state: "unknown", error: "Unable to inspect the Manus task." };
+    return {
+      ...base,
+      state: "unknown",
+      error: "Unable to inspect the Manus task.",
+    };
   }
 
   // Only a successful detail response with the provider's definitive error
@@ -801,10 +825,10 @@ export async function inspectManusAgent(
     ? input.eventCursor
     : reachedPageCapWithMore && lastPageCursor
       ? `${PAGE_CURSOR_PREFIX}${lastPageCursor}`
-      : encodeEventCursor(newestMessageId) ??
+      : (encodeEventCursor(newestMessageId) ??
         (lastPageCursor
           ? `${PAGE_CURSOR_PREFIX}${lastPageCursor}`
-          : input.eventCursor);
+          : input.eventCursor));
 
   if (state === "error") {
     return {
