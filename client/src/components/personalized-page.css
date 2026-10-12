@@ -687,3 +687,257 @@
     transform: none;
   }
 }
+
+/* Prospect-specific hero: actual brand + proposed connection + work removed. */
+.pp-prospect-pair {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.pp-seller-name {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 28px;
+}
+.pp-prospect-pair > svg {
+  opacity: 0.4;
+}
+.pp-prospect-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.pp-prospect-name img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.pp-prospect-name strong {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+.pp-proposal-tag {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  border: 1px solid #0002;
+  padding: 4px 7px;
+  margin-left: 3px;
+}
+.pp-has-workflow .pp-hero h1 {
+  font-size: clamp(43px, 4.7vw, 67px);
+  margin: 18px 0 22px;
+}
+.pp-has-workflow .pp-hero {
+  gap: 44px;
+  padding-top: 44px;
+  padding-bottom: 52px;
+}
+.pp-has-workflow .pp-subhead {
+  font-size: 14px;
+  line-height: 1.85;
+}
+.pp-has-workflow .pp-art {
+  height: 170px;
+}
+.pp-has-workflow .pp-brief {
+  margin: -14px 10px 0;
+  padding: 22px 25px;
+}
+.pp-integration-brief h2 {
+  font-size: 28px;
+  margin: 15px 0;
+}
+.pp-integration-brief > .pp-current-work {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 0 0 15px;
+  opacity: 0.7;
+  max-width: none;
+}
+.pp-flow {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pp-flow li {
+  display: grid;
+  grid-template-columns: 23px 1fr;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1px solid #0002;
+}
+.pp-flow-number {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  padding-top: 2px;
+  opacity: 0.55;
+}
+.pp-flow h3 {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 5px;
+}
+.pp-flow p {
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 0;
+  opacity: 0.68;
+}
+.pp-work-removed {
+  margin: 22px 0 0;
+}
+.pp-work-removed > .pp-index {
+  font-size: 8px;
+  opacity: 0.58;
+}
+.pp-work-removed ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 9px;
+}
+.pp-work-removed li {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.pp-work-removed svg {
+  color: var(--pp-accent);
+  flex-shrink: 0;
+}
+.pp-has-workflow .pp-micro {
+  font-size: 8px;
+}
+.pp-preview.pp-has-workflow .pp-hero {
+  gap: 23px;
+}
+.pp-preview.pp-has-workflow .pp-hero h1 {
+  font-size: 45px;
+}
+@media (max-width: 850px) {
+  .pp-has-workflow .pp-hero {
+    gap: 25px;
+  }
+  .pp-has-workflow .pp-hero h1 {
+    font-size: 49px;
+  }
+  .pp-has-workflow .pp-brief {
+    padding: 20px;
+  }
+}
+@media (max-width: 640px) {
+  .pp-prospect-pair {
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .pp-seller-name {
+    font-size: 26px;
+  }
+  .pp-prospect-name strong {
+    font-size: 25px;
+  }
+  .pp-prospect-name img {
+    height: 29px;
+    width: 29px;
+  }
+  .pp-proposal-tag {
+    font-size: 7px;
+    margin-left: 0;
+  }
+  .pp-has-workflow .pp-hero {
+    padding-top: 28px;
+    padding-bottom: 36px;
+    gap: 32px;
+  }
+  .pp-has-workflow .pp-hero h1 {
+    font-size: 49px;
+    line-height: 1.06;
+    margin-top: 20px;
+  }
+  .pp-has-workflow .pp-subhead {
+    font-size: 13px;
+  }
+  .pp-work-removed li {
+    font-size: 11px;
+  }
+  .pp-has-workflow .pp-art {
+    height: 155px;
+  }
+  .pp-has-workflow .pp-brief {
+    margin: -17px 10px 0;
+    padding: 22px;
+  }
+  .pp-flow h3 {
+    font-size: 12px;
+  }
+  .pp-flow p {
+    font-size: 11px;
+  }
+  .pp-integration-brief > .pp-current-work {
+    font-size: 12px;
+  }
+  .pp-integration-brief h2 {
+    font-size: 31px;
+  }
+  .pp-preview.pp-has-workflow .pp-hero h1 {
+    font-size: 43px;
+  }
+}
+
+.pp-mobile-fit {
+  display: none;
+}
+.pp-preview.pp-has-workflow .pp-hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+}
+.pp-preview.pp-has-workflow .pp-hero-aside {
+  width: 100%;
+}
+.pp-preview.pp-has-workflow .pp-hero h1 {
+  font-size: 42px;
+}
+.pp-preview.pp-has-workflow .pp-brief {
+  margin: -14px 10px 0;
+}
+.pp-integration-brief {
+  scroll-margin-top: 25px;
+}
+@media (max-width: 640px) {
+  .pp-has-workflow .pp-hero h1 {
+    font-size: 42px;
+  }
+  .pp-mobile-fit {
+    display: grid;
+    grid-template-columns: 1fr 18px;
+    gap: 7px;
+    margin: 0 0 20px;
+    border-left: 2px solid var(--pp-accent);
+    padding: 2px 0 2px 12px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .pp-mobile-fit > .pp-index {
+    font-size: 7px;
+    grid-column: 1/-1;
+    opacity: 0.6;
+  }
+  .pp-mobile-fit strong {
+    font-size: 11px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .pp-mobile-fit svg {
+    align-self: center;
+    opacity: 0.6;
+  }
+}

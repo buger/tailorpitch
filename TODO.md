@@ -202,3 +202,12 @@ Evidence: 152 tests/31 files pass; mocked page/form transaction tests, real stri
 - [x] Validate/deploy and upload complete corrected code to approved public GitHub main/local-development.
 
 Priority verification: 33 test files / 162 tests and TypeScript/build passed. Published proposal inspected live at 1440/390 px; hero art loaded, CTA/booking/accordion worked, no overflow or JS errors. Demo signed in to empty website onboarding; Proof page denied (404), global signup list hidden, owner Proof access intact. fal.ai is the selected visual preference and generated this image; automatic app-side generation is explicitly not enabled without a server key. GitHub sync checked after final save.
+
+## Prospect-first hero and inclusive views
+
+- [x] Future generated proposals explicitly apply Hormozi principles with recipient identity, sourced workflow fit, concrete work removed and no fabricated proof; old pages remain valid.
+- [x] Hilbert proposal shows actual prospect branding and a proposed Proof integration high in the hero, preserving the share URL, quiet fal art and working consented contact CTA.
+- [x] Count every visible published-page view/reload and admin/owner preview; idempotent retry IDs, no private draft counting. Update analytics/privacy descriptions and verify live increments.
+- [x] Regression/build/desktop-mobile checks, cloud deploy and complete GitHub sync.
+
+Verified: 34 test files / 167 tests; final affected regressions 10/10, compiler/build clean. Real generation returned "Using Proof in Hilbert", named prospect headline, concrete workflow and work removed, plus observed logo; no draft was saved. Live owner view, same-tab reload, owner published-page preview and anonymous rendered view each incremented analytics. Desktop/mobile inspected, no overflow or JS errors. Historical excluded views cannot be reconstructed; no backfill or unique-person claim. Source saved and GitHub synchronized after final checks.

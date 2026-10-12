@@ -198,8 +198,9 @@ export default function PublicPage() {
               .
             </p>
             <p className="mt-5 text-[11px] leading-5 opacity-60">
-              This page records anonymous tab-session opens, not visitor
-              identity. Your submitted email is shared with {company.name}.{" "}
+              This page counts visible loads, reloads and admin previews, not
+              visitor identity. Your submitted email is shared with{" "}
+              {company.name}.{" "}
               <Link href="/privacy" className="underline">
                 Privacy details
               </Link>

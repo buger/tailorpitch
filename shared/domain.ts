@@ -100,6 +100,24 @@ export const pageTextContentSchema = z.object({
   closing: z.string().max(500),
   designNotes: z.string().max(1000),
   layout: z.enum(["editorial", "minimal", "bold"]),
+  workflow: z
+    .object({
+      integrationTitle: z.string().min(5).max(180),
+      currentWork: z.string().max(800),
+      proposedFlow: z
+        .array(
+          z.object({ title: z.string().max(120), body: z.string().max(500) })
+        )
+        .min(2)
+        .max(4),
+      workRemoved: z
+        .array(
+          z.object({ title: z.string().max(140), body: z.string().max(600) })
+        )
+        .min(2)
+        .max(3),
+    })
+    .optional(),
 });
 export const pageContentSchema = pageTextContentSchema.extend({
   heroImageUrl: z
@@ -111,6 +129,18 @@ export const pageContentSchema = pageTextContentSchema.extend({
     .optional(),
   heroImageAlt: z.string().max(500).optional(),
   heroImageProvider: z.literal("fal.ai").optional(),
+  prospectBrand: z
+    .object({
+      name: z.string().min(1).max(200),
+      website: safeUrl,
+      logoUrl: z.union([
+        z.literal(""),
+        safeUrl,
+        z.string().regex(/^\/visuals\/[a-zA-Z0-9._-]+$/),
+      ]),
+      logoSourceUrl: z.union([z.literal(""), safeUrl]),
+    })
+    .optional(),
 });
 export type PageContent = z.infer<typeof pageContentSchema>;
 export const draftContentSchema = z.object({

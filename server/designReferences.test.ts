@@ -55,6 +55,17 @@ vi.mock("./_core/llm", () => ({
     choices: [{ message: { content: JSON.stringify(fixtures.page) } }],
   })),
 }));
+vi.mock("./services/prospectBrand", () => ({
+  getProspectBrand: vi.fn(async () => ({
+    brand: {
+      name: "Example",
+      website: "https://example.com/",
+      logoUrl: "https://example.com/logo.svg",
+      logoSourceUrl: "https://example.com/",
+    },
+    sources: [],
+  })),
+}));
 import { generatePage } from "./services/generation";
 import { invokeLLM } from "./_core/llm";
 describe("stored organization visual references", () => {

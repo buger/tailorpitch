@@ -1,13 +1,13 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db, scopedRow } from "./tenant";
 import { pages, pageVisits, submissions } from "../../drizzle/schema";
-export function shouldCountPageOpen(user: unknown, userAgent: string): boolean {
-  return (
-    !user &&
-    !/bot|crawler|spider|slurp|facebookexternalhit|preview|headless|monitor/i.test(
-      userAgent
-    )
-  );
+export function shouldCountPageOpen(
+  _user: unknown,
+  _userAgent: string
+): boolean {
+  // Every actual visible page load counts, including owner/admin and automation.
+  // Do not confuse views with people; same-event request retries remain idempotent.
+  return true;
 }
 export async function recordPageOpen(
   token: string,
@@ -87,6 +87,6 @@ export async function getPageAnalytics(companyId: number, pageId: number) {
     submissions: Number(forms.total),
     days: days.map(d => ({ day: d.day, opens: Number(d.opens) })),
     measurement:
-      "Anonymous tab sessions; repeat refreshes in the same tab are deduplicated. Not unique people. Signed-in previews and recognized bots are excluded.",
+      "Every visible published-page load or revisit, including refreshes and signed-in/admin previews. Same-event retries are deduplicated. Not unique people; automated rendered views may also count.",
   };
 }

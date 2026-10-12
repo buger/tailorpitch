@@ -1,3 +1,5 @@
+import type { RouterOutputs } from "@/components/leadloom-types";
+import { usePageOpen } from "@/components/usePageOpen";
 import { signupCsv, signupSourceLabel } from "@shared/emailSignups";
 import { useOperation } from "@/components/operations/OperationProvider";
 import { useState } from "react";
@@ -70,6 +72,29 @@ async function copyText(value: string) {
   if (!navigator.clipboard)
     throw new Error("Clipboard access is not available in this browser.");
   await navigator.clipboard.writeText(value);
+}
+
+function PublishedAdminPreview({
+  data,
+  onRecorded,
+}: {
+  data: RouterOutputs["pages"]["get"];
+  onRecorded: () => void;
+}) {
+  usePageOpen(
+    data.page.shareToken,
+    data.page.status === "published",
+    onRecorded
+  );
+  return (
+    <PagePreview
+      content={data.page.content}
+      brand={data.page.brandSnapshot || data.company.brand}
+      companyName={data.company.name}
+      leadName={data.lead.companyName}
+      preview
+    />
+  );
 }
 
 export function PagesView({ workspace }: { workspace: Workspace }) {
@@ -283,14 +308,14 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
                       {page.companyName || `Lead #${page.leadId}`}
                     </p>
                     <p className="mt-3 text-xs text-ink-muted">
-                      <strong>{page.views ?? 0}</strong> opens ·{" "}
+                      <strong>{page.views ?? 0}</strong> views ·{" "}
                       {page.opensToday ?? 0} today (UTC) ·{" "}
                       <strong>{page.submissions ?? 0}</strong> form signups
                     </p>
                     <p className="mt-1 text-[11px] text-ink-muted">
                       {page.lastOpened
                         ? `Last opened: ${new Date(page.lastOpened).toLocaleString()}`
-                        : "Not opened by an anonymous visitor yet"}
+                        : "No recorded page views yet"}
                     </p>
                     {isPublished && (
                       <a
@@ -371,8 +396,9 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
               never expose private research notes.
             </li>
             <li>
-              • Opens count anonymous tab sessions, not unique people. Refreshes
-              in the same tab and signed-in previews are excluded.
+              • Views include refreshes and signed-in/admin published-page
+              previews. Only retries of the same view event are deduplicated.
+              These are not unique people.
             </li>
             <li>
               • Publishing and unpublishing always require an explicit
@@ -384,7 +410,7 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
       {selected && (
         <DrawerDialog
           title={selected.title || selected.content.headline}
-          description="Preview only — this page is not changed by viewing it."
+          description="Preview only — content is unchanged. A published-page preview counts as a view."
           onClose={() => setSelected(null)}
         >
           {selectedPage.isLoading && (
@@ -403,7 +429,7 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
             <section className="mb-6 border border-line bg-paper p-5">
               <h3 className="font-semibold">Page activity</h3>
               <p className="mt-2 text-sm">
-                {pageAnalytics.data.totalOpens} opens ·{" "}
+                {pageAnalytics.data.totalOpens} views ·{" "}
                 {pageAnalytics.data.opensToday} today (UTC) ·{" "}
                 {pageAnalytics.data.submissions} form signups
               </p>
@@ -418,7 +444,7 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
                     </span>
                   ))
                 ) : (
-                  <span>No page opens in the last 14 days.</span>
+                  <span>No page views in the last 14 days.</span>
                 )}
               </div>
               <Link
@@ -436,14 +462,15 @@ export function PagesView({ workspace }: { workspace: Workspace }) {
             />
           )}
           {selectedPage.data && (
-            <PagePreview
-              content={selectedPage.data.page.content}
-              brand={
-                selectedPage.data.page.brandSnapshot || workspace.company.brand
-              }
-              companyName={selectedPage.data.company.name}
-              leadName={selectedPage.data.lead.contactName || undefined}
-              preview
+            <PublishedAdminPreview
+              key={selectedPage.data.page.id}
+              data={selectedPage.data}
+              onRecorded={() => {
+                void utils.pages.analytics.invalidate({
+                  id: selectedPage.data!.page.id,
+                });
+                void utils.pages.list.invalidate();
+              }}
             />
           )}
         </DrawerDialog>
@@ -622,6 +649,100 @@ function PageEditor({ page, brand, saving, onClose, onSave }: PageEditorProps) {
           onChange={event => updateContent("subheadline", event.target.value)}
           disabled={saving}
         />
+        {content.workflow && (
+          <section className="border border-line p-4 space-y-4">
+            <MonoLabel>Prospect workflow / hero</MonoLabel>
+            <TextInput
+              label="Proposed integration title"
+              value={content.workflow.integrationTitle}
+              disabled={saving}
+              onChange={e =>
+                updateContent("workflow", {
+                  ...content.workflow!,
+                  integrationTitle: e.target.value,
+                })
+              }
+            />
+            <TextArea
+              label="Current work (conditional if unverified)"
+              value={content.workflow.currentWork}
+              disabled={saving}
+              onChange={e =>
+                updateContent("workflow", {
+                  ...content.workflow!,
+                  currentWork: e.target.value,
+                })
+              }
+            />
+            {content.workflow.proposedFlow.map((step, i) => (
+              <div
+                className="border-t border-line pt-3 space-y-3"
+                key={`flow-${i}`}
+              >
+                <TextInput
+                  label={`Workflow ${i + 1} title`}
+                  value={step.title}
+                  disabled={saving}
+                  onChange={e =>
+                    updateContent("workflow", {
+                      ...content.workflow!,
+                      proposedFlow: content.workflow!.proposedFlow.map(
+                        (v, n) =>
+                          n === i ? { ...v, title: e.target.value } : v
+                      ),
+                    })
+                  }
+                />
+                <TextArea
+                  label={`Workflow ${i + 1} explanation`}
+                  value={step.body}
+                  disabled={saving}
+                  onChange={e =>
+                    updateContent("workflow", {
+                      ...content.workflow!,
+                      proposedFlow: content.workflow!.proposedFlow.map(
+                        (v, n) => (n === i ? { ...v, body: e.target.value } : v)
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+            {content.workflow.workRemoved.map((work, i) => (
+              <div
+                className="border-t border-line pt-3 space-y-3"
+                key={`work-${i}`}
+              >
+                <TextInput
+                  label={`Work removed ${i + 1}`}
+                  value={work.title}
+                  disabled={saving}
+                  onChange={e =>
+                    updateContent("workflow", {
+                      ...content.workflow!,
+                      workRemoved: content.workflow!.workRemoved.map((v, n) =>
+                        n === i ? { ...v, title: e.target.value } : v
+                      ),
+                    })
+                  }
+                />
+                <TextArea
+                  label={`How task ${i + 1} is reduced`}
+                  value={work.body}
+                  disabled={saving}
+                  onChange={e =>
+                    updateContent("workflow", {
+                      ...content.workflow!,
+                      workRemoved: content.workflow!.workRemoved.map((v, n) =>
+                        n === i ? { ...v, body: e.target.value } : v
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </section>
+        )}
         <TextInput
           label="Context title"
           value={content.contextTitle}

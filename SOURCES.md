@@ -78,3 +78,7 @@ Re-read Acquisition offer modules at https://www.acquisition.com/training/offers
 - fal.ai model/schema: `google/nano-banana-2.1`, live schema inspected 12 October 2026. One 2K 16:9 WebP generated via connected fal.ai; request `01a13001-4bdf-7051-a6b2-ee2c454fb372`. Artwork stored at `client/public/visuals/proof-evidence-layers.webp`, not a private brand asset.
 - fal queue runtime API: https://docs.fal.ai/model-apis/model-endpoints/queue — server credential uses Authorization Key; connector credentials are not automatically injected into deployed app. `shared/visuals.ts` sets the preferred provider/model. Automatic app-side fal generation remains separately credentialed.
 - Existing verified lead research supplies Hilbert context. No fabricated saved time, acceptance metrics, budget, customer status or certification is introduced.
+
+## Prospect-specific workflow and observed Hilbert identity
+
+Hilbert website https://hilberts.ai/ inspected 12 October 2026. Publisher-declared logo: https://cdn.prod.website-files.com/69241c9125ae02b952e6e87e/693ac8377a4b126cdcef1cbd_8a443cf4b61b94edbe491ea2c1d67ea8_Dark.svg . Passive 669-byte SVG retained as `client/public/visuals/hilbert-logo.svg`. Customer/testimonial logos are not treated as Hilbert assets. Public growth/SOC2 positioning does not establish internal GitHub, CI, runner or review usage; page connection is explicitly proposed and setup must be confirmed. No installed-integration, endorsement or saved-hours claim is added.

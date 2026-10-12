@@ -58,11 +58,11 @@ export function PrivacyPage() {
             <p className="mt-3 text-ink-muted">
               When you submit a personalized-page form, your email and consent
               are saved for the company that created the proposal. Published
-              pages count anonymous tab-session opens, not unique people. Repeat
-              refreshes in one tab are deduplicated; signed-in previews and
-              recognized crawlers are excluded. No IP address, fingerprint or
-              visitor identity is stored by page analytics. Browser privacy
-              tools may prevent tracking.
+              pages count every visible page load, including refreshes and
+              signed-in/admin published-page previews, not unique people. Only
+              retries of the same event are deduplicated. No IP address,
+              fingerprint or viewer identity is stored. Automated rendered views
+              can also count; browser privacy tools can prevent tracking.
             </p>
           </section>
           <section>

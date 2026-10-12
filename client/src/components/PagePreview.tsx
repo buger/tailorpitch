@@ -1,6 +1,13 @@
 import { useState, type CSSProperties } from "react";
 import type { Brand, PageContent } from "@shared/domain";
-import { ArrowUpRight, ArrowDown, Check, Plus, Minus } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDown,
+  ArrowRight,
+  Check,
+  Plus,
+  Minus,
+} from "lucide-react";
 import "./personalized-page.css";
 
 export function PagePreview({
@@ -19,6 +26,9 @@ export function PagePreview({
   ctaHref?: string;
 }) {
   const [imageFailed, setImageFailed] = useState(false);
+  const [prospectLogoFailed, setProspectLogoFailed] = useState(false);
+  const prospect = content.prospectBrand;
+  const workflow = content.workflow;
   const style = {
     "--pp-paper": brand.backgroundColor,
     "--pp-ink": brand.primaryColor,
@@ -46,7 +56,7 @@ export function PagePreview({
       : brand.logoUrl;
   return (
     <article
-      className={`pp-page pp-${content.layout} ${preview ? "pp-preview" : ""}`}
+      className={`pp-page pp-${content.layout} ${workflow ? "pp-has-workflow" : ""} ${preview ? "pp-preview" : ""}`}
       style={style}
     >
       <header className="pp-header">
@@ -74,11 +84,53 @@ export function PagePreview({
       </header>
       <section className="pp-hero pp-container" id="proposal">
         <div className="pp-hero-copy">
+          {prospect && (
+            <div
+              className="pp-prospect-pair"
+              aria-label={`Proposed ${companyName} workflow for ${prospect.name}`}
+            >
+              <span className="pp-seller-name">{companyName}</span>
+              <ArrowRight size={18} />
+              <span className="pp-prospect-name">
+                {prospect.logoUrl && !prospectLogoFailed && (
+                  <img
+                    src={prospect.logoUrl}
+                    alt={`${prospect.name} logo`}
+                    onError={() => setProspectLogoFailed(true)}
+                  />
+                )}
+                <strong>{prospect.name}</strong>
+              </span>
+              <span className="pp-proposal-tag">Proposed workflow</span>
+            </div>
+          )}
           <p className="pp-eyebrow">
             <span /> {content.eyebrow}
           </p>
           <h1>{content.headline}</h1>
+          {workflow && (
+            <a className="pp-mobile-fit" href="#workflow-fit">
+              <span className="pp-index">The proposed connection</span>
+              <strong>{workflow.integrationTitle}</strong>
+              <ArrowDown size={14} />
+            </a>
+          )}
           <p className="pp-subhead">{content.subheadline}</p>
+          {workflow && (
+            <div className="pp-work-removed">
+              <span className="pp-index">
+                Work this could take off your plate
+              </span>
+              <ul>
+                {workflow.workRemoved.map((item, i) => (
+                  <li key={i}>
+                    <Check size={13} />
+                    <span>{item.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="pp-hero-actions">
             <Cta />
             <a className="pp-text-link" href="#pilot">
@@ -108,28 +160,59 @@ export function PagePreview({
               <div />
             </div>
           )}
-          <div className="pp-brief">
-            <div className="pp-brief-top">
-              <span className="pp-eyebrow">The invitation</span>
-              <span className="pp-status">
-                <span />
-                For {leadName || "your team"}
-              </span>
+          {workflow ? (
+            <div className="pp-brief pp-integration-brief" id="workflow-fit">
+              <div className="pp-brief-top">
+                <span className="pp-eyebrow">How it would fit</span>
+                <span className="pp-status">
+                  <span />
+                  For {prospect?.name || leadName || "your team"}
+                </span>
+              </div>
+              <h2>{workflow.integrationTitle}</h2>
+              <p className="pp-current-work">{workflow.currentWork}</p>
+              <ol className="pp-flow">
+                {workflow.proposedFlow.map((step, i) => (
+                  <li key={i}>
+                    <span className="pp-flow-number">0{i + 1}</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p>
+                Proposed scope, not an installed integration. Confirm the actual
+                setup in the first conversation.
+              </p>
             </div>
-            <h2>{content.pilotTitle}</h2>
-            <div className="pp-brief-line">
-              <span>Start with</span>
-              <span>{content.steps[0]?.title || "A focused conversation"}</span>
+          ) : (
+            <div className="pp-brief">
+              <div className="pp-brief-top">
+                <span className="pp-eyebrow">The invitation</span>
+                <span className="pp-status">
+                  <span />
+                  For {leadName || "your team"}
+                </span>
+              </div>
+              <h2>{content.pilotTitle}</h2>
+              <div className="pp-brief-line">
+                <span>Start with</span>
+                <span>
+                  {content.steps[0]?.title || "A focused conversation"}
+                </span>
+              </div>
+              <div className="pp-brief-line">
+                <span>Your decision</span>
+                <span>Proceed only if the scope fits</span>
+              </div>
+              <p>
+                Prepared by {companyName}. A proposal, not a claim of an
+                existing partnership.
+              </p>
             </div>
-            <div className="pp-brief-line">
-              <span>Your decision</span>
-              <span>Proceed only if the scope fits</span>
-            </div>
-            <p>
-              Prepared by {companyName}. A proposal, not a claim of an existing
-              partnership.
-            </p>
-          </div>
+          )}
         </div>
       </section>
       <div className="pp-container">
