@@ -10,6 +10,7 @@ import {
   Inbox,
   LogOut,
   Menu,
+  Mail,
   Settings,
   Sparkles,
   Users,
@@ -27,7 +28,7 @@ const nav = [
   { href: "/app/pages", label: "Pages", icon: FileText },
   { href: "/app/outreach", label: "Outreach", icon: BookOpen },
   { href: "/app/inbox", label: "Inbox", icon: Inbox },
-  { href: "/app/submissions", label: "Submissions", icon: BarChart3 },
+  { href: "/app/submissions", label: "Email signups", icon: Mail },
 ];
 
 export function LeadloomShell({

@@ -1,3 +1,4 @@
+import { saveEarlyAccessEmail } from "./services/emailSignups";
 import {
   listIcpAgents,
   saveIcpAgent,
@@ -157,10 +158,8 @@ async function reconcileInterruptedSends(companyId: number) {
     );
 }
 
-const consentText =
-  "I agree to receive occasional TailorPitch updates. You can unsubscribe anytime.";
 const publicSubmission = z.object({
-  email: z.string().email().max(320),
+  email: z.string().trim().email().max(320),
   consent: z.literal(true),
   website: z.string().max(200).default(""),
 });
@@ -1719,18 +1718,7 @@ export const appRouter = router({
       .input(publicSubmission)
       .mutation(async ({ ctx, input }) => {
         throttle(`signup:${ipKey(ctx.req)}`, 8);
-        if (input.website) return { success: true };
-        await (
-          await db()
-        )
-          .insert(t.submissions)
-          .values({
-            email: input.email.toLowerCase().trim(),
-            source: "leadloom-waitlist",
-            consentText,
-          })
-          .onDuplicateKeyUpdate({ set: { consent: 1 } });
-        return { success: true };
+        return saveEarlyAccessEmail(input);
       }),
     page: publicProcedure
       .input(z.object({ token: tokenInput }))

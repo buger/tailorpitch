@@ -172,3 +172,10 @@ Per-ICP completion evidence: TypeScript clean; 129 regressions/25 files pass; Ma
 - [x] Reboot-safe HTTPS cloud app serves tailorpitch.com and www redirect; retained landing design and managed data/AI/Apify work. No real agents or outreach enabled by migration.
 
 Cloud verification: 139 tests/28 files, typecheck/build pass, real public owner login/workspace HTTP 200, anonymous HTTP 401, authenticated original reference image HTTP 200, AI/Apify authentication HTTP 200. No providers launched. Native Google remains deferred in favor of expressly approved owner/password.
+
+## Durable email capture and review
+- [x] Consented landing emails are normalized and saved to managed MySQL before success; repeated emails are deduplicated by source, consent and timestamps retained, bot honeypot ignored, write failures shown. Existing emails remain intact.
+- [x] Owner can review Email signups at /app/submissions with received time, source, consent, refresh, search/source filter and CSV export of the loaded latest 500; anonymous users cannot read the list.
+- [x] Isolated tests pass without adding production test emails; build/restart cloud service and back up source on local-development.
+
+Evidence: 143 tests/29 files pass, typecheck/build pass. Live owner email list HTTP 200 with 2 preserved rows, dates/consent retained; invalid public email and absent consent rejected HTTP 400, anonymous email-list access HTTP 401. Live bundle contains the new review heading and CSV export. No test emails saved or mail sent.

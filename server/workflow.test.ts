@@ -54,6 +54,9 @@ describe("company workflow boundaries", () => {
     await expect(caller.workspace.get()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });
+    await expect(caller.submissions.list()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
     await expect(caller.leads.list()).rejects.toMatchObject({
       code: "UNAUTHORIZED",
     });

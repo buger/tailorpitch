@@ -1,8 +1,11 @@
+import { signupCsv, signupSourceLabel } from "@shared/emailSignups";
 import { useOperation } from "@/components/operations/OperationProvider";
 import { useState } from "react";
 import {
   ArrowRight,
   Copy,
+  Download,
+  RefreshCw,
   ExternalLink,
   FileText,
   Inbox as InboxIcon,
@@ -1468,21 +1471,86 @@ export function InboxView() {
 
 export function SubmissionsView() {
   const list = api.submissions.list.useQuery(undefined, { retry: false });
+  const [query, setQuery] = useState("");
+  const [source, setSource] = useState("all");
+  const rows = (list.data ?? []).filter(
+    row =>
+      row.email.toLowerCase().includes(query.trim().toLowerCase()) &&
+      (source === "all" ||
+        (source === "early"
+          ? row.source === "leadloom-waitlist"
+          : row.source.startsWith("page-")))
+  );
+  const exportRows = () => {
+    const url = URL.createObjectURL(
+      new Blob([signupCsv(rows)], { type: "text/csv;charset=utf-8" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `tailorpitch-email-signups-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
   return (
     <>
       <SectionHeader
-        eyebrow="Submissions / consented interest"
-        title="Who raised a hand."
+        eyebrow="Email signups / saved in your database"
+        title="Your email signup list."
         description="Submissions from public personalized pages and the TailorPitch early-access list. Consent text is retained with each record."
       />
-      {list.isLoading && <LoadingState label="Loading submissions" />}
+      <div className="mb-5 flex flex-wrap items-end gap-3">
+        <div className="min-w-[220px] flex-1">
+          <TextInput
+            label="Search email"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Find a saved email"
+          />
+        </div>
+        <label className="text-xs text-ink-muted">
+          Source
+          <select
+            aria-label="Signup source"
+            className="mt-2 block border border-line bg-white px-3 py-3 text-sm text-ink"
+            value={source}
+            onChange={e => setSource(e.target.value)}
+          >
+            <option value="all">All sources</option>
+            <option value="early">Early access</option>
+            <option value="pages">Personalized pages</option>
+          </select>
+        </label>
+        <Button
+          variant="secondary"
+          onClick={() => void list.refetch()}
+          disabled={list.isFetching}
+        >
+          <RefreshCw className="h-4 w-4" />{" "}
+          {list.isFetching ? "Refreshing…" : "Refresh"}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={exportRows}
+          disabled={!rows.length || Boolean(list.error)}
+        >
+          <Download className="h-4 w-4" /> Export CSV
+        </Button>
+      </div>
+      {!list.isLoading && !list.error && (
+        <p className="mb-4 text-xs text-ink-muted">
+          {rows.length} matching / {list.data?.length ?? 0} loaded. Latest 500
+          saved submissions; CSV contains the currently filtered rows. Emails
+          remain saved across server restarts.
+        </p>
+      )}
+      {list.isLoading && <LoadingState label="Loading saved email signups" />}
       {list.error && (
         <ErrorState
           message={list.error.message || "Submissions are unavailable."}
           onRetry={() => void list.refetch()}
         />
       )}
-      {!list.isLoading && !list.error && list.data?.length ? (
+      {!list.isLoading && !list.error && rows.length ? (
         <div className="overflow-x-auto border border-line bg-white">
           <table className="min-w-[700px] w-full text-left">
             <thead>
@@ -1502,7 +1570,7 @@ export function SubmissionsView() {
               </tr>
             </thead>
             <tbody>
-              {list.data.map(submission => (
+              {rows.map(submission => (
                 <tr
                   key={submission.id}
                   className="border-b border-line last:border-0"
@@ -1511,9 +1579,12 @@ export function SubmissionsView() {
                     {submission.email}
                   </td>
                   <td className="px-5 py-4">
-                    <StatusChip tone="good">{submission.source}</StatusChip>
+                    <StatusChip tone="good">
+                      {signupSourceLabel(submission.source)}
+                    </StatusChip>
                   </td>
                   <td className="max-w-xs px-5 py-4 text-xs leading-5 text-ink-muted">
+                    {submission.consent ? "Consented · " : "No consent · "}
                     {submission.consentText}
                   </td>
                   <td className="px-5 py-4 font-mono text-[10px] text-ink-muted">
@@ -1527,8 +1598,14 @@ export function SubmissionsView() {
       ) : !list.isLoading && !list.error ? (
         <EmptyState
           icon={Share2}
-          title="No submissions yet"
-          description="When someone submits a consented email on a published page, it will appear here. The public waitlist is also visible to the pilot owner."
+          title={
+            list.data?.length ? "No matching signups" : "No email signups yet"
+          }
+          description={
+            list.data?.length
+              ? "Try a different email search or choose All sources."
+              : "Consented emails from the landing page and published personalized pages are saved to the database and will appear here."
+          }
         />
       ) : null}
     </>
